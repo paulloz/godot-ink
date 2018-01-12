@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://InkStory.tscn" type="PackedScene" id=1]
+
+[node name="Root" type="Node"]
+
+_sections_unfolded = [ "Material", "Pause", "Transform", "Visibility", "Z Index" ]
+
+[node name="InkStory" parent="." index="0" instance=ExtResource( 1 )]
+
+
