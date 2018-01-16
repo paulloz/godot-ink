@@ -4,17 +4,28 @@ using Ink.Runtime;
 
 public class InkStory : Node
 {
-    [Export]
-    public String InkFilePath = null;
+    // All the signals we'll need
+    public sealed class Signals
+    {
+        private Signals() { }
+
+        public static readonly String Continued = "ink-continued";
+        public static readonly String Ended = "ink-ended";
+        public static readonly String Choices = "ink-choices";
+    }
+
+    // All the exported variables
+    [Export] public String InkFilePath = null;
+    [Export] public String CurrentText = "";
     
     private Story story = null;
     
     public override void _Ready()
     {
         // Register used signals
-        AddUserSignal("StoryContinued");
-        AddUserSignal("NewChoices");
-        AddUserSignal("StoryEnded");
+        AddUserSignal(Signals.Continued);
+        AddUserSignal(Signals.Ended);
+        AddUserSignal(Signals.Choices);
 
         String path = String.Format("res://{0}", this.InkFilePath);
         File file = new File();
@@ -24,37 +35,27 @@ public class InkStory : Node
             file.Open(path, (int)File.ModeFlags.Read);
             this.story = new Story(file.GetAsText());
             file.Close();
-            
-            // Start
-            this.continueStory();
         }
         else
-        {
             throw new System.IO.FileNotFoundException(String.Format("Unable to find {0}.", path));
-        }
     }
 
-    private void continueStory()
+    public void Continue()
     {
+        // Continue if we can
         if (this.story.canContinue)
         {
-            this.EmitSignal("StoryContinued", this.story.currentText);
+            this.story.Continue();
+            this.CurrentText = this.story.currentText;
+            this.EmitSignal(Signals.Continued, this.CurrentText);
 
-            if (this.story.currentChoices.Count > 0)
-            {
-                foreach (Choice choice in this.story.currentChoices)
-                {
-                }
-            }
+            // Check if we have choices after continuing
+            //if (this.story.currentChoices.Count > 0)
+                //this.EmitSignal(Signals.Choices, this.story.currentChoices.ToArray());
         }
+        // If we can't continue and don't have any choice, we're at the end
         else if (this.story.currentChoices.Count <= 0)
-        {
-            this.EmitSignal("StoryEnded");
-        }
-    }
-
-    private void hasChoices()
-    {
+            this.EmitSignal(Signals.Ended);
     }
 
     public void ChooseChoiceIndex(int index)
@@ -63,11 +64,7 @@ public class InkStory : Node
         {
             this.story.ChooseChoiceIndex(index);
             
-            this.continueStory();
+            this.Continue();
         }
-    }
-
-    public override void _Process(float delta)
-    {
     }
 }
