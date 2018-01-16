@@ -15,8 +15,10 @@ public class InkStory : Node
 
     // All the exported variables
     [Export] public String InkFilePath = null;
-    [Export] public String CurrentText = "";
-    [Export] public String[] CurrentChoices = { };
+
+    // All the public variables
+    public String CurrentText = "";
+    public String[] CurrentChoices = { };
     
     private Story story = null;
     
