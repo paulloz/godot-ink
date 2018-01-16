@@ -8,7 +8,6 @@ public class InkStory : Node
     public sealed class Signals
     {
         private Signals() { }
-
         public static readonly String Continued = "ink-continued";
         public static readonly String Ended = "ink-ended";
         public static readonly String Choices = "ink-choices";
@@ -17,6 +16,7 @@ public class InkStory : Node
     // All the exported variables
     [Export] public String InkFilePath = null;
     [Export] public String CurrentText = "";
+    [Export] public String[] CurrentChoices = { };
     
     private Story story = null;
     
@@ -50,8 +50,11 @@ public class InkStory : Node
             this.EmitSignal(Signals.Continued, this.CurrentText);
 
             // Check if we have choices after continuing
-            //if (this.story.currentChoices.Count > 0)
-                //this.EmitSignal(Signals.Choices, this.story.currentChoices.ToArray());
+            if (this.story.currentChoices.Count > 0)
+            {
+                this.CurrentChoices = this.story.currentChoices.ConvertAll<String>(choice => choice.text).ToArray();
+                this.EmitSignal(Signals.Choices, this.CurrentChoices);
+            }
         }
         // If we can't continue and don't have any choice, we're at the end
         else if (this.story.currentChoices.Count <= 0)
