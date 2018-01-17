@@ -65,7 +65,7 @@ public class InkStory : Node
 
     public void ChooseChoiceIndex(int index)
     {
-        if (index > 0 && index < this.story.currentChoices.Count)
+        if (index >= 0 && index < this.story.currentChoices.Count)
         {
             this.story.ChooseChoiceIndex(index);
             
