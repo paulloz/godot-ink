@@ -72,4 +72,32 @@ public class InkStory : Node
             this.Continue();
         }
     }
+
+    public String GetStringVar(String key)
+    {
+        object val = this.story.variablesState[key];
+        return this.story.variablesState[key].ToString();
+    }
+
+    public int GetIntVar(String key)
+    {
+        object val = this.story.variablesState[key];
+        return val is int ? (int)val : val is float ? (int)Math.Floor((float)val) : 0;
+    }
+
+    public float GetFloatVar(String key)
+    {
+        object val = this.story.variablesState[key];
+        return val is float ? (float)val : val is int ? (float)((int)val) : (float)0;
+    }
+
+    public bool GetBoolVar(String key)
+    {
+        return this.GetIntVar(key) != 0;
+    }
+
+    public void SetVar(String key, object val)
+    {
+        this.story.variablesState[key] = val;
+    }
 }
