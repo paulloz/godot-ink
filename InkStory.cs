@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using Ink.Runtime;
 
 public class InkStory : Node
@@ -11,6 +12,7 @@ public class InkStory : Node
         public static readonly String Continued = "ink-continued";
         public static readonly String Ended = "ink-ended";
         public static readonly String Choices = "ink-choices";
+        public static readonly String VariableChanged = "ink-variablechanged";
     }
 
     // All the exported variables
@@ -21,6 +23,7 @@ public class InkStory : Node
     public String[] CurrentChoices = { };
 
     private Story story = null;
+    private List<String> observedVariables = new List<String>();
 
     public override void _Ready()
     {
@@ -88,10 +91,17 @@ public class InkStory : Node
         this.story.variablesState[name] = value_;
     }
 
-    public void ObserveVar(String name, Node node, String func)
+    public String ObserveVariable(String name)
     {
-        this.story.ObserveVariable(name, (String varName, object varValue) => {
-            node.Call(func, varValue);
-        });
+        String signalName = String.Format("{0}-{1}", Signals.VariableChanged, name);
+
+        if (!this.observedVariables.Contains(name))
+        {
+            AddUserSignal(signalName);
+            this.story.ObserveVariable(name, (String varName, object varValue) => {
+                this.EmitSignal(signalName, varName, varValue);
+            });
+        }
+        return signalName;
     }
 }
