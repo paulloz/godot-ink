@@ -19,9 +19,9 @@ public class InkStory : Node
     // All the public variables
     public String CurrentText = "";
     public String[] CurrentChoices = { };
-    
+
     private Story story = null;
-    
+
     public override void _Ready()
     {
         // Register used signals
@@ -68,36 +68,30 @@ public class InkStory : Node
         if (index >= 0 && index < this.story.currentChoices.Count)
         {
             this.story.ChooseChoiceIndex(index);
-            
+
             this.Continue();
         }
     }
 
-    public String GetStringVar(String key)
+    public object GetVariable(String name)
     {
-        object val = this.story.variablesState[key];
-        return this.story.variablesState[key].ToString();
+        object value_ = this.story.variablesState[name];
+        if (value_.GetType() == typeof(Ink.Runtime.InkList))
+        {
+
+        }
+        return value_;
     }
 
-    public int GetIntVar(String key)
+    public void SetVariable(String name, object value_)
     {
-        object val = this.story.variablesState[key];
-        return val is int ? (int)val : val is float ? (int)Math.Floor((float)val) : 0;
+        this.story.variablesState[name] = value_;
     }
 
-    public float GetFloatVar(String key)
+    public void ObserveVar(String name, Node node, String func)
     {
-        object val = this.story.variablesState[key];
-        return val is float ? (float)val : val is int ? (float)((int)val) : (float)0;
-    }
-
-    public bool GetBoolVar(String key)
-    {
-        return this.GetIntVar(key) != 0;
-    }
-
-    public void SetVar(String key, object val)
-    {
-        this.story.variablesState[key] = val;
+        this.story.ObserveVariable(name, (String varName, object varValue) => {
+            node.Call(func, varValue);
+        });
     }
 }
