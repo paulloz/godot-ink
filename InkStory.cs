@@ -55,14 +55,21 @@ public class InkStory : Node
         }
     }
 
-    public void Continue()
+    public bool CanContinue()
     {
+        return this.story.canContinue;
+    }
+
+    public String Continue()
+    {
+        String text = null;
+
         // Continue if we can
         if (this.story.canContinue)
         {
             this.story.Continue();
             this.CurrentText = this.story.currentText;
-            this.EmitSignal(Signals.Continued, this.CurrentText);
+            text = this.CurrentText;
 
             // Check if we have choices after continuing
             if (this.story.currentChoices.Count > 0)
@@ -74,6 +81,13 @@ public class InkStory : Node
         // If we can't continue and don't have any choice, we're at the end
         else if (this.story.currentChoices.Count <= 0)
             this.EmitSignal(Signals.Ended);
+
+        return text;
+    }
+
+    public bool HasChoices()
+    {
+        return this.story.currentChoices.Count > 0;
     }
 
     public void ChooseChoiceIndex(int index)
