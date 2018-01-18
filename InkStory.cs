@@ -73,10 +73,13 @@ public class InkStory : Node
 
             // Check if we have choices after continuing
             if (this.story.currentChoices.Count > 0)
-            {
                 this.CurrentChoices = this.story.currentChoices.ConvertAll<String>(choice => choice.text).ToArray();
-                this.EmitSignal(Signals.Choices, this.CurrentChoices);
-            }
+            else
+                this.CurrentChoices = new String[0];
+
+            this.EmitSignal(Signals.Continued, this.CurrentText);
+            if (this.CurrentChoices.Length > 0)
+                this.EmitSignal(Signals.Choices, new object[] { this.CurrentChoices });
         }
         // If we can't continue and don't have any choice, we're at the end
         else if (this.story.currentChoices.Count <= 0)
