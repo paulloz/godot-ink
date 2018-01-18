@@ -34,15 +34,25 @@ public class InkStory : Node
 
         String path = String.Format("res://{0}", this.InkFilePath);
         File file = new File();
-        if (file.FileExists(path))
+        try
         {
-            // Load the story
-            file.Open(path, (int)File.ModeFlags.Read);
-            this.story = new Story(file.GetAsText());
-            file.Close();
+            if (file.FileExists(path))
+            {
+                // Load the story
+                file.Open(path, (int)File.ModeFlags.Read);
+                this.story = new Story(file.GetAsText());
+                file.Close();
+            }
+            else {
+                throw new System.IO.FileNotFoundException(String.Format("Unable to find {0}.", path));
+            }
         }
-        else
-            throw new System.IO.FileNotFoundException(String.Format("Unable to find {0}.", path));
+        catch (System.IO.FileNotFoundException e)
+        {
+            // Quit game if the JSON Ink file is not found
+            GD.Printerr(e.ToString());
+            this.GetTree().Quit();
+        }
     }
 
     public void Continue()
