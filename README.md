@@ -19,9 +19,92 @@ As C# custom types aren't available yet, this package includes an **InkStory** p
 * Tags
 * On the fly Ink to JSON compilation 
 
-## Usage
+## How to use
 
 You'll need to put `ink-engine-runtime.dll` at the root of your Godot project.
+
+Everything revolves around the `InkStory` packed scene. For the sake of explanations, let's assume your scene contains an `InkStory` node called `story`.
+
+You'll need to point its `InkFilePath` exported variable to the location of your JSON Ink file, whether from the inspector or from a script.
+
+### Running the story and making choices
+
+Getting content from the story is done by calling the `.Continue()` method.
+```C#
+// From C#
+InkStory story = GetNode("story") as InkStory;
+while (story.CanContinue()) {
+    GD.Print(story.Continue());
+    // Alternatively, text can be accessed from story.CurrentText
+}
+```
+```GDScript
+# From GDScript
+var story = get_node("story")
+while story.call("CanContinue"):
+    print(story.call("Continue"))
+    # Alternatively, text can be accessed from story.get("CurrentText")
+```
+
+Choices are made with the `.ChooseChoiceIndex(int)` method.
+```C#
+// From C#
+if (story.HasChoices()) {
+    for (short i = 0; i < story.CurrentChoices.Count; ++i) {
+        GD.Print(story.CurrentChoices[i]);
+    }
+    ...
+    story.ChooseChoiceIndex(index);
+}
+```
+```GDScript
+# From GDScript
+if story.call("HasChoices"):
+    for choice in story.get("CurrentChoices"):
+        print(choice)
+    ...
+    story.Call("ChooseChoiceIndex", index)
+```
+
+### Using signals
+
+If you don't want to bother accessing `CurrentText` and `CurrentChoices`, signals are emitted when the story continues forward and when a new choice appears.
+
+```C#
+// From C#
+...
+{
+    ...
+    story.Connect(InkStory.Signals.Continued, this, "OnStoryContinued");
+    story.Connect(InkStory.Signals.Choices, this, "OnChoices");
+}
+
+public void OnStoryContinued(String text)
+{
+    GD.Print(text);
+}
+
+public void OnChoices(String[] choices)
+{
+    foreach (String choice in choices) {
+        GD.Print(choice);
+    }
+}
+```
+```GDScript
+# From GDScript
+    ...
+    story.connect("ink-continued", self, "_on_story_continued")
+    story.connect("ink-choices", self, "_on_choices")
+
+func _on_story_continued(currentText):
+    print(currentText)
+
+func _on_choices(currentChoices):
+    for choice in choices:
+        print(choice)
+```
+
 
 ## License
 
