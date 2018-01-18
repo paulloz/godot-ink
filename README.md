@@ -33,7 +33,7 @@ Getting content from the story is done by calling the `.Continue()` method.
 ```C#
 // From C#
 InkStory story = GetNode("story") as InkStory;
-while (story.CanContinue()) {
+while (story.CanContinue) {
     GD.Print(story.Continue());
     // Alternatively, text can be accessed from story.CurrentText
 }
@@ -41,7 +41,7 @@ while (story.CanContinue()) {
 ```GDScript
 # From GDScript
 var story = get_node("story")
-while story.CanContinue():
+while story.CanContinue:
     print(story.Continue())
     # Alternatively, text can be accessed from story.get("CurrentText")
 ```
@@ -49,7 +49,7 @@ while story.CanContinue():
 Choices are made with the `.ChooseChoiceIndex(int)` method.
 ```C#
 // From C#
-if (story.HasChoices()) {
+if (story.HasChoices) {
     for (short i = 0; i < story.CurrentChoices.Count; ++i) {
         GD.Print(story.CurrentChoices[i]);
     }
@@ -59,7 +59,7 @@ if (story.HasChoices()) {
 ```
 ```GDScript
 # From GDScript
-if story.HasChoices():
+if story.HasChoices:
     for choice in story.CurrentChoices:
         print(choice)
     ...

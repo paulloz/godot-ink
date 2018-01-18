@@ -55,10 +55,7 @@ public class InkStory : Node
         }
     }
 
-    public bool CanContinue()
-    {
-        return this.story.canContinue;
-    }
+    public bool CanContinue { get { return this.story.canContinue; } }
 
     public String Continue()
     {
@@ -88,10 +85,7 @@ public class InkStory : Node
         return text;
     }
 
-    public bool HasChoices()
-    {
-        return this.story.currentChoices.Count > 0;
-    }
+    public bool HasChoices { get { return this.story.currentChoices.Count > 0; } }
 
     public void ChooseChoiceIndex(int index)
     {
