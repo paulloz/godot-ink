@@ -9,10 +9,10 @@ As C# custom types aren't available yet, this package includes a **InkStory** pa
 * Running an Ink story and branching with choice indexes
 * Getting/Setting Ink variables (InkLists aren't supported yet)
 * Observing Ink variables (Inklists aren't supported yet)
+* External function bindings
 
 ### TODO:
 * Getting/Setting/Observing InkLists
-* External function bindings
 * Saving and loading Ink state
 * Read/Visit counts
 * Knot/Stitch jumping

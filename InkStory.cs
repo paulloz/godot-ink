@@ -100,6 +100,31 @@ public class InkStory : Node
         return signalName;
     }
 
+    public void BindExternalFunction(String inkFuncName, Func<object> func)
+    {
+        this.story.BindExternalFunction(inkFuncName, func);
+    }
+
+    public void BindExternalFunction<T>(String inkFuncName, Func<T, object> func)
+    {
+        this.story.BindExternalFunction(inkFuncName, func);
+    }
+
+    public void BindExternalFunction<T1, T2>(String inkFuncName, Func<T1, T2, object> func)
+    {
+        this.story.BindExternalFunction(inkFuncName, func);
+    }
+
+    public void BindExternalFunction<T1, T2, T3>(String inkFuncName, Func<T1, T2, T3, object> func)
+    {
+        this.story.BindExternalFunction(inkFuncName, func);
+    }
+
+    public void BindExternalFunction(String inkFuncName, Node node, String funcName)
+    {
+        this.story.BindExternalFunctionGeneral(inkFuncName, (object[] foo) => node.Call(funcName, foo));
+    }
+
     private object marshallVariableValue(object value_)
     {
         if (value_.GetType() == typeof(Ink.Runtime.InkList))
