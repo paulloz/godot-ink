@@ -78,12 +78,7 @@ public class InkStory : Node
 
     public object GetVariable(String name)
     {
-        object value_ = this.story.variablesState[name];
-        if (value_.GetType() == typeof(Ink.Runtime.InkList))
-        {
-
-        }
-        return value_;
+        return this.marshallVariableValue(this.story.variablesState[name]);
     }
 
     public void SetVariable(String name, object value_)
@@ -99,9 +94,16 @@ public class InkStory : Node
         {
             AddUserSignal(signalName);
             this.story.ObserveVariable(name, (String varName, object varValue) => {
-                this.EmitSignal(signalName, varName, varValue);
+                this.EmitSignal(signalName, varName, this.marshallVariableValue(varValue));
             });
         }
         return signalName;
+    }
+
+    private object marshallVariableValue(object value_)
+    {
+        if (value_.GetType() == typeof(Ink.Runtime.InkList))
+            value_ = null;
+        return value_;
     }
 }
