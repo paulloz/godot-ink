@@ -137,7 +137,7 @@ public class InkStory : Node
 
     private object marshallVariableValue(object value_)
     {
-        if (value_.GetType() == typeof(Ink.Runtime.InkList))
+        if (value_ != null && value_.GetType() == typeof(Ink.Runtime.InkList))
             value_ = null;
         return value_;
     }
