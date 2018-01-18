@@ -3,7 +3,7 @@
 **This project is heavily under construction as C# support in Godot is a WIP.**
 
 [Ink](https://github.com/inkle/ink) integration for [Godot Engine](https://github.com/godotengine/godot).  
-As C# custom types aren't available yet, this package includes a **InkStory** packed scene.
+As C# custom types aren't available yet, this package includes an **InkStory** packed scene.
 
 ### Currently supported features:
 * Running an Ink story and branching with choice indexes
