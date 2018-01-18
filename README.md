@@ -25,40 +25,21 @@ You'll need to put `ink-engine-runtime.dll` at the root of your Godot project.
 
 Everything revolves around the `InkStory` packed scene. For the sake of explanations, let's assume your scene contains an `InkStory` node called `story`.
 
-You'll need to point its `InkFilePath` exported variable to the location of your JSON Ink file, whether from the inspector or from a script.
+You'll need to point its `InkFilePath` exported variable to the location of your JSON Ink file, whether from the inspector or from a script.  
+If nothing is specified, the **C#** usage is the same as the **GDScript** one.
 
 ### Running the story and making choices
 
 Getting content from the story is done by calling the `.Continue()` method.
-```C#
-// From C#
-InkStory story = GetNode("story") as InkStory;
-while (story.CanContinue) {
-    GD.Print(story.Continue());
-    // Alternatively, text can be accessed from story.CurrentText
-}
-```
 ```GDScript
-# From GDScript
 var story = get_node("story")
 while story.CanContinue:
     print(story.Continue())
-    # Alternatively, text can be accessed from story.get("CurrentText")
+    # Alternatively, text can be accessed from story.CurrentText
 ```
 
 Choices are made with the `.ChooseChoiceIndex(int)` method.
-```C#
-// From C#
-if (story.HasChoices) {
-    for (short i = 0; i < story.CurrentChoices.Count; ++i) {
-        GD.Print(story.CurrentChoices[i]);
-    }
-    ...
-    story.ChooseChoiceIndex(index);
-}
-```
 ```GDScript
-# From GDScript
 if story.HasChoices:
     for choice in story.CurrentChoices:
         print(choice)
@@ -70,27 +51,6 @@ if story.HasChoices:
 
 If you don't want to bother accessing `CurrentText` and `CurrentChoices`, signals are emitted when the story continues forward and when a new choice appears.
 
-```C#
-// From C#
-...
-{
-    ...
-    story.Connect(InkStory.Signals.Continued, this, "OnStoryContinued");
-    story.Connect(InkStory.Signals.Choices, this, "OnChoices");
-}
-
-public void OnStoryContinued(String text)
-{
-    GD.Print(text);
-}
-
-public void OnChoices(String[] choices)
-{
-    foreach (String choice in choices) {
-        GD.Print(choice);
-    }
-}
-```
 ```GDScript
 # From GDScript
     ...
@@ -105,37 +65,26 @@ func _on_choices(currentChoices):
         print(choice)
 ```
 
+In **C#**, you can use the `Signals` enum instead of signal names.
+
+```C#
+story.Connect(InkStory.Signals.Continued, this, "OnStoryContinued");
+story.Connect(InkStory.Signals.Choices, this, "OnChoices");
+```
+
+
 ### Using Ink variables
 
 Ink variables (except InkLists for now) can be get and set.
 
-```C#
-// From C#
-story.GetVariable("foo");
-story.SetVariable("foo", "bar");
-```
 ```GDScript
-# From GDScript
 story.GetVariable("foo")
 story.SetVariable("foo", "bar")
 ```
 
 They can also be observed with signals.
-```C#
-// From C#
-...
-{
-    ...
-    story.Connect(story.ObserveVariable("foo"), this, "FooObserver");
-}
 
-public void FooObserver(String varName, String varValue)
-{
-    GD.Print(String.Format("{0} == {1}", varName, varValue));
-}
-```
 ```GDScript
-# From GDScript
     ...
     story.connect(story.ObserveVariable("foo"), self, "_foo_observer")
 
