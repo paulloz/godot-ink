@@ -41,8 +41,8 @@ while (story.CanContinue()) {
 ```GDScript
 # From GDScript
 var story = get_node("story")
-while story.call("CanContinue"):
-    print(story.call("Continue"))
+while story.CanContinue():
+    print(story.Continue())
     # Alternatively, text can be accessed from story.get("CurrentText")
 ```
 
@@ -59,11 +59,11 @@ if (story.HasChoices()) {
 ```
 ```GDScript
 # From GDScript
-if story.call("HasChoices"):
-    for choice in story.get("CurrentChoices"):
+if story.HasChoices():
+    for choice in story.CurrentChoices:
         print(choice)
     ...
-    story.Call("ChooseChoiceIndex", index)
+    story.ChooseChoiceIndex(index)
 ```
 
 ### Using signals
@@ -103,6 +103,44 @@ func _on_story_continued(currentText):
 func _on_choices(currentChoices):
     for choice in choices:
         print(choice)
+```
+
+### Using Ink variables
+
+Ink variables (except InkLists for now) can be get and set.
+
+```C#
+// From C#
+story.GetVariable("foo");
+story.SetVariable("foo", "bar");
+```
+```GDScript
+# From GDScript
+story.GetVariable("foo")
+story.SetVariable("foo", "bar")
+```
+
+They can also be observed with signals.
+```C#
+// From C#
+...
+{
+    ...
+    story.Connect(story.ObserveVariable("foo"), this, "FooObserver");
+}
+
+public void FooObserver(String varName, String varValue)
+{
+    GD.Print(String.Format("{0} == {1}", varName, varValue));
+}
+```
+```GDScript
+# From GDScript
+    ...
+    story.connect(story.ObserveVariable("foo"), self, "_foo_observer")
+
+func _foo_observer(varName, varValue):
+    print(varName, " = ", varValue)
 ```
 
 
