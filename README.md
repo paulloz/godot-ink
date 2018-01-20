@@ -11,11 +11,11 @@ As C# custom types aren't available yet, this package includes an **InkStory** p
 * Getting/Setting Ink variables (InkLists aren't supported yet)
 * Observing Ink variables (Inklists aren't supported yet)
 * External function bindings
+* Read/Visit counts
 
 ### TODO:
 * Getting/Setting/Observing InkLists
 * Saving and loading Ink state
-* Read/Visit counts
 * Tags
 * On the fly Ink to JSON compilation 
 
@@ -78,9 +78,8 @@ story.Connect(InkStory.Signals.Choices, this, "OnChoices");
 You can [jump to a particular knot or stitch](https://github.com/inkle/ink/blob/master/Documentation/RunningYourInk.md#jumping-to-a-particular-scene) with `.ChoosePathString(String)`. This method will return `false` if the jump failed.
 
 ```GDScript
-    ...
-    if story.ChoosePathString("mycoolknot.myradstitch"):
-        story.Continue()
+if story.ChoosePathString("mycoolknot.myradstitch"):
+    story.Continue()
 ```
 
 ### Using Ink variables
@@ -102,6 +101,13 @@ func _foo_observer(varName, varValue):
     print(varName, " = ", varValue)
 ```
 
+#### Read/Visit count
+
+You can know how many times a knot/stitch has been visited with `.VisitCountPathString(String)`.
+
+```GDScript
+print(story.VisitCountPathString("mycoolknot.myradstitch"))
+```
 
 ## License
 
