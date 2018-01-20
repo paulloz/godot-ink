@@ -7,6 +7,7 @@ As C# custom types aren't available yet, this package includes an **InkStory** p
 
 ### Currently supported features:
 * Running an Ink story and branching with choice indexes
+* Knot/Stitch jumping
 * Getting/Setting Ink variables (InkLists aren't supported yet)
 * Observing Ink variables (Inklists aren't supported yet)
 * External function bindings
@@ -15,7 +16,6 @@ As C# custom types aren't available yet, this package includes an **InkStory** p
 * Getting/Setting/Observing InkLists
 * Saving and loading Ink state
 * Read/Visit counts
-* Knot/Stitch jumping
 * Tags
 * On the fly Ink to JSON compilation 
 
@@ -24,8 +24,10 @@ As C# custom types aren't available yet, this package includes an **InkStory** p
 You'll need to put `ink-engine-runtime.dll` at the root of your Godot project.
 
 Everything revolves around the `InkStory` packed scene. For the sake of explanations, let's assume your scene contains an `InkStory` node called `story`.
+You can also use it in as an AutoLoad.
 
 You'll need to point its `InkFilePath` exported variable to the location of your JSON Ink file, whether from the inspector or from a script.  
+
 If nothing is specified, the **C#** usage is the same as the **GDScript** one.
 
 ### Running the story and making choices
@@ -52,7 +54,6 @@ if story.HasChoices:
 If you don't want to bother accessing `CurrentText` and `CurrentChoices`, signals are emitted when the story continues forward and when a new choice appears.
 
 ```GDScript
-# From GDScript
     ...
     story.connect("ink-continued", self, "_on_story_continued")
     story.connect("ink-choices", self, "_on_choices")
@@ -72,6 +73,15 @@ story.Connect(InkStory.Signals.Continued, this, "OnStoryContinued");
 story.Connect(InkStory.Signals.Choices, this, "OnChoices");
 ```
 
+### Jumping to a Knot/Stitch
+
+You can [jump to a particular knot or stitch](https://github.com/inkle/ink/blob/master/Documentation/RunningYourInk.md#jumping-to-a-particular-scene) with `.ChoosePathString(String)`. This method will return `false` if the jump failed.
+
+```GDScript
+    ...
+    if story.ChoosePathString("mycoolknot.myradstitch"):
+        story.Continue()
+```
 
 ### Using Ink variables
 
