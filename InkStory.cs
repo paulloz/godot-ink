@@ -22,6 +22,10 @@ public class InkStory : Node
     public String CurrentText = "";
     public String[] CurrentChoices = { };
 
+    // All the properties
+    public bool CanContinue { get { return this.story.canContinue; } }
+    public bool HasChoices { get { return this.story.currentChoices.Count > 0; } }
+
     private Story story = null;
     private List<String> observedVariables = new List<String>();
 
@@ -55,8 +59,6 @@ public class InkStory : Node
         }
     }
 
-    public bool CanContinue { get { return this.story.canContinue; } }
-
     public String Continue()
     {
         String text = null;
@@ -75,17 +77,19 @@ public class InkStory : Node
                 this.CurrentChoices = new String[0];
 
             this.EmitSignal(Signals.Continued, this.CurrentText);
+            // this.EmitSignal("InkContinued", "lolilol");
             if (this.CurrentChoices.Length > 0)
                 this.EmitSignal(Signals.Choices, new object[] { this.CurrentChoices });
         }
         // If we can't continue and don't have any choice, we're at the end
         else if (this.story.currentChoices.Count <= 0)
             this.EmitSignal(Signals.Ended);
+        else {
+            this.ChooseChoiceIndex(0);
+        }
 
         return text;
     }
-
-    public bool HasChoices { get { return this.story.currentChoices.Count > 0; } }
 
     public void ChooseChoiceIndex(int index)
     {
@@ -95,6 +99,21 @@ public class InkStory : Node
 
             this.Continue();
         }
+    }
+
+    public bool ChoosePathString(String pathString)
+    {
+        try
+        {
+            this.story.ChoosePathString(pathString);
+        }
+        catch (Ink.Runtime.StoryException e)
+        {
+            GD.Printerr(e.ToString());
+            return false;
+        }
+
+        return true;
     }
 
     public object GetVariable(String name)
