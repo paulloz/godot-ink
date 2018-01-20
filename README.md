@@ -26,9 +26,15 @@ You'll need to put `ink-engine-runtime.dll` at the root of your Godot project.
 Everything revolves around the `InkStory` packed scene. For the sake of explanations, let's assume your scene contains an `InkStory` node called `story`.
 You can also use it in as an AutoLoad.
 
-You'll need to point its `InkFilePath` exported variable to the location of your JSON Ink file, whether from the inspector or from a script.  
-
 If nothing is specified, the **C#** usage is the same as the **GDScript** one.
+
+### Loading the story
+
+To load your story, you can:
+
+* Point the `InkFilePath` exported variable to the location of your JSON Ink file and check the `AutoLoadStory` checkbox in the inspector.
+* Point the `InkFilePath` exported variable to the location of your JSON Ink file (in the inspector or via a script) and call `story.LoadStory()`.
+* Call `story.LoadStory(path)` with path pointing to the location of your JSON Ink file.
 
 ### Running the story and making choices
 
