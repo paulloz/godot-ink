@@ -64,9 +64,8 @@ public class InkStory : Node
                 this.story = new Story(file.GetAsText());
                 file.Close();
             }
-            else {
+            else
                 throw new System.IO.FileNotFoundException(String.Format("Unable to find {0}.", path));
-            }
         }
         catch (System.IO.FileNotFoundException e)
         {
@@ -86,18 +85,17 @@ public class InkStory : Node
             text = this.CurrentText;
 
             // Check if we have choices after continuing
-            if (this.story.currentChoices.Count > 0)
+            if (this.HasChoices)
                 this.CurrentChoices = this.story.currentChoices.ConvertAll<String>(choice => choice.text).ToArray();
             else
                 this.CurrentChoices = new String[0];
 
             this.EmitSignal(Signals.Continued, this.CurrentText);
-            // this.EmitSignal("InkContinued", "lolilol");
             if (this.CurrentChoices.Length > 0)
                 this.EmitSignal(Signals.Choices, new object[] { this.CurrentChoices });
         }
         // If we can't continue and don't have any choice, we're at the end
-        else if (this.story?.currentChoices.Count <= 0)
+        else if (!this.HasChoices)
             this.EmitSignal(Signals.Ended);
 
         return text;
@@ -108,7 +106,6 @@ public class InkStory : Node
         if (index >= 0 && index < this.story?.currentChoices.Count)
         {
             this.story.ChooseChoiceIndex(index);
-
             this.Continue();
         }
     }
