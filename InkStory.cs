@@ -116,6 +116,11 @@ public class InkStory : Node
         return true;
     }
 
+    public int VisitCountAtPathString(String pathString)
+    {
+        return this.story.state.VisitCountAtPathString(pathString);
+    }
+
     public object GetVariable(String name)
     {
         return this.marshallVariableValue(this.story.variablesState[name]);
