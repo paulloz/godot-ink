@@ -61,8 +61,8 @@ If you don't want to bother accessing `CurrentText` and `CurrentChoices`, signal
 
 ```GDScript
     ...
-    story.connect("ink-continued", self, "_on_story_continued")
-    story.connect("ink-choices", self, "_on_choices")
+    story.connect("InkContinued", self, "_on_story_continued")
+    story.connect("InkChoices", self, "_on_choices")
 
 func _on_story_continued(currentText):
     print(currentText)
@@ -72,11 +72,11 @@ func _on_choices(currentChoices):
         print(choice)
 ```
 
-In **C#**, you can use the `Signals` enum instead of signal names.
+In **C#**, you can use the `nameof()` on the `[Signal]` delegates.
 
 ```C#
-story.Connect(InkStory.Signals.Continued, this, "OnStoryContinued");
-story.Connect(InkStory.Signals.Choices, this, "OnChoices");
+story.Connect(nameof(InkStory.InkContinued), this, "OnStoryContinued");
+story.Connect(nameof(InkStory.InkChoices), this, "OnChoices");
 ```
 
 ### Jumping to a Knot/Stitch
