@@ -6,14 +6,10 @@ using Ink.Runtime;
 public class InkStory : Node
 {
     // All the signals we'll need
-    public sealed class Signals
-    {
-        private Signals() { }
-        public static readonly String Continued = "ink-continued";
-        public static readonly String Ended = "ink-ended";
-        public static readonly String Choices = "ink-choices";
-        public static readonly String VariableChanged = "ink-variablechanged";
-    }
+    [Signal] public delegate void InkContinued(String text);
+    [Signal] public delegate void InkEnded();
+    [Signal] public delegate void InkChoices(String[] choices);
+    public delegate void InkVariableChanged(String variableName, object variableValue);
 
     // All the exported variables
     [Export] public Boolean AutoLoadStory = false;
@@ -32,11 +28,6 @@ public class InkStory : Node
 
     public override void _Ready()
     {
-        // Register used signals
-        AddUserSignal(Signals.Continued);
-        AddUserSignal(Signals.Ended);
-        AddUserSignal(Signals.Choices);
-
         if (this.AutoLoadStory)
             this.LoadStory();
     }
@@ -90,13 +81,13 @@ public class InkStory : Node
             else
                 this.CurrentChoices = new String[0];
 
-            this.EmitSignal(Signals.Continued, this.CurrentText);
+            this.EmitSignal(nameof(InkContinued), this.CurrentText);
             if (this.CurrentChoices.Length > 0)
-                this.EmitSignal(Signals.Choices, new object[] { this.CurrentChoices });
+                this.EmitSignal(nameof(InkChoices), new object[] { this.CurrentChoices });
         }
         // If we can't continue and don't have any choice, we're at the end
         else if (!this.HasChoices)
-            this.EmitSignal(Signals.Ended);
+            this.EmitSignal(nameof(InkEnded));
 
         return text;
     }
@@ -146,7 +137,7 @@ public class InkStory : Node
 
     public String ObserveVariable(String name)
     {
-        String signalName = String.Format("{0}-{1}", Signals.VariableChanged, name);
+        String signalName = String.Format("{0}-{1}", nameof(InkVariableChanged), name);
 
         if (this.story != null && !this.observedVariables.Contains(name))
         {
