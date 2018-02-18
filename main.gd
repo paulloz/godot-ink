@@ -2,8 +2,8 @@ extends Node
 
 func _ready():
     set_process(true)
-    InkStory.connect("ink-continued", self, "_on_story_continued")
-    InkStory.connect("ink-choices", self, "_on_choices")
+    InkStory.connect("InkContinued", self, "_on_story_continued")
+    InkStory.connect("InkChoices", self, "_on_choices")
     InkStory.LoadStory("ink/example.json")
     InkStory.Continue();
     
