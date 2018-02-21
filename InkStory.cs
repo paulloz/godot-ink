@@ -145,6 +145,11 @@ public class InkStory : Node
         return this.story?.state.VisitCountAtPathString(pathString) ?? 0;
     }
 
+    public String[] TagsForContentAtPath(String pathString)
+    {
+        return this.story?.TagsForContentAtPath(pathString).ToArray() ?? new String[0];
+    }
+
     public object GetVariable(String name)
     {
         return this.marshallVariableValue(this.story?.variablesState[name]);
