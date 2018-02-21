@@ -11,13 +11,17 @@ public class InkStory : Node
     [Signal] public delegate void InkChoices(String[] choices);
     public delegate void InkVariableChanged(String variableName, object variableValue);
 
+    private String ObservedVariableSignalName(String name) {
+        return String.Format("{0}-{1}", nameof(InkVariableChanged), name);
+    }
+
     // All the exported variables
     [Export] public Boolean AutoLoadStory = false;
     [Export] public String InkFilePath = null;
 
     // All the public variables
     public String CurrentText = "";
-    public String[] CurrentChoices = { };
+    public String[] CurrentChoices = new String[0];
 
     // All the properties
     public bool CanContinue { get { return this.story?.canContinue ?? false; } }
@@ -25,6 +29,19 @@ public class InkStory : Node
 
     private Story story = null;
     private List<String> observedVariables = new List<String>();
+
+    private void reset()
+    {
+        this.story =  null;
+
+        foreach (String varName in this.observedVariables) {
+            // TODO Unregister Signal
+        }
+        this.observedVariables.Clear();
+
+        this.CurrentText = "";
+        this.CurrentChoices = new String[0];
+    }
 
     public override void _Ready()
     {
@@ -34,6 +51,8 @@ public class InkStory : Node
 
     public void LoadStory()
     {
+        this.reset();
+
         this.LoadStory(this.InkFilePath);
     }
 
@@ -137,7 +156,7 @@ public class InkStory : Node
 
     public String ObserveVariable(String name)
     {
-        String signalName = String.Format("{0}-{1}", nameof(InkVariableChanged), name);
+        String signalName = this.ObservedVariableSignalName(name);
 
         if (this.story != null)
         {
