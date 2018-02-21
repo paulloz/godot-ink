@@ -57,7 +57,7 @@ public class InkStory : Node
         this.LoadStory(this.InkFilePath);
     }
 
-    public void LoadStory(String inkFilePath)
+    public Boolean LoadStory(String inkFilePath)
     {
         this.reset();
 
@@ -83,7 +83,17 @@ public class InkStory : Node
         catch (System.IO.FileNotFoundException e)
         {
             GD.Printerr(e.ToString());
+
+            return false;
         }
+
+        return true;
+    }
+
+    public void LoadStory(String inkFilePath, String state)
+    {
+        if (this.LoadStory(inkFilePath))
+            this.SetState(state);
     }
 
     public String Continue()
@@ -213,5 +223,15 @@ public class InkStory : Node
         if (value_ != null && value_.GetType() == typeof(Ink.Runtime.InkList))
             value_ = null;
         return value_;
+    }
+
+    public String GetState()
+    {
+        return this.story.state.ToJson();
+    }
+
+    public void SetState(String state)
+    {
+        this.story.state.LoadJson(state);
     }
 }
