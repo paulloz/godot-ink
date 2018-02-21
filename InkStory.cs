@@ -54,13 +54,13 @@ public class InkStory : Node
 
     public void LoadStory()
     {
-        this.reset();
-
         this.LoadStory(this.InkFilePath);
     }
 
     public void LoadStory(String inkFilePath)
     {
+        this.reset();
+
         try
         {
             if (inkFilePath == null)
