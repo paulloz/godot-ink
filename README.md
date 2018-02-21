@@ -7,6 +7,7 @@ As C# custom types aren't available yet, this package includes an **InkStory** p
 
 ### Currently supported features:
 * Running an Ink story and branching with choice indexes
+* Saving and loading Ink state
 * Tags
 * Knot/Stitch jumping
 * Getting/Setting Ink variables (InkLists aren't supported yet)
@@ -16,7 +17,6 @@ As C# custom types aren't available yet, this package includes an **InkStory** p
 
 ### TODO:
 * Getting/Setting/Observing InkLists
-* Saving and loading Ink state
 * On the fly Ink to JSON compilation 
 
 ## How to use
@@ -80,6 +80,33 @@ story.Connect(nameof(InkStory.InkChoices), this, "OnChoices");
 ```
 
 The above signals are also available through the node inspector.
+
+### Save / Load
+
+You get and set the json state by calling `.GetState()` and `.SetState(String)`.
+
+```GDScript
+story.SetState(story.GetState())
+```
+
+Alternatively you can save and load directly from disk (either by passing a path or a file as argument) with `.LoadStateFromDisk` and `.SaveStateOnDisk`.
+
+```GDScript
+story.SaveStateOnDisk("save.json")
+story.LoadStateFromDisk("save.json")
+```
+
+```GDScript
+var file = File.new()
+file.open("save.json", File.WRITE)
+story.SaveStateOnDisk(file)
+file.close
+
+
+file.open("save.json", File.READ)
+story.LoadStateFromDisk(file)
+file.close
+```
 
 ### Tags
 
