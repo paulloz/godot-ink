@@ -230,8 +230,42 @@ public class InkStory : Node
         return this.story.state.ToJson();
     }
 
+    public void SaveStateOnDisk(String path)
+    {
+        path = String.Format("res://{0}", path);
+        File file = new File();
+        file.Open(path, (int)File.ModeFlags.Write);
+        this.SaveStateOnDisk(file);
+        file.Close();
+    }
+
+    public void SaveStateOnDisk(File file)
+    {
+        if (file.IsOpen())
+            file.StoreString(this.GetState());
+    }
+
     public void SetState(String state)
     {
         this.story.state.LoadJson(state);
+    }
+
+    public void LoadStateFromDisk(String path)
+    {
+        path = String.Format("res://{0}", path);
+        File file = new File();
+        file.Open(path, (int)File.ModeFlags.Read);
+        this.LoadStateFromDisk(file);
+        file.Close();
+    }
+
+    public void LoadStateFromDisk(File file)
+    {
+        if (file.IsOpen())
+        {
+            file.Seek(0);
+            if (file.GetLen() > 0)
+                this.story.state.LoadJson(file.GetAsText());
+        }
     }
 }
