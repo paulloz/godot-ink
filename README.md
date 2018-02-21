@@ -7,6 +7,7 @@ As C# custom types aren't available yet, this package includes an **InkStory** p
 
 ### Currently supported features:
 * Running an Ink story and branching with choice indexes
+* Tags
 * Knot/Stitch jumping
 * Getting/Setting Ink variables (InkLists aren't supported yet)
 * Observing Ink variables (Inklists aren't supported yet)
@@ -16,7 +17,6 @@ As C# custom types aren't available yet, this package includes an **InkStory** p
 ### TODO:
 * Getting/Setting/Observing InkLists
 * Saving and loading Ink state
-* Tags
 * On the fly Ink to JSON compilation 
 
 ## How to use
@@ -64,7 +64,7 @@ If you don't want to bother accessing `CurrentText` and `CurrentChoices`, signal
     story.connect("InkContinued", self, "_on_story_continued")
     story.connect("InkChoices", self, "_on_choices")
 
-func _on_story_continued(currentText):
+func _on_story_continued(currentText, currentTags):
     print(currentText)
 
 func _on_choices(currentChoices):
@@ -78,6 +78,20 @@ In **C#**, you can use the `nameof()` on the `[Signal]` delegates.
 story.Connect(nameof(InkStory.InkContinued), this, "OnStoryContinued");
 story.Connect(nameof(InkStory.InkChoices), this, "OnChoices");
 ```
+
+The above signals are also available through the node inspector.
+
+### Tags
+
+Tags, global tags and knot tags are accessible respectively through `.CurrentTags`, `.GlobalTags` and `.TagsForContentAtPath(String)`.
+
+```GDScript
+print(story.CurrentTags)
+print(story.GlobalTags)
+print(story.TagsForContentAtPath("mycoolknot"))
+```
+
+As shown above, current tags are also passed along the current text in the `InkContinued` event.
 
 ### Jumping to a Knot/Stitch
 
