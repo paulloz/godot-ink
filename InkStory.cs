@@ -139,12 +139,17 @@ public class InkStory : Node
     {
         String signalName = String.Format("{0}-{1}", nameof(InkVariableChanged), name);
 
-        if (this.story != null && !this.observedVariables.Contains(name))
+        if (this.story != null)
         {
-            AddUserSignal(signalName);
-            this.story.ObserveVariable(name, (String varName, object varValue) => {
-                this.EmitSignal(signalName, varName, this.marshallVariableValue(varValue));
-            });
+            if (!this.observedVariables.Contains(name))
+            {
+                AddUserSignal(signalName);
+                this.story.ObserveVariable(name, (String varName, object varValue) => {
+                    this.EmitSignal(signalName, varName, this.marshallVariableValue(varValue));
+                });
+
+                this.observedVariables.Add(name);
+            }
 
             return signalName;
         }
