@@ -6,7 +6,7 @@ using Ink.Runtime;
 public class InkStory : Node
 {
     // All the signals we'll need
-    [Signal] public delegate void InkContinued(String text);
+    [Signal] public delegate void InkContinued(String text, String[] tags);
     [Signal] public delegate void InkEnded();
     [Signal] public delegate void InkChoices(String[] choices);
     public delegate void InkVariableChanged(String variableName, object variableValue);
@@ -21,6 +21,7 @@ public class InkStory : Node
 
     // All the public variables
     public String CurrentText = "";
+    public String[] CurrentTags = new String[0];
     public String[] CurrentChoices = new String[0];
 
     // All the properties
@@ -40,6 +41,7 @@ public class InkStory : Node
         this.observedVariables.Clear();
 
         this.CurrentText = "";
+        this.CurrentTags = new String[0];
         this.CurrentChoices = new String[0];
     }
 
@@ -94,13 +96,12 @@ public class InkStory : Node
             this.CurrentText = this.story.currentText;
             text = this.CurrentText;
 
-            // Check if we have choices after continuing
-            if (this.HasChoices)
-                this.CurrentChoices = this.story.currentChoices.ConvertAll<String>(choice => choice.text).ToArray();
-            else
-                this.CurrentChoices = new String[0];
+            this.CurrentTags = this.story.currentTags.ToArray();
 
-            this.EmitSignal(nameof(InkContinued), this.CurrentText);
+            // Check if we have choices after continuing
+            this.CurrentChoices = this.story.currentChoices.ConvertAll<String>(choice => choice.text).ToArray();
+
+            this.EmitSignal(nameof(InkContinued), new object[] { this.CurrentText, this.CurrentTags });
             if (this.CurrentChoices.Length > 0)
                 this.EmitSignal(nameof(InkChoices), new object[] { this.CurrentChoices });
         }
