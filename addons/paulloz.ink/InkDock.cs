@@ -36,12 +36,26 @@ public class InkDock : Control
             fileSelect.RemoveItem(fileSelect.GetItemCount() - 1);
     }
 
+    private void resetStoryContent()
+    {
+        storyText.Text = "";
+        foreach (Node n in storyChoices.GetChildren())
+            storyChoices.RemoveChild(n);
+    }
+
     private void onFileSelectItemSelected(int id)
     {
         if (id == 0)
+        {
             resetFileSelectItems();
+            resetStoryContent();
+            currentFilePath = "";
+        }
         else if (id == 1)
+        {
+            fileSelect.Select(0);
             fileDialog.PopupCentered();
+        }
     }
 
     private void onFileDialogFileSelected(String path)
@@ -63,9 +77,14 @@ public class InkDock : Control
             fileSelect.Select(2);
             storyNode.Set("InkFilePath", currentFilePath.Remove(0, 6));
             storyNode.Call("LoadStory");
-            while ((bool)storyNode.Get("CanContinue"))
-                storyNode.Call("Continue");
+            continueStoryMaximally();
         }
+    }
+
+    private void continueStoryMaximally()
+    {
+        while ((bool)storyNode.Get("CanContinue"))
+            storyNode.Call("Continue");
     }
 
     private void onStoryContinued(String text, String[] tags)
@@ -88,12 +107,9 @@ public class InkDock : Control
 
     private void clickChoice(int idx)
     {
-        storyText.Text = "";
-        foreach (Node n in storyChoices.GetChildren())
-            storyChoices.RemoveChild(n);
+        resetStoryContent();
         storyNode.Callv("ChooseChoiceIndex", new Godot.Collections.Array() { idx });
-        while ((bool)storyNode.Get("CanContinue"))
-            storyNode.Call("Continue");
+        continueStoryMaximally();
     }
 }
 // #endif
