@@ -2,6 +2,7 @@
 
 .import/
 .mono/
+Properties/
 *.sln
 *.csproj
 

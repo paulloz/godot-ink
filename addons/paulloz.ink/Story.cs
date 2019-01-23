@@ -1,9 +1,11 @@
 using Godot;
 using System;
 using System.Collections.Generic;
-using Ink.Runtime;
 
-public class InkStory : Node
+#if TOOLS
+[Tool]
+#endif
+public class Story : Node
 {
     // All the signals we'll need
     [Signal] public delegate void InkContinued(String text, String[] tags);
@@ -11,7 +13,8 @@ public class InkStory : Node
     [Signal] public delegate void InkChoices(String[] choices);
     public delegate void InkVariableChanged(String variableName, object variableValue);
 
-    private String ObservedVariableSignalName(String name) {
+    private String ObservedVariableSignalName(String name)
+    {
         return String.Format("{0}-{1}", nameof(InkVariableChanged), name);
     }
 
@@ -29,7 +32,7 @@ public class InkStory : Node
     public bool HasChoices { get { return this.story?.currentChoices.Count > 0; } }
     public String[] GlobalTags { get { return this.story?.globalTags.ToArray() ?? new String[0]; } }
 
-    private Story story = null;
+    private Ink.Runtime.Story story = null;
     private List<String> observedVariables = new List<String>();
 
     private void reset()
@@ -74,7 +77,7 @@ public class InkStory : Node
             {
                 // Load the story
                 file.Open(path, (int)File.ModeFlags.Read);
-                this.story = new Story(file.GetAsText());
+                this.story = new Ink.Runtime.Story(file.GetAsText());
                 file.Close();
             }
             else
