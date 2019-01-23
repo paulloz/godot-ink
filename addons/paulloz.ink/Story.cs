@@ -82,7 +82,7 @@ public class InkStory : Node
         }
         catch (System.IO.FileNotFoundException e)
         {
-            GD.Printerr(e.ToString());
+//            GD.Printerr(e.ToString());
 
             return false;
         }
@@ -143,7 +143,7 @@ public class InkStory : Node
         }
         catch (Ink.Runtime.StoryException e)
         {
-            GD.Printerr(e.ToString());
+//            GD.Printerr(e.ToString());
             return false;
         }
 

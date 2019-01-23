@@ -1,3 +1,13 @@
+.vscode/
+
 .import/
 .mono/
+*.sln
+*.csproj
+
+export_presets.cfg
+project.godot
+*.tscn
+
 ink-engine-runtime.dll
+ink-engine-runtime.dll.mdb
