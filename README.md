@@ -3,7 +3,7 @@
 **This project is heavily under construction as C# support in Godot is a WIP.**
 
 [Ink](https://github.com/inkle/ink) integration for [Godot Engine](https://github.com/godotengine/godot).  
-As C# custom types aren't available yet, this package includes an **InkStory** packed scene.
+As C# supprt in Godot is still in its early stages, you might need to manually add the addon files to your `.csproj`. 
 
 ### Currently supported features:
 * Running an Ink story and branching with choice indexes
@@ -23,8 +23,7 @@ As C# custom types aren't available yet, this package includes an **InkStory** p
 
 You'll need to put `ink-engine-runtime.dll` at the root of your Godot project.
 
-Everything revolves around the `InkStory` packed scene. For the sake of explanations, let's assume your scene contains an `InkStory` node called `story`.
-You can also use it in as an AutoLoad.
+Everything revolves around the `Story` node.
 
 If nothing is specified, the **C#** usage is the same as the **GDScript** one.
 
@@ -40,7 +39,7 @@ To load your story, you can:
 
 Getting content from the story is done by calling the `.Continue()` method.
 ```GDScript
-var story = get_node("story")
+var story = get_node("Story")
 while story.CanContinue:
     print(story.Continue())
     # Alternatively, text can be accessed from story.CurrentText
