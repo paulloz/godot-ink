@@ -85,7 +85,7 @@ public class Story : Node
         }
         catch (System.IO.FileNotFoundException e)
         {
-//            GD.Printerr(e.ToString());
+            GD.PrintErr(e.ToString());
 
             return false;
         }
@@ -146,7 +146,7 @@ public class Story : Node
         }
         catch (Ink.Runtime.StoryException e)
         {
-//            GD.Printerr(e.ToString());
+            GD.PrintErr(e.ToString());
             return false;
         }
 
