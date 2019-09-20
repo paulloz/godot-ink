@@ -71,7 +71,7 @@ public class Story : Node
 
             this.InkFilePath = inkFilePath;
 
-            String path = String.Format("res://{0}", this.InkFilePath);
+            String path = this.InkFilePath.StartsWith("res://") ? this.InkFilePath : String.Format("res://{0}", this.InkFilePath);
             File file = new File();
             if (file.FileExists(path))
             {
