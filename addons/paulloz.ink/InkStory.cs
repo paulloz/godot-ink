@@ -5,7 +5,7 @@ using System.Collections.Generic;
 #if TOOLS
 [Tool]
 #endif
-public class Story : Node
+public class InkStory : Node
 {
     // All the signals we'll need
     [Signal] public delegate void InkContinued(String text, String[] tags);

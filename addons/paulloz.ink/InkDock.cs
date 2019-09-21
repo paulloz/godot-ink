@@ -23,11 +23,11 @@ public class InkDock : Control
         fileDialog.Connect("popup_hide", this, nameof(onFileDialogHide));
 
         storyNode = GetNode("Story");
-        storyNode.SetScript(ResourceLoader.Load("res://addons/paulloz.ink/Story.cs") as Script);
         storyNode.Connect(nameof(Story.InkContinued), this, nameof(onStoryContinued));
         storyNode.Connect(nameof(Story.InkChoices), this, nameof(onStoryChoices));
         storyText = GetNode<RichTextLabel>("VBoxContainer/StoryText");
         storyChoices = GetNode<VBoxContainer>("VBoxContainer/StoryChoices");
+        storyNode.SetScript(ResourceLoader.Load("res://addons/paulloz.ink/InkStory.cs") as Script);
     }
 
     private void resetFileSelectItems()
