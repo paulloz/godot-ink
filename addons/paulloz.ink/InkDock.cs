@@ -75,7 +75,7 @@ public class InkDock : Control
         else
         {
             fileSelect.Select(2);
-            storyNode.Set("InkFilePath", currentFilePath.Remove(0, 6));
+            storyNode.Set("InkFile", ResourceLoader.Load(currentFilePath));
             storyNode.Call("LoadStory");
             continueStoryMaximally();
         }
@@ -84,7 +84,16 @@ public class InkDock : Control
     private void continueStoryMaximally()
     {
         while ((bool)storyNode.Get("CanContinue"))
-            storyNode.Call("Continue");
+        {
+            try
+            {
+                storyNode.Call("Continue");
+            }
+            catch (Ink.Runtime.StoryException e)
+            {
+                onStoryContinued(e.ToString(), new String[] { });
+            }
+        }
     }
 
     private void onStoryContinued(String text, String[] tags)
