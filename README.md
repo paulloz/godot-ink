@@ -181,6 +181,3 @@ print(story.VisitCountPathString("mycoolknot.myradstitch"))
 ## License
 
 **godot-ink** is released under MIT license (see the [LICENSE](/LICENSE) file for more information).
-
-Example files in the `ink/` come from the [Writing with ink](https://github.com/inkle/ink/blob/master/Documentation/WritingWithInk.md) tutorial.
-
