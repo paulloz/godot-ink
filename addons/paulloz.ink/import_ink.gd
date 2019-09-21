@@ -2,10 +2,10 @@ tool
 extends EditorImportPlugin
 
 func get_importer_name():
-    return "inkjson";
+    return "ink";
 
 func get_visible_name():
-    return "JSON ink story";
+    return "Ink story";
 
 func get_recognized_extensions():
     return [ "json", "ink" ];
