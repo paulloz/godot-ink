@@ -11,23 +11,26 @@ public class InkDock : Control
     private String currentFilePath;
 
     private Node storyNode;
-    private RichTextLabel storyText;
+    private VBoxContainer storyText;
     private VBoxContainer storyChoices;
+    
+    private ScrollBar scrollbar;
 
     public override void _Ready()
     {
-        fileSelect = GetNode<OptionButton>("VBoxContainer/GridContainer/OptionButton");
+        fileSelect = GetNode<OptionButton>("Container/Top/OptionButton");
         fileDialog = GetNode<FileDialog>("FileDialog");
         fileSelect.Connect("item_selected", this, nameof(onFileSelectItemSelected));
         fileDialog.Connect("file_selected", this, nameof(onFileDialogFileSelected));
         fileDialog.Connect("popup_hide", this, nameof(onFileDialogHide));
 
         storyNode = GetNode("Story");
-        storyNode.SetScript(ResourceLoader.Load("res://addons/paulloz.ink/Story.cs") as Script);
-        storyNode.Connect(nameof(Story.InkContinued), this, nameof(onStoryContinued));
-        storyNode.Connect(nameof(Story.InkChoices), this, nameof(onStoryChoices));
-        storyText = GetNode<RichTextLabel>("VBoxContainer/StoryText");
-        storyChoices = GetNode<VBoxContainer>("VBoxContainer/StoryChoices");
+        storyNode.SetScript(ResourceLoader.Load("res://addons/paulloz.ink/InkStory.cs") as Script);
+        storyNode.Connect(nameof(InkStory.InkChoices), this, nameof(onStoryChoices));
+        storyText = GetNode<VBoxContainer>("Container/Bottom/Scroll/Margin/StoryText");
+        storyChoices = GetNode<VBoxContainer>("Container/Bottom/StoryChoices");
+
+        scrollbar = this.GetNode<ScrollContainer>("Container/Bottom/Scroll").GetVScrollbar();
     }
 
     private void resetFileSelectItems()
@@ -38,7 +41,18 @@ public class InkDock : Control
 
     private void resetStoryContent()
     {
-        storyText.Text = "";
+        this.removeAllStoryContent();
+        this.removeAllChoices();
+    }
+
+    private void removeAllStoryContent()
+    {
+        foreach (Node n in storyText.GetChildren())
+            storyText.RemoveChild(n);
+    }
+
+    private void removeAllChoices()
+    {
         foreach (Node n in storyChoices.GetChildren())
             storyChoices.RemoveChild(n);
     }
@@ -75,21 +89,37 @@ public class InkDock : Control
         else
         {
             fileSelect.Select(2);
-            storyNode.Set("InkFilePath", currentFilePath.Remove(0, 6));
+            storyNode.Set("InkFile", ResourceLoader.Load(currentFilePath));
             storyNode.Call("LoadStory");
+            resetStoryContent();
             continueStoryMaximally();
         }
     }
 
-    private void continueStoryMaximally()
+    private async void continueStoryMaximally()
     {
         while ((bool)storyNode.Get("CanContinue"))
-            storyNode.Call("Continue");
+        {
+            try
+            {
+                storyNode.Call("Continue");
+                onStoryContinued(storyNode.Get("CurrentText") as String, new String[] { });
+            }
+            catch (Ink.Runtime.StoryException e)
+            {
+                onStoryContinued(e.ToString(), new String[] { });
+            }
+        }
+        await ToSignal(GetTree(), "idle_frame");
+        this.scrollbar.Value = this.scrollbar.MaxValue;
     }
 
     private void onStoryContinued(String text, String[] tags)
     {
-        storyText.Text = (storyText.Text + text).TrimStart(new char[] { ' ', '\n' });
+        Label newLine = new Label();
+        newLine.Autowrap = true;
+        newLine.Text = text.Trim(new char[] { ' ', '\n' });
+        this.storyText.AddChild(newLine);
     }
 
     private void onStoryChoices(String[] choices)
@@ -107,8 +137,9 @@ public class InkDock : Control
 
     private void clickChoice(int idx)
     {
-        resetStoryContent();
         storyNode.Callv("ChooseChoiceIndex", new Godot.Collections.Array() { idx });
+        this.removeAllChoices();
+        this.storyText.AddChild(new HSeparator());
         continueStoryMaximally();
     }
 }
