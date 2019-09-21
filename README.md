@@ -1,9 +1,6 @@
 # godot-ink
 
-**This project is heavily under construction as C# support in Godot is a WIP.**
-
-[Ink](https://github.com/inkle/ink) integration for [Godot Engine](https://github.com/godotengine/godot).  
-As C# supprt in Godot is still in its early stages, you might need to manually add the addon files to your `.csproj`. 
+An [ink](https://github.com/inkle/ink) integration for [Godot Engine](https://github.com/godotengine/godot).  
 
 ### Currently supported features:
 * Running an Ink story and branching with choice indexes
@@ -14,31 +11,17 @@ As C# supprt in Godot is still in its early stages, you might need to manually a
 * Observing Ink variables (Inklists aren't supported yet)
 * External function bindings
 * Read/Visit counts
+* Story viewer inside the editor
 
 ### TODO:
 * Getting/Setting/Observing InkLists
 * On the fly Ink to JSON compilation 
 
-## Troubleshooting
-
-If you're having trouble enabling the editor plugin, it's probably because the `.cs` files aren't compiling with your project. You can solve the issue by adding this `ItemGroup` to your `.csproj` file.
-
-```xml
-<ItemGroup>
-    <Compile Include="addons\paulloz.ink\PaullozDotInk.cs" />
-    <Compile Include="addons\paulloz.ink\InkDock.cs" />
-    <Compile Include="addons\paulloz.ink\Story.cs" />
-    <Reference Include="Ink">
-        <HintPath>$(ProjectDir)/ink-engine-runtime.dll</HintPath>
-        <Private>False</Private>
-    </Reference>
-</ItemGroup>
-```
-
-Depending on the version of Godot you're using, you might still have issues with the editor plugin.  
-Do not worry, you don't actually need to enable it to use **godot-ink**. If you don't want to bother with extensive troubleshooting, all you have to do is attach `addons/paulloz.ink/Story.cs` to a node (or use it as a singleton). This node will become the `Story` node for the rest of this documentation.
-
 ## How to use
+
+When the plugin is properly loaded, you should be able to use the new ink panel to inspect your story.
+
+![](inspector_screenshot.png)
 
 You'll need to put `ink-engine-runtime.dll` at the root of your Godot project.
 
@@ -49,6 +32,8 @@ If nothing is specified, the **C#** usage is the same as the **GDScript** one.
 ### Loading the story
 
 First you should navigate to your JSON ink file and import it as a `JSON ink story` in Godot. To do that, select the file in Godot, go to `Import`, select `JSON ink story` under `Import As:` and click `ReImport`.
+
+![](import_screenshot.png)
 
 To load your story, you can:
 
@@ -174,6 +159,25 @@ You can know how many times a knot/stitch has been visited with `.VisitCountPath
 ```GDScript
 print(story.VisitCountPathString("mycoolknot.myradstitch"))
 ```
+
+## Troubleshooting
+
+If you're having trouble enabling the editor plugin, it's probably because the `.cs` files aren't compiling with your project. You can solve the issue by adding this `ItemGroup` to your `.csproj` file.
+
+```xml
+<ItemGroup>
+    <Compile Include="addons\paulloz.ink\PaullozDotInk.cs" />
+    <Compile Include="addons\paulloz.ink\InkDock.cs" />
+    <Compile Include="addons\paulloz.ink\Story.cs" />
+    <Reference Include="Ink">
+        <HintPath>$(ProjectDir)/ink-engine-runtime.dll</HintPath>
+        <Private>False</Private>
+    </Reference>
+</ItemGroup>
+```
+
+Depending on the version of Godot you're using, you might still have issues with the editor plugin.  
+Do not worry, you don't actually need to enable it to use **godot-ink**. If you don't want to bother with extensive troubleshooting, all you have to do is attach `addons/paulloz.ink/Story.cs` to a node (or use it as a singleton). This node will become the `Story` node for the rest of this documentation.
 
 ## License
 
