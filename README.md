@@ -2,43 +2,30 @@
 
 An [ink](https://github.com/inkle/ink) integration for [Godot Engine](https://github.com/godotengine/godot).  
 
-### Currently supported features:
-* Running an Ink story and branching with choice indexes
-* Saving and loading Ink state
-* Tags
-* Knot/Stitch jumping
-* Getting/Setting Ink variables (InkLists aren't supported yet)
-* Observing Ink variables (Inklists aren't supported yet)
-* External function bindings
-* Read/Visit counts
-* Story viewer inside the editor
-
-### TODO:
-* Getting/Setting/Observing InkLists
-* On the fly Ink to JSON compilation 
-
 ## How to use
 
 When the plugin is properly loaded, you should be able to use the new ink panel to inspect your story.
 
 ![](inspector_screenshot.png)
 
-You'll need to put `ink-engine-runtime.dll` at the root of your Godot project.
+You'll also see a new `ink` section in your project settings. If you want to be able to compile your .ink files on the fly you can input the path to the inklecate binary here.  
+The last thing you'll need to do in order to get going is to put `ink-engine-runtime.dll` at the root of your Godot project.
 
-Everything revolves around the `Story` node.
+---
 
+Everything is handled in a `Story` node.  
 If nothing is specified, the **C#** usage is the same as the **GDScript** one.
 
 ### Loading the story
 
-First you should navigate to your JSON ink file and import it as a `JSON ink story` in Godot. To do that, select the file in Godot, go to `Import`, select `JSON ink story` under `Import As:` and click `ReImport`.
+First you should navigate to your `.json` or `.ink` file and import it as an `Ink story` in Godot. To do that, select the file in Godot, go to `Import`, select `Ink story` under `Import As:` and click `ReImport`.
 
 ![](import_screenshot.png)
 
 To load your story, you can:
 
-* Point the `InkFile` exported variable to your JSON ink file and check the `AutoLoadStory` checkbox in the inspector.
-* Point the `InkFile` exported variable to your JSON ink file (in the inspector or via a script) and call `story.LoadStory()`.
+* Point the `InkFile` exported variable to your `.json`/`.ink` file and check the `AutoLoadStory` checkbox in the inspector.
+* Point the `InkFile` exported variable to your `.json`/`.ink` file (in the inspector or via a script) and call `story.LoadStory()`.
 
 ### Running the story and making choices
 
@@ -93,7 +80,8 @@ You get and set the json state by calling `.GetState()` and `.SetState(String)`.
 story.SetState(story.GetState())
 ```
 
-Alternatively you can save and load directly from disk (either by passing a path or a file as argument) with `.LoadStateFromDisk` and `.SaveStateOnDisk`.
+Alternatively you can save and load directly from disk (either by passing a path or a file as argument) with `.LoadStateFromDisk` and `.SaveStateOnDisk`.  
+When using a path, the default behaviour is to use the `user://` folder. You can bypass this by passing a full path to the functions (e.g. `res://my_dope_save_file.json`).
 
 ```GDScript
 story.SaveStateOnDisk("save.json")
@@ -178,6 +166,10 @@ If you're having trouble enabling the editor plugin, it's probably because the `
 
 Depending on the version of Godot you're using, you might still have issues with the editor plugin.  
 Do not worry, you don't actually need to enable it to use **godot-ink**. If you don't want to bother with extensive troubleshooting, all you have to do is attach `addons/paulloz.ink/Story.cs` to a node (or use it as a singleton). This node will become the `Story` node for the rest of this documentation.
+
+### TODO:
+* Getting/Setting/Observing InkLists
+* On the fly Ink to JSON compilation (works on Windows, need some tweaking for Linux and Mac OS support)
 
 ## License
 
