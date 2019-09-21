@@ -24,12 +24,13 @@ public class PaullozDotInk : EditorPlugin
         AddCustomType("Ink Story", "Node", ResourceLoader.Load(customTypeScriptPath) as Script, ResourceLoader.Load(customTypeIconPath) as Texture);
 
         dock = (ResourceLoader.Load(dockScene) as PackedScene).Instance() as Control;
-        AddControlToDock(EditorPlugin.DockSlot.RightUl, dock);
+        AddControlToBottomPanel(dock, "Ink");
     }
 
     public override void _ExitTree()
     {
-        RemoveControlFromDocks(dock);
+        RemoveControlFromBottomPanel(dock);
+        dock.Free();
 
         RemoveCustomType("Ink Story");
 
