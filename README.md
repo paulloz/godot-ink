@@ -13,7 +13,7 @@ The last thing you'll need to do in order to get going is to put `ink-engine-run
 
 ---
 
-Everything is handled in a `Story` node.  
+Everything is handled in an `InkStory` node.  
 If nothing is specified, the **C#** usage is the same as the **GDScript** one.
 
 ### Loading the story
@@ -156,7 +156,7 @@ If you're having trouble enabling the editor plugin, it's probably because the `
 <ItemGroup>
     <Compile Include="addons\paulloz.ink\PaullozDotInk.cs" />
     <Compile Include="addons\paulloz.ink\InkDock.cs" />
-    <Compile Include="addons\paulloz.ink\Story.cs" />
+    <Compile Include="addons\paulloz.ink\InkStory.cs" />
     <Reference Include="Ink">
         <HintPath>$(ProjectDir)/ink-engine-runtime.dll</HintPath>
         <Private>False</Private>
@@ -165,7 +165,7 @@ If you're having trouble enabling the editor plugin, it's probably because the `
 ```
 
 Depending on the version of Godot you're using, you might still have issues with the editor plugin.  
-Do not worry, you don't actually need to enable it to use **godot-ink**. If you don't want to bother with extensive troubleshooting, all you have to do is attach `addons/paulloz.ink/Story.cs` to a node (or use it as a singleton). This node will become the `Story` node for the rest of this documentation.
+Do not worry, you don't actually need to enable it to use **godot-ink**. If you don't want to bother with extensive troubleshooting, all you have to do is attach `addons/paulloz.ink/InkStory.cs` to a node (or use it as a singleton). This node will become the `InkStory` node for the rest of this documentation.
 
 ### TODO:
 * Getting/Setting/Observing InkLists
