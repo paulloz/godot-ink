@@ -235,7 +235,9 @@ public class Story : Node
 
     public void SaveStateOnDisk(String path)
     {
-        path = String.Format("res://{0}", path);
+		if (!path.StartsWith("res://") && !path.StartsWith("user://")) {
+        	path = String.Format("res://{0}", path);
+		}
         File file = new File();
         file.Open(path, (int)File.ModeFlags.Write);
         this.SaveStateOnDisk(file);
@@ -255,7 +257,9 @@ public class Story : Node
 
     public void LoadStateFromDisk(String path)
     {
-        path = String.Format("res://{0}", path);
+		if (!path.StartsWith("res://") && !path.StartsWith("user://")) {
+        	path = String.Format("res://{0}", path);
+		}
         File file = new File();
         file.Open(path, (int)File.ModeFlags.Read);
         this.LoadStateFromDisk(file);
