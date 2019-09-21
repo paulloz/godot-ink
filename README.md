@@ -38,6 +38,10 @@ If you're having trouble enabling the editor plugin, it's probably because the `
 Depending on the version of Godot you're using, you might still have issues with the editor plugin.  
 Do not worry, you don't actually need to enable it to use **godot-ink**. If you don't want to bother with extensive troubleshooting, all you have to do is attach `addons/paulloz.ink/Story.cs` to a node (or use it as a singleton). This node will become the `Story` node for the rest of this documentation.
 
+### Game export
+
+As your `.json` files aren't Godot resources, you'll need to manually tell the engine to include them in the exported package. You can read more about that in the [documentation](https://godot.readthedocs.io/en/latest/getting_started/workflow/export/exporting_projects.html?highlight=export#export-mode).
+
 ## How to use
 
 You'll need to put `ink-engine-runtime.dll` at the root of your Godot project.
