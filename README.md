@@ -38,10 +38,6 @@ If you're having trouble enabling the editor plugin, it's probably because the `
 Depending on the version of Godot you're using, you might still have issues with the editor plugin.  
 Do not worry, you don't actually need to enable it to use **godot-ink**. If you don't want to bother with extensive troubleshooting, all you have to do is attach `addons/paulloz.ink/Story.cs` to a node (or use it as a singleton). This node will become the `Story` node for the rest of this documentation.
 
-### Game export
-
-As your `.json` files aren't Godot resources, you'll need to manually tell the engine to include them in the exported package. You can read more about that in the [documentation](https://godot.readthedocs.io/en/latest/getting_started/workflow/export/exporting_projects.html?highlight=export#export-mode).
-
 ## How to use
 
 You'll need to put `ink-engine-runtime.dll` at the root of your Godot project.
@@ -52,11 +48,12 @@ If nothing is specified, the **C#** usage is the same as the **GDScript** one.
 
 ### Loading the story
 
+First you should navigate to your JSON ink file and import it as a `JSON ink story` in Godot. To do that, select the file in Godot, go to `Import`, select `JSON ink story` under `Import As:` and click `ReImport`.
+
 To load your story, you can:
 
-* Point the `InkFilePath` exported variable to the location of your JSON Ink file and check the `AutoLoadStory` checkbox in the inspector.
-* Point the `InkFilePath` exported variable to the location of your JSON Ink file (in the inspector or via a script) and call `story.LoadStory()`.
-* Call `story.LoadStory(path)` with path pointing to the location of your JSON Ink file.
+* Point the `InkFile` exported variable to your JSON ink file and check the `AutoLoadStory` checkbox in the inspector.
+* Point the `InkFile` exported variable to your JSON ink file (in the inspector or via a script) and call `story.LoadStory()`.
 
 ### Running the story and making choices
 
