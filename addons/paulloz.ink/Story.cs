@@ -20,7 +20,7 @@ public class Story : Node
 
     // All the exported variables
     [Export] public Boolean AutoLoadStory = false;
-    [Export] public String InkFilePath = null;
+    [Export] public TextFile InkFile = null;
 
     // All the public variables
     public String CurrentText = "";
@@ -55,48 +55,24 @@ public class Story : Node
             this.LoadStory();
     }
 
-    public void LoadStory()
-    {
-        this.LoadStory(this.InkFilePath);
-    }
-
-    public Boolean LoadStory(String inkFilePath)
+    public Boolean LoadStory()
     {
         this.reset();
 
-        try
-        {
-            if (inkFilePath == null)
-                throw new System.IO.FileNotFoundException(String.Format("Unable to find {0}.", null));
-
-            this.InkFilePath = inkFilePath;
-
-            String path = this.InkFilePath.StartsWith("res://") ? this.InkFilePath : String.Format("res://{0}", this.InkFilePath);
-            File file = new File();
-            if (file.FileExists(path))
-            {
-                // Load the story
-                file.Open(path, (int)File.ModeFlags.Read);
-                this.story = new Ink.Runtime.Story(file.GetAsText());
-                file.Close();
-            }
-            else
-                throw new System.IO.FileNotFoundException(String.Format("Unable to find {0}.", path));
-        }
-        catch (System.IO.FileNotFoundException e)
-        {
-            GD.PrintErr(e.ToString());
-
+        if (!this.isJSONFileValid())
             return false;
-        }
 
+        this.story = new Ink.Runtime.Story(this.InkFile.GetMeta("content") as String);
         return true;
     }
 
-    public void LoadStory(String inkFilePath, String state)
+    public Boolean LoadStory(String state)
     {
-        if (this.LoadStory(inkFilePath))
+        if (this.LoadStory())
             this.SetState(state);
+        else
+            return false;
+        return true;
     }
 
     public String Continue()
@@ -270,5 +246,10 @@ public class Story : Node
             if (file.GetLen() > 0)
                 this.story.state.LoadJson(file.GetAsText());
         }
+    }
+
+    private Boolean isJSONFileValid()
+    {
+        return this.InkFile != null && this.InkFile.HasMeta("content");
     }
 }
