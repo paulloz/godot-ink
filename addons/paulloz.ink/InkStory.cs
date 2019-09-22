@@ -23,9 +23,9 @@ public class InkStory : Node
     [Export] public TextFile InkFile = null;
 
     // All the public variables
-    public String CurrentText = "";
-    public String[] CurrentTags = new String[0];
-    public String[] CurrentChoices = new String[0];
+    public String CurrentText { get { return this.story?.currentText ?? ""; } }
+    public String[] CurrentTags { get { return this.story?.currentTags.ToArray() ?? new String[0]; } }
+    public String[] CurrentChoices { get { return this.story?.currentChoices.ConvertAll<String>(choice => choice.text).ToArray() ?? new String[0]; } }
 
     // All the properties
     public bool CanContinue { get { return this.story?.canContinue ?? false; } }
@@ -43,10 +43,6 @@ public class InkStory : Node
             // TODO Unregister Signal
         }
         this.observedVariables.Clear();
-
-        this.CurrentText = "";
-        this.CurrentTags = new String[0];
-        this.CurrentChoices = new String[0];
     }
 
     public override void _Ready()
@@ -83,20 +79,13 @@ public class InkStory : Node
         if (this.CanContinue)
         {
             this.story.Continue();
-            this.CurrentText = this.story.currentText;
             text = this.CurrentText;
 
-            this.CurrentTags = this.story.currentTags.ToArray();
-
-            // Check if we have choices after continuing
-            this.CurrentChoices = this.story.currentChoices.ConvertAll<String>(choice => choice.text).ToArray();
-
             this.EmitSignal(nameof(InkContinued), new object[] { this.CurrentText, this.CurrentTags });
-            if (this.CurrentChoices.Length > 0)
+            if (this.HasChoices) // Check if we have choices after continuing
                 this.EmitSignal(nameof(InkChoices), new object[] { this.CurrentChoices });
         }
-        // If we can't continue and don't have any choice, we're at the end
-        else if (!this.HasChoices)
+        else if (!this.HasChoices) // If we can't continue and don't have any choice, we're at the end
             this.EmitSignal(nameof(InkEnded));
 
         return text;
