@@ -33,17 +33,29 @@ public class InkStory : Node
     public String[] GlobalTags { get { return this.story?.globalTags.ToArray() ?? new String[0]; } }
 
     private Ink.Runtime.Story story = null;
-    private List<String> observedVariables = new List<String>();
+    // private List<String> observedVariables = new List<String>();
+    private Dictionary<String, Ink.Runtime.Story.VariableObserver> observedVariables = new Dictionary<string, Ink.Runtime.Story.VariableObserver>();
 
     private void reset()
     {
-        this.story =  null;
+        if (this.story == null)
+            return;
 
-        foreach (String varName in this.observedVariables)
+        foreach (String varName in this.observedVariables.Keys)
         {
-            // TODO Unregister Signal
+            String signalName = this.ObservedVariableSignalName(varName);
+            if (this.HasUserSignal(signalName))
+            {
+                Godot.Collections.Array connections = this.GetSignalConnectionList(signalName);
+                foreach (Godot.Collections.Dictionary connection in connections)
+                    this.Disconnect(signalName, connection["target"] as Godot.Object, connection["method"] as String);
+                this.story.RemoveVariableObserver(this.observedVariables[varName]);
+                // Seems like there's no way to undo `AddUserSignal` so we're just going to unbind everything :/
+            }
         }
         this.observedVariables.Clear();
+
+        this.story =  null;
     }
 
     public override void _Ready()
@@ -146,14 +158,15 @@ public class InkStory : Node
 
         if (this.story != null)
         {
-            if (!this.observedVariables.Contains(name))
+            if (!this.observedVariables.ContainsKey(name))
             {
-                AddUserSignal(signalName);
-                this.story.ObserveVariable(name, (String varName, object varValue) => {
-                    this.EmitSignal(signalName, varName, this.marshallVariableValue(varValue));
-                });
+                if (!this.HasUserSignal(signalName))
+                    AddUserSignal(signalName);
 
-                this.observedVariables.Add(name);
+                this.observedVariables[name] = (String varName, object varValue) => {
+                    this.EmitSignal(signalName, varName, this.marshallVariableValue(varValue));
+                };
+                this.story.ObserveVariable(name, this.observedVariables[name]);
             }
 
             return signalName;
