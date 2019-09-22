@@ -15,7 +15,7 @@ public class InkStory : Node
 
     private String ObservedVariableSignalName(String name)
     {
-        return String.Format("{0}-{1}", nameof(InkVariableChanged), name);
+        return $"{nameof(InkVariableChanged)}-{name}";
     }
 
     // All the exported variables
@@ -39,7 +39,8 @@ public class InkStory : Node
     {
         this.story =  null;
 
-        foreach (String varName in this.observedVariables) {
+        foreach (String varName in this.observedVariables)
+        {
             // TODO Unregister Signal
         }
         this.observedVariables.Clear();
@@ -200,9 +201,8 @@ public class InkStory : Node
 
     public void SaveStateOnDisk(String path)
     {
-        if (!path.StartsWith("res://") && !path.StartsWith("user://")) {
-            path = String.Format("user://{0}", path);
-        }
+        if (!path.StartsWith("res://") && !path.StartsWith("user://"))
+            path = $"user://{path}";
         File file = new File();
         file.Open(path, (int)File.ModeFlags.Write);
         this.SaveStateOnDisk(file);
@@ -222,9 +222,8 @@ public class InkStory : Node
 
     public void LoadStateFromDisk(String path)
     {
-        if (!path.StartsWith("res://") && !path.StartsWith("user://")) {
-            path = String.Format("user://{0}", path);
-        }
+        if (!path.StartsWith("res://") && !path.StartsWith("user://"))
+            path = $"user://{path}";
         File file = new File();
         file.Open(path, (int)File.ModeFlags.Read);
         this.LoadStateFromDisk(file);
