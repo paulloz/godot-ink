@@ -34,25 +34,16 @@ public class InkStory : Node
 
     private Ink.Runtime.Story story = null;
     // private List<String> observedVariables = new List<String>();
-    private Dictionary<String, Ink.Runtime.Story.VariableObserver> observedVariables = new Dictionary<string, Ink.Runtime.Story.VariableObserver>();
+    private List<String> observedVariables = new List<String>();
+    private Ink.Runtime.Story.VariableObserver observer;
 
     private void reset()
     {
         if (this.story == null)
             return;
 
-        foreach (String varName in this.observedVariables.Keys)
-        {
-            String signalName = this.ObservedVariableSignalName(varName);
-            if (this.HasUserSignal(signalName))
-            {
-                Godot.Collections.Array connections = this.GetSignalConnectionList(signalName);
-                foreach (Godot.Collections.Dictionary connection in connections)
-                    this.Disconnect(signalName, connection["target"] as Godot.Object, connection["method"] as String);
-                this.story.RemoveVariableObserver(this.observedVariables[varName]);
-                // Seems like there's no way to undo `AddUserSignal` so we're just going to unbind everything :/
-            }
-        }
+        foreach (String varName in this.observedVariables)
+            this.RemoveVariableObserver(varName, false);
         this.observedVariables.Clear();
 
         this.story =  null;
@@ -60,6 +51,11 @@ public class InkStory : Node
 
     public override void _Ready()
     {
+        this.observer = (String varName, object varValue) => {
+            if (this.observedVariables.Contains(varName))
+                this.EmitSignal(this.ObservedVariableSignalName(varName), varName, this.marshallVariableValue(varValue));
+        };
+
         if (this.AutoLoadStory)
             this.LoadStory();
     }
@@ -154,25 +150,51 @@ public class InkStory : Node
 
     public String ObserveVariable(String name)
     {
-        String signalName = this.ObservedVariableSignalName(name);
-
         if (this.story != null)
         {
-            if (!this.observedVariables.ContainsKey(name))
+            String signalName = this.ObservedVariableSignalName(name);
+
+            if (!this.observedVariables.Contains(name))
             {
                 if (!this.HasUserSignal(signalName))
                     AddUserSignal(signalName);
 
-                this.observedVariables[name] = (String varName, object varValue) => {
-                    this.EmitSignal(signalName, varName, this.marshallVariableValue(varValue));
-                };
-                this.story.ObserveVariable(name, this.observedVariables[name]);
+                this.observedVariables.Add(name);
+                this.story.ObserveVariable(name, this.observer);
             }
 
             return signalName;
         }
 
         return null;
+    }
+
+    public void RemoveVariableObserver(String name)
+    {
+        this.RemoveVariableObserver(name, true);
+    }
+
+    private void RemoveVariableObserver(String name, Boolean clear)
+    {
+        if (this.story != null)
+        {
+            if (this.observedVariables.Contains(name))
+            {
+                String signalName = this.ObservedVariableSignalName(name);
+                if (this.HasUserSignal(signalName))
+                {
+                    Godot.Collections.Array connections = this.GetSignalConnectionList(signalName);
+                    foreach (Godot.Collections.Dictionary connection in connections)
+                        this.Disconnect(signalName, connection["target"] as Godot.Object, connection["method"] as String);
+                    // Seems like there's no way to undo `AddUserSignal` so we're just going to unbind everything :/
+                }
+
+                this.story.RemoveVariableObserver(null, name);
+
+                if (clear)
+                    this.observedVariables.Remove(name);
+            }
+        }
     }
 
     public void BindExternalFunction(String inkFuncName, Func<object> func)
