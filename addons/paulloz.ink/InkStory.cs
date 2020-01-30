@@ -239,7 +239,7 @@ public class InkStory : Node
         if (!path.StartsWith("res://") && !path.StartsWith("user://"))
             path = $"user://{path}";
         File file = new File();
-        file.Open(path, (int)File.ModeFlags.Write);
+        file.Open(path, File.ModeFlags.Write);
         this.SaveStateOnDisk(file);
         file.Close();
     }
@@ -260,7 +260,7 @@ public class InkStory : Node
         if (!path.StartsWith("res://") && !path.StartsWith("user://"))
             path = $"user://{path}";
         File file = new File();
-        file.Open(path, (int)File.ModeFlags.Read);
+        file.Open(path, File.ModeFlags.Read);
         this.LoadStateFromDisk(file);
         file.Close();
     }
