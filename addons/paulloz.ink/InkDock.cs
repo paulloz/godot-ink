@@ -74,7 +74,7 @@ public class InkDock : Control
 
     private void onFileDialogFileSelected(String path)
     {
-        if (path.EndsWith(".json"))
+        if (path.EndsWith(".json") || path.EndsWith(".ink"))
         {
             resetFileSelectItems();
             fileSelect.AddItem(path.Substring(path.FindLast("/") + 1));

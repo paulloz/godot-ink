@@ -83,7 +83,7 @@ margin_right = 461.0
 margin_bottom = 297.0
 window_title = "Open a File"
 mode = 0
-filters = PoolStringArray( "*.json" )
+filters = PoolStringArray( "*.json", "*.ink" )
 
 [node name="Story" type="Node" parent="."]
 script = ExtResource( 2 )
