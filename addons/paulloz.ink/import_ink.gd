@@ -14,7 +14,7 @@ func get_save_extension():
     return "res";
 
 func get_resource_type():
-    return "TextFile";
+    return "Resource";
 
 func get_import_options(preset):
     return []
@@ -56,6 +56,8 @@ func import_from_ink(source_file, save_path):
 
             Directory.new().remove(new_file)
             return ret
+        else:
+            return ERR_COMPILATION_FAILED
 
 func import_from_json(source_file, save_path):
     var raw_content = get_source_file_content(source_file)
@@ -64,7 +66,7 @@ func import_from_json(source_file, save_path):
     if !parsed_content.has("inkVersion"):
         return ERR_FILE_UNRECOGNIZED
 
-    var resource = TextFile.new()
+    var resource = Resource.new()
     resource.set_meta("content", raw_content);
 
     return ResourceSaver.save("%s.%s" % [save_path, get_save_extension()], resource)

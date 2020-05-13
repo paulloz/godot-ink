@@ -20,7 +20,7 @@ public class InkStory : Node
 
     // All the exported variables
     [Export] public Boolean AutoLoadStory = false;
-    [Export] public TextFile InkFile = null;
+    [Export] public Resource InkFile = null;
 
     // All the public variables
     public String CurrentText { get { return this.story?.currentText ?? ""; } }
