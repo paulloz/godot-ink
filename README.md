@@ -150,7 +150,9 @@ print(story.VisitCountPathString("mycoolknot.myradstitch"))
 
 ## Troubleshooting
 
-If you're having trouble enabling the editor plugin, it's probably because the `.cs` files aren't compiling with your project. You can solve the issue by adding this `ItemGroup` to your `.csproj` file.
+### There's an error or Godot crashes when I enable the plugin
+
+If you're having trouble enabling the editor plugin, it's probably because the `.cs` files aren't compiling with your project. You can solve the issue by adding this `ItemGroup` to your `.csproj` file and rebuilding the project (from the **Mono** tab).
 
 ```xml
 <ItemGroup>
@@ -164,8 +166,17 @@ If you're having trouble enabling the editor plugin, it's probably because the `
 </ItemGroup>
 ```
 
-Depending on the version of Godot you're using, you might still have issues with the editor plugin.  
-Do not worry, you don't actually need to enable it to use **godot-ink**. If you don't want to bother with extensive troubleshooting, all you have to do is attach `addons/paulloz.ink/InkStory.cs` to a node (or use it as a singleton). This node will become the `InkStory` node for the rest of this documentation.
+### There's an error when I try to build my project
+
+If you have the following warning while trying to build your game, you probably forgot to put the `ink-engine-runtime.dll` at the root of your Godot project.
+
+```
+warning MSB3245:
+Could not resolve this reference.
+Could not locate the assembly "Ink".
+Check to make sure the assembly exists on disk.
+If this reference is required by your code, you may get compilation errors.
+```
 
 ### TODO:
 * Getting/Setting/Observing InkLists
