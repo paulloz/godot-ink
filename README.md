@@ -8,8 +8,9 @@ When the plugin is properly loaded, you should be able to use the new ink panel 
 
 ![](inspector_screenshot.png)
 
-You'll also see a new `ink` section in your project settings. If you want to be able to compile your .ink files on the fly you can input the path to the inklecate binary here.  
 The last thing you'll need to do in order to get going is to put `ink-engine-runtime.dll` at the root of your Godot project.
+
+If you want to directly compile your `.ink` files, you'll also need to download the [ink compiler](https://github.com/inkle/ink/releases) on your computer and copy/paste the path to `inklecate.exe` into your project settings (*Project -> Project Settings... -> Ink -> Inklecate Path*).
 
 ---
 
@@ -180,7 +181,6 @@ If this reference is required by your code, you may get compilation errors.
 
 ### TODO:
 * Getting/Setting/Observing InkLists
-* On the fly Ink to JSON compilation (works on Windows, need some tweaking for Linux and Mac OS support)
 
 ## License
 
