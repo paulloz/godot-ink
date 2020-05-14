@@ -65,18 +65,27 @@ public class InkStory : Node
         this.reset();
 
         if (!this.isJSONFileValid())
+        {
+            GD.PrintErr("The story you're trying to load is not valid.");
             return false;
+        }
 
         this.story = new Ink.Runtime.Story(this.InkFile.GetMeta("content") as String);
         return true;
     }
 
-    public Boolean LoadStory(String state)
+    public Boolean LoadStoryFromString(String story)
     {
-        if (this.LoadStory())
-            this.SetState(state);
-        else
+        this.InkFile = new Resource();
+        this.InkFile.SetMeta("content", story);
+        return this.LoadStory();
+    }
+
+    public Boolean LoadStoryAndSetState(String state)
+    {
+        if (!this.LoadStory())
             return false;
+        this.SetState(state);
         return true;
     }
 
