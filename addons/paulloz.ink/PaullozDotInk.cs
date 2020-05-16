@@ -33,14 +33,14 @@ public class PaullozDotInk : EditorPlugin
         ProjectSettings.Save();
 
         // Resources
-        importPlugin = (ResourceLoader.Load(importPluginScriptPath) as GDScript).New() as EditorImportPlugin;
+        importPlugin = GD.Load<GDScript>(importPluginScriptPath).New() as EditorImportPlugin;
         AddImportPlugin(importPlugin);
 
         // Custom types
-        AddCustomType("Ink Story", "Node", ResourceLoader.Load(customTypeScriptPath) as Script, ResourceLoader.Load(customTypeIconPath) as Texture);
+        AddCustomType("Ink Story", "Node", GD.Load<Script>(customTypeScriptPath), GD.Load<Texture>(customTypeIconPath));
 
         // Editor
-        dock = (ResourceLoader.Load(dockScene) as PackedScene).Instance() as Control;
+        dock = GD.Load<PackedScene>(dockScene).Instance() as Control;
         AddControlToBottomPanel(dock, "Ink");
     }
 
