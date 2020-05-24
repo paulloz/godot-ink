@@ -30,34 +30,35 @@ func import(source_file, save_path, options, r_platform_variants, r_gen_files):
             return import_from_json(source_file, save_path)
 
 func import_from_ink(source_file, save_path):
-    if ProjectSettings.has_setting("ink/inklecate_path"):
-        var inklecate = ProjectSettings.get_setting("ink/inklecate_path")
-        if inklecate != "---":
-            var new_file = "%d.json" % int(randf() * 100000)
-            var arguments = [
-                inklecate, "-o",
-                "%s/%s" % [OS.get_user_data_dir(), new_file],
-                ProjectSettings.globalize_path(source_file)
-            ]
+    var setting = "ink/inklecate_path"
+    if ProjectSettings.has_setting(setting) and ProjectSettings.property_can_revert(setting):
+        var inklecate = ProjectSettings.get_setting(setting)
+        var new_file = "%d.json" % int(randf() * 100000)
+        var arguments = [
+            inklecate, "-o",
+            "%s/%s" % [OS.get_user_data_dir(), new_file],
+            ProjectSettings.globalize_path(source_file)
+        ]
 
-            match OS.get_name():
-                "X11", "OSX":
-                    var _err = OS.execute("mono", arguments, true)
-                "Windows":
-                    arguments.pop_front()
-                    var _err = OS.execute(inklecate, arguments, true)
-                _:
-                    return null
+        match OS.get_name():
+            "X11", "OSX":
+                var _err = OS.execute("mono", arguments, true)
+            "Windows":
+                arguments.pop_front()
+                var _err = OS.execute(inklecate, arguments, true)
+            _:
+                return null
 
-            new_file = "user://%s" % new_file
-            if !File.new().file_exists(new_file):
-                return ERR_FILE_UNRECOGNIZED
-            var ret = import_from_json(new_file, save_path)
+        new_file = "user://%s" % new_file
+        if !File.new().file_exists(new_file):
+            return ERR_FILE_UNRECOGNIZED
+        var ret = import_from_json(new_file, save_path)
 
-            Directory.new().remove(new_file)
-            return ret
-        else:
-            return ERR_COMPILATION_FAILED
+        Directory.new().remove(new_file)
+        return ret
+    else:
+        printerr("Please update inklecate_path setting to be able to compile ink files.")
+        return ERR_COMPILATION_FAILED
 
 func import_from_json(source_file, save_path):
     var raw_content = get_source_file_content(source_file)

@@ -6,7 +6,14 @@ using System;
 [Tool]
 public class PaullozDotInk : EditorPlugin
 {
-    private Dictionary settings = new Dictionary() { {"inklecate_path", "---"} };
+    private Dictionary settings = new Dictionary() {
+        {"inklecate_path", new Dictionary() {
+            { "type", Variant.Type.String },
+            { "hint", PropertyHint.GlobalFile },
+            { "hint_string", "*.exe" },
+            { "default", "" }
+        }}
+    };
     private const String addonBasePath = "res://addons/paulloz.ink";
 
     private NodePath customTypeScriptPath = $"{addonBasePath}/InkStory.cs";
@@ -26,8 +33,14 @@ public class PaullozDotInk : EditorPlugin
             String property_name = $"ink/{key}";
             if (!ProjectSettings.HasSetting(property_name))
             {
-                ProjectSettings.SetSetting(property_name, settings[key]);
-                ProjectSettings.SetInitialValue(property_name, settings[key]);
+                Dictionary setting = settings[key] as Dictionary;
+                ProjectSettings.SetSetting(property_name, setting["default"]);
+                ProjectSettings.AddPropertyInfo(new Dictionary() {
+                    { "name", property_name },
+                    { "type", setting["type"] },
+                    { "hint", setting["hint"] },
+                    { "hint_string", setting["hint_string"] },
+                });
             }
         }
         ProjectSettings.Save();
