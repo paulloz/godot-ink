@@ -33,7 +33,6 @@ public class InkStory : Node
     public String[] GlobalTags { get { return this.story?.globalTags.ToArray() ?? new String[0]; } }
 
     private Ink.Runtime.Story story = null;
-    // private List<String> observedVariables = new List<String>();
     private List<String> observedVariables = new List<String>();
     private Ink.Runtime.Story.VariableObserver observer;
 
@@ -236,6 +235,17 @@ public class InkStory : Node
         if (value_ != null && value_.GetType() == typeof(Ink.Runtime.InkList))
             value_ = null;
         return value_;
+    }
+
+    public object EvaluateFunction(String functionName, Boolean returnTextOutput, params object [] arguments)
+    {
+        if (returnTextOutput)
+        {
+            String textOutput = null;
+            object returnValue = this.story?.EvaluateFunction(functionName, out textOutput, arguments);
+            return new object[] { returnValue, textOutput };
+        }
+        return this.story?.EvaluateFunction(functionName, arguments);
     }
 
     public String GetState()
