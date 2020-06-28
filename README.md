@@ -2,6 +2,14 @@
 
 An [ink](https://github.com/inkle/ink) integration for [Godot Engine](https://github.com/godotengine/godot).  
 
+The following platforms have been tested with Godot 3.2.2:  
+ * Windows 🗸
+ * Linux 🗸
+ * WebAssembly 🗸
+ * iOS 🗸
+
+I'm pretty sure this will also run fine on MacOS and Android but haven't witnessed it yet. If you end up testing an unlisted platform, please create an issue to tell me whether everything work or not.
+
 ## How to use
 
 When the plugin is properly loaded, you should be able to use the new ink panel to inspect your story.
