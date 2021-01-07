@@ -10,13 +10,27 @@ The following platforms have been tested with Godot 3.2.2:
 
 I'm pretty sure this will also run fine on MacOS and Android but haven't witnessed it yet. If you end up testing an unlisted platform, please create an issue to tell me whether everything work or not.
 
+## Installation
+
+* Drop the `paulloz.ink/` folder in your project's `addons/` folder.
+* Grab (or compile) `ink-engine-runtime.dll` from the [official ink repository](https://github.com/inkle/ink) and drop it at the root of your Godot project.
+* Add the following to you `.csproj` file:
+```xml
+<ItemGroup>
+    <Reference Include="Ink">
+        <HintPath>$(ProjectDir)/ink-engine-runtime.dll</HintPath>
+        <Private>False</Private>
+    </Reference>
+</ItemGroup>
+```
+* Build your project.
+* Go to *Project -> Project Settings... -> Plugins* and tick the *Enable* checkbox.
+
 ## How to use
 
 When the plugin is properly loaded, you should be able to use the new ink panel to inspect your story.
 
 ![](inspector_screenshot.png)
-
-The last thing you'll need to do in order to get going is to put `ink-engine-runtime.dll` at the root of your Godot project.
 
 If you want to directly compile your `.ink` files, you'll also need to download the [ink compiler](https://github.com/inkle/ink/releases) on your computer and copy/paste the path to `inklecate.exe` into your project settings (*Project -> Project Settings... -> Ink -> Inklecate Path*).
 
@@ -157,22 +171,7 @@ You can know how many times a knot/stitch has been visited with `.VisitCountPath
 print(story.VisitCountPathString("mycoolknot.myradstitch"))
 ```
 
-## Troubleshooting
-
-### There's an error or Godot crashes when I enable the plugin
-
-If you're having trouble enabling the editor plugin, it's probably because `ink-engine-runtime.dll` isn't referenced in your project. You can solve the issue by adding this `ItemGroup` to your `.csproj` file and rebuilding the project (from the **Mono** tab).
-
-```xml
-<ItemGroup>
-    <Reference Include="Ink">
-        <HintPath>$(ProjectDir)/ink-engine-runtime.dll</HintPath>
-        <Private>False</Private>
-    </Reference>
-</ItemGroup>
-```
-
-### TODO:
+## TODO:
 * Getting/Setting/Observing InkLists
 
 ## License
