@@ -30,7 +30,7 @@ public class InkStory : Node
     // All the properties
     public bool CanContinue { get { return this.story?.canContinue ?? false; } }
     public bool HasChoices { get { return this.story?.currentChoices.Count > 0; } }
-    public String[] GlobalTags { get { return this.story?.globalTags.ToArray() ?? new String[0]; } }
+    public String[] GlobalTags { get { return this.story?.globalTags?.ToArray() ?? new String[0]; } }
 
     private Ink.Runtime.Story story = null;
     private List<String> observedVariables = new List<String>();
