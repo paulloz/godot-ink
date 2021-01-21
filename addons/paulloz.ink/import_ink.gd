@@ -21,6 +21,9 @@ func get_import_options(preset):
         {"name": "compress", "default_value": true}
     ]
 
+func get_option_visibility(option, options):
+    return true
+
 func get_preset_count():
     return 0
 

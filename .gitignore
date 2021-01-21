@@ -1,4 +1,5 @@
 .vscode/
+*.code-workspace
 
 .import/
 .mono/
