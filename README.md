@@ -37,7 +37,7 @@ If you want to directly compile your `.ink` files, you'll also need to download 
 ---
 
 Everything is handled in an `InkStory` node.  
-If nothing is specified, the **C#** usage is the same as the **GDScript** one.
+In **GDScript** for some properties, you'll need to use a `get_` prefix (e.g. `get_CanContinue()` to access `CanContinue`). Trust your autocompletion.
 
 ### Loading the story
 
@@ -53,122 +53,128 @@ To load your story, you can:
 ### Running the story and making choices
 
 Getting content from the story is done by calling the `.Continue()` method.
-```GDScript
-var story = get_node("Story")
-while story.CanContinue:
-    print(story.Continue())
-    # Alternatively, text can be accessed from story.CurrentText
+```csharp
+InkStory story = GetNode<InkStory>("Story");
+
+while (story.CanContinue) {
+    GD.Print(story.Continue());
+    // Alternatively, text can be accessed from story.CurrentText
+}
 ```
 
 Choices are made with the `.ChooseChoiceIndex(int)` method.
-```GDScript
-if story.HasChoices:
-    for choice in story.CurrentChoices:
-        print(choice)
+```csharp
+if (story.HasChoices) {
+    foreach (string choice in story.CurrentChoices) {
+        GD.Print(choice);
+    }
     ...
-    story.ChooseChoiceIndex(index)
+    story.ChooseChoiceIndex(index);
+}
 ```
 
 ### Using signals
 
 If you don't want to bother accessing `CurrentText` and `CurrentChoices`, signals are emitted when the story continues forward and when a new choice appears.
 
-```GDScript
-    ...
-    story.connect("InkContinued", self, "_on_story_continued")
-    story.connect("InkChoices", self, "_on_choices")
-
-func _on_story_continued(currentText, currentTags):
-    print(currentText)
-
-func _on_choices(currentChoices):
-    for choice in choices:
-        print(choice)
-```
-
-In **C#**, you can use the `nameof()` on the `[Signal]` delegates.
-
 ```C#
-story.Connect(nameof(InkStory.InkContinued), this, "OnStoryContinued");
-story.Connect(nameof(InkStory.InkChoices), this, "OnChoices");
+    ...
+    story.Connect(nameof(InkStory.InkContinued), this, "OnStoryContinued");
+    story.Connect(nameof(InkStory.InkChoices), this, "OnChoices");
+}
+
+public void OnStoryContinued(string text, string[] tags)
+{
+}
+
+public void OnStoryChoices(string[] choices)
+{
+}
 ```
 
 The above signals are also available through the node inspector.
 
 ### Save / Load
 
-You get and set the json state by calling `.GetState()` and `.SetState(String)`.
+You get and set the json state by calling `.GetState()` and `.SetState(string)`.
 
-```GDScript
-story.SetState(story.GetState())
+```csharp
+string state = story.GetState();
+...
+story.SetState(state);
 ```
 
 Alternatively you can save and load directly from disk (either by passing a path or a file as argument) with `.LoadStateFromDisk` and `.SaveStateOnDisk`.  
 When using a path, the default behaviour is to use the `user://` folder. You can bypass this by passing a full path to the functions (e.g. `res://my_dope_save_file.json`).
 
-```GDScript
-story.SaveStateOnDisk("save.json")
-story.LoadStateFromDisk("save.json")
+```csharp
+story.SaveStateOnDisk("save.json");
+story.LoadStateFromDisk("save.json");
 ```
 
-```GDScript
-var file = File.new()
-file.open("save.json", File.WRITE)
-story.SaveStateOnDisk(file)
-file.close
+If you need to, those functions can also take a `File` in parameter.
+```csharp
+File file = new File();
+file.Open("user://save.json", File.ModeFlags.Write);
+story.SaveStateOnDisk(file);
+file.Close();
 
 
-file.open("save.json", File.READ)
-story.LoadStateFromDisk(file)
-file.close
+file.open("user://save.json", File.ModeFlags.Read);
+story.LoadStateFromDisk(file);
+file.Close();
 ```
 
 ### Tags
 
-Tags, global tags and knot tags are accessible respectively through `.CurrentTags`, `.GlobalTags` and `.TagsForContentAtPath(String)`.
+Tags, global tags and knot tags are accessible respectively through `.CurrentTags`, `.GlobalTags` and `.TagsForContentAtPath(string)`.
 
-```GDScript
-print(story.CurrentTags)
-print(story.GlobalTags)
-print(story.TagsForContentAtPath("mycoolknot"))
+```csharp
+GD.Print(story.CurrentTags);
+GD.Print(story.GlobalTags);
+GD.Print(story.TagsForContentAtPath("mycoolknot"));
 ```
 
 As shown above, current tags are also passed along the current text in the `InkContinued` event.
 
 ### Jumping to a Knot/Stitch
 
-You can [jump to a particular knot or stitch](https://github.com/inkle/ink/blob/master/Documentation/RunningYourInk.md#jumping-to-a-particular-scene) with `.ChoosePathString(String)`. This method will return `false` if the jump failed.
+You can [jump to a particular knot or stitch](https://github.com/inkle/ink/blob/master/Documentation/RunningYourInk.md#jumping-to-a-particular-scene) with `.ChoosePathString(string)`. This method will return `false` if the jump failed.
 
-```GDScript
-if story.ChoosePathString("mycoolknot.myradstitch"):
-    story.Continue()
+```csharp
+if story.ChoosePathString("mycoolknot.myradstitch") {
+    story.Continue();
+}
 ```
 
 ### Using Ink variables
 
 Ink variables (except InkLists for now) can be get and set.
 
-```GDScript
-story.GetVariable("foo")
-story.SetVariable("foo", "bar")
+```csharp
+story.GetVariable("foo");
+story.SetVariable("foo", "bar");
 ```
 
 They can also be observed with signals.
 
-```GDScript
+```csharp
     ...
-    story.connect(story.ObserveVariable("foo"), self, "_foo_observer")
+    story.connect(story.ObserveVariable("foo"), this, "FooObserver")
+}
 
-func _foo_observer(varName, varValue):
-    print(varName, " = ", varValue)
+private void FooObserver(string name, string value)
+{
+    GD.Print($"{name} = {value}");
+}
 ```
 
 #### Read/Visit count
 
-You can know how many times a knot/stitch has been visited with `.VisitCountPathString(String)`.
+You can know how many times a knot/stitch has been visited with `.VisitCountPathString(string)`.
 
-```GDScript
-print(story.VisitCountPathString("mycoolknot.myradstitch"))
+```csharp
+GD.Print(story.VisitCountPathString("mycoolknot.myradstitch"));
 ```
 
 ## TODO:
