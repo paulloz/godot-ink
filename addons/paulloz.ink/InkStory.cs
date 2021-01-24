@@ -7,6 +7,9 @@ using System.Collections.Generic;
 #endif
 public class InkStory : Node
 {
+    // Settings
+    private Boolean shouldMarshallVariables;
+
     // All the signals we'll need
     [Signal] public delegate void InkContinued(String text, String[] tags);
     [Signal] public delegate void InkEnded();
@@ -50,6 +53,8 @@ public class InkStory : Node
 
     public override void _Ready()
     {
+        this.shouldMarshallVariables = (Boolean)ProjectSettings.GetSetting("ink/marshall_state_variables");
+        
         this.observer = (String varName, object varValue) => {
             if (this.observedVariables.Contains(varName))
                 this.EmitSignal(this.ObservedVariableSignalName(varName), varName, this.marshallVariableValue(varValue));
@@ -237,6 +242,8 @@ public class InkStory : Node
 
     private object marshallVariableValue(object value_)
     {
+        if (!this.shouldMarshallVariables) return value_;
+
         if (value_ != null && value_.GetType() == typeof(Ink.Runtime.InkList))
             value_ = null;
         return value_;

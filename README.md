@@ -169,6 +169,8 @@ private void FooObserver(string name, string value)
 }
 ```
 
+If you're working with GDScript, you might want to enable **Marshall state variables** in your project's settings to avoid getting error when trying to access ink lists.
+
 #### Read/Visit count
 
 You can know how many times a knot/stitch has been visited with `.VisitCountPathString(string)`.
@@ -176,9 +178,6 @@ You can know how many times a knot/stitch has been visited with `.VisitCountPath
 ```csharp
 GD.Print(story.VisitCountPathString("mycoolknot.myradstitch"));
 ```
-
-## TODO:
-* Getting/Setting/Observing InkLists
 
 ## License
 

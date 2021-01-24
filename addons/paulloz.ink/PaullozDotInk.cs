@@ -12,6 +12,11 @@ public class PaullozDotInk : EditorPlugin
             { "hint", PropertyHint.GlobalFile },
             { "hint_string", "*.exe" },
             { "default", "" }
+        }},
+        {"marshall_state_variables", new Dictionary() {
+            { "type", Variant.Type.Bool },
+            { "hint_string", "Enable this if you're going to use state variables from GDScript." },
+            { "default", false }
         }}
     };
     private const String addonBasePath = "res://addons/paulloz.ink";
