@@ -15,6 +15,7 @@ Examples can be found in my [godot-ink-example](https://github.com/paulloz/godot
 ## Installation
 
 * Drop the `paulloz.ink/` folder in your project's `addons/` folder.
+* Make sure you have a `.csproj` file. If not, there's a menu for that in Godot: *Project -> Tools -> Mono -> Create C# Solution*.
 * Grab (or compile) `ink-engine-runtime.dll` from the [official ink repository](https://github.com/inkle/ink) and drop it at the root of your Godot project.
 * Add the following to you `.csproj` file:
 ```xml
@@ -27,6 +28,10 @@ Examples can be found in my [godot-ink-example](https://github.com/paulloz/godot
 ```
 * Build your project.
 * Go to *Project -> Project Settings... -> Plugins* and tick the *Enable* checkbox.
+
+:robot: To ease the installation process, I made [installation scripts](https://gist.github.com/paulloz/18911ef7b9754cebeb622e724afe4159).  
+:warning: Beware, they probably aren't bulletproof.  
+:robot: But if you want to go that way they'll skip you steps 2, 3 and 4.
 
 ## How to use
 
