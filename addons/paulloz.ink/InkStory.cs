@@ -8,7 +8,7 @@ using System.Collections.Generic;
 public class InkStory : Node
 {
     // Settings
-    private Boolean shouldMarshallVariables;
+    private Boolean shouldMarshallVariables = false;
 
     // All the signals we'll need
     [Signal] public delegate void InkContinued(String text, String[] tags);
@@ -53,7 +53,7 @@ public class InkStory : Node
 
     public override void _Ready()
     {
-        this.shouldMarshallVariables = (Boolean)ProjectSettings.GetSetting("ink/marshall_state_variables");
+        this.shouldMarshallVariables = ProjectSettings.HasSetting("ink/marshall_state_variables");
         
         this.observer = (String varName, object varValue) => {
             if (this.observedVariables.Contains(varName))
