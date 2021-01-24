@@ -30,18 +30,17 @@ public class PaullozDotInk : EditorPlugin
         // Settings
         foreach (String key in settings.Keys)
         {
-            String property_name = $"ink/{key}";
-            if (!ProjectSettings.HasSetting(property_name))
-            {
-                Dictionary setting = settings[key] as Dictionary;
-                ProjectSettings.SetSetting(property_name, setting["default"]);
-                ProjectSettings.AddPropertyInfo(new Dictionary() {
-                    { "name", property_name },
-                    { "type", setting["type"] },
-                    { "hint", setting["hint"] },
-                    { "hint_string", setting["hint_string"] },
-                });
-            }
+            String propertyName = $"ink/{key}";
+            Dictionary setting = settings[key] as Dictionary;
+            if (!ProjectSettings.HasSetting(propertyName))
+                ProjectSettings.SetSetting(propertyName, setting["default"]);
+            ProjectSettings.AddPropertyInfo(new Dictionary() {
+                { "name", propertyName },
+                { "type", setting["type"] },
+                { "hint", setting.Contains("hint") ? setting["hint"] : null },
+                { "hint_string", setting.Contains("hint_string") ? setting["hint_string"] : null },
+            });
+            ProjectSettings.SetInitialValue(propertyName, setting["default"]);
         }
         ProjectSettings.Save();
 
