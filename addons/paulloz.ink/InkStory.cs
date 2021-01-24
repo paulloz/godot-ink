@@ -113,8 +113,13 @@ public class InkStory : Node
         if (index >= 0 && index < this.story?.currentChoices.Count)
         {
             this.story.ChooseChoiceIndex(index);
-            this.Continue();
         }
+    }
+
+    public String ChooseChoiceIndexAndContinue(int index)
+    {
+        this.ChooseChoiceIndex(index);
+        return this.Continue();
     }
 
     public bool ChoosePathString(String pathString)
