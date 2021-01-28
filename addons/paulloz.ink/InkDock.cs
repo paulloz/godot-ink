@@ -1,48 +1,45 @@
-// #if TOOLS
+#if TOOLS
 using Godot;
 using System;
 
 [Tool]
 public class InkDock : Control
 {
-    private OptionButton fileSelect;
+    private Label fileName;
+    private Button resetButton;
+    private Button loadButton;
     private FileDialog fileDialog;
 
-    private String currentFilePath;
-
-    private Node storyNode;
+    private InkStory story;
     private VBoxContainer storyText;
     private VBoxContainer storyChoices;
     
+    private ScrollContainer scroll;
     private ScrollBar scrollbar;
 
     public override void _Ready()
     {
-        fileSelect = GetNode<OptionButton>("Container/Top/OptionButton");
+        fileName = GetNode<Label>("Container/Top/Label");
+        resetButton = GetNode<Button>("Container/Top/ResetButton");
+        loadButton = GetNode<Button>("Container/Top/LoadButton");
         fileDialog = GetNode<FileDialog>("FileDialog");
-        fileSelect.Connect("item_selected", this, nameof(onFileSelectItemSelected));
-        fileDialog.Connect("file_selected", this, nameof(onFileDialogFileSelected));
-        fileDialog.Connect("popup_hide", this, nameof(onFileDialogHide));
-
-        storyNode = GetNode("Story");
-        storyNode.SetScript(ResourceLoader.Load("res://addons/paulloz.ink/InkStory.cs") as Script);
-        storyNode.Connect(nameof(InkStory.InkChoices), this, nameof(onStoryChoices));
         storyText = GetNode<VBoxContainer>("Container/Bottom/Scroll/Margin/StoryText");
         storyChoices = GetNode<VBoxContainer>("Container/Bottom/StoryChoices");
+        scroll = GetNode<ScrollContainer>("Container/Bottom/Scroll");
+        story = GetNode<InkStory>("Story");
 
-        scrollbar = this.GetNode<ScrollContainer>("Container/Bottom/Scroll").GetVScrollbar();
-    }
-
-    private void resetFileSelectItems()
-    {
-        while (fileSelect.GetItemCount() > 2)
-            fileSelect.RemoveItem(fileSelect.GetItemCount() - 1);
+        resetButton.Connect("pressed", this, nameof(onResetButtonPressed));
+        loadButton.Connect("pressed", this, nameof(onLoadButtonPressed));
+        fileDialog.Connect("popup_hide", this, nameof(onFileDialogHide));
+        story.Connect(nameof(InkStory.InkChoices), this, nameof(onStoryChoices));
+        story.Connect(nameof(InkStory.InkContinued), this, nameof(onStoryContinued));
+        story.Connect(nameof(InkStory.InkEnded), this, nameof(onStoryEnded));
     }
 
     private void resetStoryContent()
     {
-        this.removeAllStoryContent();
-        this.removeAllChoices();
+        removeAllStoryContent();
+        removeAllChoices();
     }
 
     private void removeAllStoryContent()
@@ -57,69 +54,44 @@ public class InkDock : Control
             storyChoices.RemoveChild(n);
     }
 
-    private void onFileSelectItemSelected(int id)
+    private void onResetButtonPressed()
     {
-        if (id == 0)
-        {
-            resetFileSelectItems();
-            resetStoryContent();
-            currentFilePath = "";
-        }
-        else if (id == 1)
-        {
-            fileSelect.Select(0);
-            fileDialog.PopupCentered();
-        }
+        resetStoryContent();
+        story.LoadStory();
+        story.Continue();
     }
 
-    private void onFileDialogFileSelected(String path)
+    private void onLoadButtonPressed()
     {
-        if (path.EndsWith(".json") || path.EndsWith(".ink"))
-        {
-            resetFileSelectItems();
-            fileSelect.AddItem(path.Substring(path.FindLast("/") + 1));
-            currentFilePath = path;
-        }
+        fileDialog.PopupCentered();
     }
 
     private void onFileDialogHide()
     {
-        if (currentFilePath == null || currentFilePath.Length == 0)
-            fileSelect.Select(0);
-        else
-        {
-            fileSelect.Select(2);
-            storyNode.Set("InkFile", ResourceLoader.Load(currentFilePath));
-            storyNode.Call("LoadStory");
-            resetStoryContent();
-            continueStoryMaximally();
+        resetStoryContent();
+        fileName.Text = "";
+        if (fileDialog.CurrentFile == null || fileDialog.CurrentFile.Length == 0) {
+            resetButton.Disabled = true;
+        } else {
+            resetButton.Disabled = false;
+            fileName.Text = fileDialog.CurrentFile;
+            story.InkFile = ResourceLoader.Load(fileDialog.CurrentPath);
+            story.LoadStory();
+            story.Continue();
         }
-    }
-
-    private async void continueStoryMaximally()
-    {
-        while ((bool)storyNode.Get("CanContinue"))
-        {
-            try
-            {
-                storyNode.Call("Continue");
-                onStoryContinued(storyNode.Get("CurrentText") as String, new String[] { });
-            }
-            catch (Ink.Runtime.StoryException e)
-            {
-                onStoryContinued(e.ToString(), new String[] { });
-            }
-        }
-        await ToSignal(GetTree(), "idle_frame");
-        this.scrollbar.Value = this.scrollbar.MaxValue;
     }
 
     private void onStoryContinued(String text, String[] tags)
     {
-        Label newLine = new Label();
-        newLine.Autowrap = true;
-        newLine.Text = text.Trim(new char[] { ' ', '\n' });
-        this.storyText.AddChild(newLine);
+        text = text.Trim();
+        if (text.Length > 0) {
+            Label newLine = new Label();
+            newLine.Autowrap = true;
+            newLine.Text = text;
+            addToStory(newLine);
+        }
+
+        story.Continue();
     }
 
     private void onStoryChoices(String[] choices)
@@ -127,6 +99,7 @@ public class InkDock : Control
         int i = 0;
         foreach (String choice in choices)
         {
+            if (i < storyChoices.GetChildCount()) { continue; }
             Button button = new Button();
             button.Text = choice;
             button.Connect("pressed", this, nameof(clickChoice), new Godot.Collections.Array() { i });
@@ -135,12 +108,37 @@ public class InkDock : Control
         }
     }
 
+    private void onStoryEnded()
+    {
+        CanvasItem endOfStory = new VBoxContainer();
+        endOfStory.AddChild(new HSeparator());
+        CanvasItem endOfStoryLine = new HBoxContainer();
+        endOfStory.AddChild(endOfStoryLine);
+        endOfStory.AddChild(new HSeparator());
+        Control separator = new HSeparator();
+        separator.SizeFlagsHorizontal = (int)(SizeFlags.Fill | SizeFlags.Expand);
+        Label endOfStoryText = new Label();
+        endOfStoryText.Text = "End of story";
+        endOfStoryLine.AddChild(separator);
+        endOfStoryLine.AddChild(endOfStoryText);
+        endOfStoryLine.AddChild(separator.Duplicate());
+        addToStory(endOfStory);
+    }
+
     private void clickChoice(int idx)
     {
-        storyNode.Callv("ChooseChoiceIndex", new Godot.Collections.Array() { idx });
-        this.removeAllChoices();
-        this.storyText.AddChild(new HSeparator());
-        continueStoryMaximally();
+        story.ChooseChoiceIndex(idx);
+        removeAllChoices();
+        addToStory(new HSeparator());
+        story.Continue();
+    }
+
+    private async void addToStory(CanvasItem item)
+    {
+        storyText.AddChild(item);
+        await ToSignal(GetTree(), "idle_frame");
+        await ToSignal(GetTree(), "idle_frame");
+        scroll.ScrollVertical = (int)scroll.GetVScrollbar().MaxValue;
     }
 }
-// #endif
+#endif

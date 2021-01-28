@@ -13,30 +13,41 @@ rect_min_size = Vector2( 0, 200 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Container" type="VBoxContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Top" type="HBoxContainer" parent="Container"]
-editor/display_folded = true
 margin_right = 1024.0
 margin_bottom = 20.0
 
 [node name="Label" type="Label" parent="Container/Top"]
 margin_top = 3.0
-margin_right = 40.0
+margin_right = 891.0
 margin_bottom = 17.0
-text = "Story :"
+size_flags_horizontal = 3
 
-[node name="OptionButton" type="OptionButton" parent="Container/Top"]
-margin_left = 44.0
-margin_right = 85.0
+[node name="ResetButton" type="Button" parent="Container/Top"]
+margin_left = 895.0
+margin_right = 943.0
 margin_bottom = 20.0
-items = [ "", null, false, 0, null, "Load", null, false, 1, null ]
-selected = 0
+disabled = true
+text = "Reset"
+
+[node name="LoadButton" type="Button" parent="Container/Top"]
+margin_left = 947.0
+margin_right = 1024.0
+margin_bottom = 20.0
+text = "Load a file"
 
 [node name="Bottom" type="HBoxContainer" parent="Container"]
 margin_top = 24.0
