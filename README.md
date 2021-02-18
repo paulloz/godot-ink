@@ -39,7 +39,9 @@ When the plugin is properly loaded, you should be able to use the new ink panel 
 
 ![](inspector_screenshot.png)
 
-If you want to directly compile your `.ink` files, you'll also need to download the [ink compiler](https://github.com/inkle/ink/releases) on your computer and copy/paste the path to `inklecate.exe` into your project settings (*Project -> Project Settings... -> Ink -> Inklecate Path*).
+If you want to compile your `.ink` files directly, you'll also need to download the [ink compiler](https://github.com/inkle/ink/releases) on your computer and copy/paste the path to the `inklecate` binary into your project settings (*Project -> Project Settings... -> Ink -> Inklecate Path*). 
+
+N.B : Use `inklecate.exe` binary for both Linux and Windows environments, but use the macOS `inklecate` binary for macOS.
 
 ---
 
