@@ -22,7 +22,7 @@ If your Pull Request is related to another [GitHub issue](https://github.com/pau
 * You should indent using four spaces (soft tabs)
 * GDScript code should name everything using snake_case
 * C# code should name public members using PascalCase and everything else using camelCase
-* Curly braces should be on their own lines
+* Curly braces are mandatory and should follow K&R style
 * Operators should be surrounder by spaces
 * Comments are nice and healthy
 * In general, keep in mind your code will be read by others and should be tidy and nice to look at

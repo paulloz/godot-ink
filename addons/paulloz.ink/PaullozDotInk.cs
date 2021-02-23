@@ -77,8 +77,9 @@ public class PaullozDotInk : EditorPlugin
         foreach (String key in settings.Keys)
         {
             String property_name = $"ink/{key}";
-            if (ProjectSettings.HasSetting(property_name))
+            if (ProjectSettings.HasSetting(property_name)) {
                 ProjectSettings.SetSetting(property_name, null);
+            }
         }
     }
 }

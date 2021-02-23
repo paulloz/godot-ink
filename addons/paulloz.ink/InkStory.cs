@@ -26,14 +26,32 @@ public class InkStory : Node
     [Export] public Resource InkFile = null;
 
     // All the public variables
-    public String CurrentText { get { return this.story?.currentText ?? ""; } }
-    public String[] CurrentTags { get { return this.story?.currentTags.ToArray() ?? new String[0]; } }
-    public String[] CurrentChoices { get { return this.story?.currentChoices.ConvertAll<String>(choice => choice.text).ToArray() ?? new String[0]; } }
+    public String CurrentText
+    {
+        get => story?.currentText ?? "";
+    }
+    public String[] CurrentTags
+    {
+        get => story?.currentTags.ToArray() ?? default(String[]);
+    }
+    public String[] CurrentChoices
+    {
+        get => story?.currentChoices.ConvertAll<String>(choice => choice.text).ToArray() ?? default(String[]);
+    }
 
     // All the properties
-    public bool CanContinue { get { return this.story?.canContinue ?? false; } }
-    public bool HasChoices { get { return this.story?.currentChoices.Count > 0; } }
-    public String[] GlobalTags { get { return this.story?.globalTags?.ToArray() ?? new String[0]; } }
+    public bool CanContinue
+    {
+        get => story?.canContinue ?? false;
+    }
+    public bool HasChoices
+    {
+        get => story?.currentChoices.Count > 0;
+    }
+    public String[] GlobalTags
+    {
+        get => story?.globalTags?.ToArray() ?? new String[0];
+    }
 
     private Ink.Runtime.Story story = null;
     private List<String> observedVariables = new List<String>();
@@ -41,55 +59,60 @@ public class InkStory : Node
 
     private void reset()
     {
-        if (this.story == null)
+        if (story == null) {
             return;
+        }
 
-        foreach (String varName in this.observedVariables)
-            this.RemoveVariableObserver(varName, false);
-        this.observedVariables.Clear();
+        foreach (String varName in observedVariables) {
+            RemoveVariableObserver(varName, false);
+        }
+        observedVariables.Clear();
 
-        this.story =  null;
+        story =  null;
     }
 
     public override void _Ready()
     {
-        this.shouldMarshallVariables = ProjectSettings.HasSetting("ink/marshall_state_variables");
+        shouldMarshallVariables = ProjectSettings.HasSetting("ink/marshall_state_variables");
         
-        this.observer = (String varName, object varValue) => {
-            if (this.observedVariables.Contains(varName))
-                this.EmitSignal(this.ObservedVariableSignalName(varName), varName, this.marshallVariableValue(varValue));
+        observer = (String varName, object varValue) => {
+            if (observedVariables.Contains(varName)) {
+                EmitSignal(ObservedVariableSignalName(varName), varName, marshallVariableValue(varValue));
+            }
         };
 
-        if (this.AutoLoadStory)
-            this.LoadStory();
+        if (AutoLoadStory) {
+            LoadStory();
+        }
     }
 
     public Boolean LoadStory()
     {
-        this.reset();
+        reset();
 
-        if (!this.isJSONFileValid())
+        if (!isJSONFileValid())
         {
             GD.PrintErr("The story you're trying to load is not valid.");
             return false;
         }
 
-        this.story = new Ink.Runtime.Story(this.InkFile.GetMeta("content") as String);
+        story = new Ink.Runtime.Story(InkFile.GetMeta("content") as String);
         return true;
     }
 
     public Boolean LoadStoryFromString(String story)
     {
-        this.InkFile = new Resource();
-        this.InkFile.SetMeta("content", story);
-        return this.LoadStory();
+        InkFile = new Resource();
+        InkFile.SetMeta("content", story);
+        return LoadStory();
     }
 
     public Boolean LoadStoryAndSetState(String state)
     {
-        if (!this.LoadStory())
+        if (!LoadStory()) {
             return false;
-        this.SetState(state);
+        }
+        SetState(state);
         return true;
     }
 
@@ -98,43 +121,48 @@ public class InkStory : Node
         String text = null;
 
         // Continue if we can
-        if (this.CanContinue)
+        if (CanContinue)
         {
-            this.story.Continue();
-            text = this.CurrentText;
+            story.Continue();
+            text = CurrentText;
 
-            this.EmitSignal(nameof(InkContinued), new object[] { this.CurrentText, this.CurrentTags });
-            if (this.HasChoices) // Check if we have choices after continuing
-                this.EmitSignal(nameof(InkChoices), new object[] { this.CurrentChoices });
+            EmitSignal(nameof(InkContinued), new object[] { CurrentText, CurrentTags });
+            // Check if we have choices after continuing
+            if (HasChoices) {
+                EmitSignal(nameof(InkChoices), new object[] { CurrentChoices });
+            }
         }
-        else if (!this.HasChoices) // If we can't continue and don't have any choice, we're at the end
-            this.EmitSignal(nameof(InkEnded));
+        else if (!HasChoices) {
+            // If we can't continue and don't have any choice, we're at the end
+            EmitSignal(nameof(InkEnded));
+        }
 
         return text;
     }
 
     public void ChooseChoiceIndex(int index)
     {
-        if (index >= 0 && index < this.story?.currentChoices.Count)
+        if (index >= 0 && index < story?.currentChoices.Count)
         {
-            this.story.ChooseChoiceIndex(index);
+            story.ChooseChoiceIndex(index);
         }
     }
 
     public String ChooseChoiceIndexAndContinue(int index)
     {
-        this.ChooseChoiceIndex(index);
-        return this.Continue();
+        ChooseChoiceIndex(index);
+        return Continue();
     }
 
     public bool ChoosePathString(String pathString)
     {
         try
         {
-            if (this.story != null)
-                this.story.ChoosePathString(pathString);
-            else
+            if (story != null) {
+                story.ChoosePathString(pathString);
+            } else {
                 return false;
+            }
         }
         catch (Ink.Runtime.StoryException e)
         {
@@ -147,38 +175,40 @@ public class InkStory : Node
 
     public int VisitCountAtPathString(String pathString)
     {
-        return this.story?.state.VisitCountAtPathString(pathString) ?? 0;
+        return story?.state.VisitCountAtPathString(pathString) ?? 0;
     }
 
     public String[] TagsForContentAtPath(String pathString)
     {
-        return this.story?.TagsForContentAtPath(pathString).ToArray() ?? new String[0];
+        return story?.TagsForContentAtPath(pathString).ToArray() ?? new String[0];
     }
 
     public object GetVariable(String name)
     {
-        return this.marshallVariableValue(this.story?.variablesState[name]);
+        return marshallVariableValue(story?.variablesState[name]);
     }
 
     public void SetVariable(String name, object value_)
     {
-        if (this.story != null)
-            this.story.variablesState[name] = value_;
+        if (story != null) {
+            story.variablesState[name] = value_;
+        }
     }
 
     public String ObserveVariable(String name)
     {
-        if (this.story != null)
+        if (story != null)
         {
-            String signalName = this.ObservedVariableSignalName(name);
+            String signalName = ObservedVariableSignalName(name);
 
-            if (!this.observedVariables.Contains(name))
+            if (!observedVariables.Contains(name))
             {
-                if (!this.HasUserSignal(signalName))
+                if (!HasUserSignal(signalName)) {
                     AddUserSignal(signalName);
+                }
 
-                this.observedVariables.Add(name);
-                this.story.ObserveVariable(name, this.observer);
+                observedVariables.Add(name);
+                story.ObserveVariable(name, observer);
             }
 
             return signalName;
@@ -189,64 +219,68 @@ public class InkStory : Node
 
     public void RemoveVariableObserver(String name)
     {
-        this.RemoveVariableObserver(name, true);
+        RemoveVariableObserver(name, true);
     }
 
     private void RemoveVariableObserver(String name, Boolean clear)
     {
-        if (this.story != null)
+        if (story != null)
         {
-            if (this.observedVariables.Contains(name))
+            if (observedVariables.Contains(name))
             {
-                String signalName = this.ObservedVariableSignalName(name);
-                if (this.HasUserSignal(signalName))
+                String signalName = ObservedVariableSignalName(name);
+                if (HasUserSignal(signalName))
                 {
-                    Godot.Collections.Array connections = this.GetSignalConnectionList(signalName);
-                    foreach (Godot.Collections.Dictionary connection in connections)
-                        this.Disconnect(signalName, connection["target"] as Godot.Object, connection["method"] as String);
+                    Godot.Collections.Array connections = GetSignalConnectionList(signalName);
+                    foreach (Godot.Collections.Dictionary connection in connections) {
+                        Disconnect(signalName, connection["target"] as Godot.Object, connection["method"] as String);
+                    }
                     // Seems like there's no way to undo `AddUserSignal` so we're just going to unbind everything :/
                 }
 
-                this.story.RemoveVariableObserver(null, name);
+                story.RemoveVariableObserver(null, name);
 
-                if (clear)
-                    this.observedVariables.Remove(name);
+                if (clear) {
+                    observedVariables.Remove(name);
+                }
             }
         }
     }
 
     public void BindExternalFunction(String inkFuncName, Func<object> func)
     {
-        this.story?.BindExternalFunction(inkFuncName, func);
+        story?.BindExternalFunction(inkFuncName, func);
     }
 
     public void BindExternalFunction<T>(String inkFuncName, Func<T, object> func)
     {
-        this.story?.BindExternalFunction(inkFuncName, func);
+        story?.BindExternalFunction(inkFuncName, func);
     }
 
     public void BindExternalFunction<T1, T2>(String inkFuncName, Func<T1, T2, object> func)
     {
-        this.story?.BindExternalFunction(inkFuncName, func);
+        story?.BindExternalFunction(inkFuncName, func);
     }
 
     public void BindExternalFunction<T1, T2, T3>(String inkFuncName, Func<T1, T2, T3, object> func)
     {
-        this.story?.BindExternalFunction(inkFuncName, func);
+        story?.BindExternalFunction(inkFuncName, func);
     }
 
     public void BindExternalFunction(String inkFuncName, Node node, String funcName)
     {
-        this.story?.BindExternalFunctionGeneral(inkFuncName, (object[] foo) => node.Call(funcName, foo));
+        story?.BindExternalFunctionGeneral(inkFuncName, (object[] foo) => node.Call(funcName, foo));
     }
 
-    private object marshallVariableValue(object value_)
+    private object marshallVariableValue(object value)
     {
-        if (!this.shouldMarshallVariables) return value_;
+        if (!shouldMarshallVariables) {
+            return value;
+        }
 
-        if (value_ != null && value_.GetType() == typeof(Ink.Runtime.InkList))
-            value_ = null;
-        return value_;
+        if (value != null && value.GetType() == typeof(Ink.Runtime.InkList))
+            value = null;
+        return value;
     }
 
     public object EvaluateFunction(String functionName, Boolean returnTextOutput, params object [] arguments)
@@ -254,45 +288,48 @@ public class InkStory : Node
         if (returnTextOutput)
         {
             String textOutput = null;
-            object returnValue = this.story?.EvaluateFunction(functionName, out textOutput, arguments);
+            object returnValue = story?.EvaluateFunction(functionName, out textOutput, arguments);
             return new object[] { returnValue, textOutput };
         }
-        return this.story?.EvaluateFunction(functionName, arguments);
+        return story?.EvaluateFunction(functionName, arguments);
     }
 
     public String GetState()
     {
-        return this.story.state.ToJson();
+        return story.state.ToJson();
     }
 
     public void SaveStateOnDisk(String path)
     {
-        if (!path.StartsWith("res://") && !path.StartsWith("user://"))
+        if (!path.StartsWith("res://") && !path.StartsWith("user://")) {
             path = $"user://{path}";
+        }
         File file = new File();
         file.Open(path, File.ModeFlags.Write);
-        this.SaveStateOnDisk(file);
+        SaveStateOnDisk(file);
         file.Close();
     }
 
     public void SaveStateOnDisk(File file)
     {
-        if (file.IsOpen())
-            file.StoreString(this.GetState());
+        if (file.IsOpen()) {
+            file.StoreString(GetState());
+        }
     }
 
     public void SetState(String state)
     {
-        this.story.state.LoadJson(state);
+        story.state.LoadJson(state);
     }
 
     public void LoadStateFromDisk(String path)
     {
-        if (!path.StartsWith("res://") && !path.StartsWith("user://"))
+        if (!path.StartsWith("res://") && !path.StartsWith("user://")) {
             path = $"user://{path}";
+        }
         File file = new File();
         file.Open(path, File.ModeFlags.Read);
-        this.LoadStateFromDisk(file);
+        LoadStateFromDisk(file);
         file.Close();
     }
 
@@ -301,13 +338,14 @@ public class InkStory : Node
         if (file.IsOpen())
         {
             file.Seek(0);
-            if (file.GetLen() > 0)
-                this.story.state.LoadJson(file.GetAsText());
+            if (file.GetLen() > 0) {
+                story.state.LoadJson(file.GetAsText());
+            }
         }
     }
 
     private Boolean isJSONFileValid()
     {
-        return this.InkFile != null && this.InkFile.HasMeta("content");
+        return InkFile != null && InkFile.HasMeta("content");
     }
 }
