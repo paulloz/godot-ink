@@ -2,6 +2,9 @@
 
 An [ink](https://github.com/inkle/ink) integration for [Godot Engine](https://github.com/godotengine/godot).  
 
+If you like **godot-ink**, please consider buying me a coffee:  
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E53SKZF)
+
 The following platforms have been tested with Godot 3.2.2:  
  * Windows 🗸
  * Linux 🗸
