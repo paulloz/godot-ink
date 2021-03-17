@@ -15,6 +15,7 @@ public class InkDock : Control
     private VBoxContainer storyChoices;
     
     private ScrollContainer scroll;
+    private ScrollBar scrollbar;
 
     public override void _Ready()
     {
@@ -43,16 +44,14 @@ public class InkDock : Control
 
     private void removeAllStoryContent()
     {
-        foreach (Node node in storyText.GetChildren()) {
-            storyText.RemoveChild(node);
-        }
+        foreach (Node n in storyText.GetChildren())
+            storyText.RemoveChild(n);
     }
 
     private void removeAllChoices()
     {
-        foreach (Node node in storyChoices.GetChildren()) {
-            storyChoices.RemoveChild(node);
-        }
+        foreach (Node n in storyChoices.GetChildren())
+            storyChoices.RemoveChild(n);
     }
 
     private void onResetButtonPressed()
