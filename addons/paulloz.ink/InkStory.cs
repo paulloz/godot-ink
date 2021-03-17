@@ -74,6 +74,11 @@ public class InkStory : Node
 #endregion
 
 #region Story loading
+    /// <summary>
+    /// Actually load the story content from <see cref="InkFile"/>.
+    /// This method is automatically called in <see cref="_Ready"/> if <see cref="AutoLoadStory"/> is true.
+    /// </summary>
+    /// <returns>False if there was an error while loading, true otherwise.</returns>
     public Boolean LoadStory()
     {
         reset();
@@ -89,6 +94,11 @@ public class InkStory : Node
         return true;
     }
 
+    /// <summary>
+    /// Load the story content from <paramref name="story"/>.
+    /// </summary>
+    /// <param name="story">A string containing the json representation of the story.</param>
+    /// <returns>False if there was an error while loading, true otherwise.</returns>
     public Boolean LoadStoryFromString(String story)
     {
         InkFile = new Resource();
@@ -96,6 +106,11 @@ public class InkStory : Node
         return LoadStory();
     }
 
+    /// <summary>
+    /// Call <see cref="LoadStory"/> and set its state to <paramref name="state"/>.
+    /// </summary>
+    /// <param name="state">A string containing the json representation of a story state.</param>
+    /// <returns>False if there was an error while loading, true otherwise.</returns>
     public Boolean LoadStoryAndSetState(String state)
     {
         if (!LoadStory()) {
@@ -112,6 +127,9 @@ public class InkStory : Node
 #endregion
 
 #region Story flow
+    /// <summary>
+    /// Continue the story for one line of content.
+    /// </summary>
     public String Continue()
     {
         String text = null;
@@ -134,6 +152,10 @@ public class InkStory : Node
         return text;
     }
 
+    /// <summary>
+    /// Choose a choice from the CurrentChoices.
+    /// </summary>
+    /// <param name="index">The index of the choice to choose from CurrentChoices.</param>
     public void ChooseChoiceIndex(int index)
     {
         if (index >= 0 && index < story?.currentChoices.Count) {
@@ -141,12 +163,21 @@ public class InkStory : Node
         }
     }
 
+    /// <summary>
+    /// Choose a choice from the CurrentChoices and automatically continue the story for one line of content.
+    /// </summary>
+    /// <param name="index">The index of the choice to choose from CurrentChoices.</param>
     public String ChooseChoiceIndexAndContinue(int index)
     {
         ChooseChoiceIndex(index);
         return Continue();
     }
 
+    /// <summary>
+    /// Change the current position of the story to the given <paramref name="pathString"/>.
+    /// </summary>
+    /// <param name="pathString">A dot-separated path string.</param>
+    /// <returns>False if there was an error during the change, true otherwise.</returns>
     public bool ChoosePathString(String pathString)
     {
         if (story != null) {
