@@ -40,21 +40,24 @@ func import_from_ink(source_file, save_path, options):
         var inklecate = ProjectSettings.get_setting(setting)
         var new_file = "%d.json" % int(randf() * 100000)
         var arguments = [
-            "-o",
+            inklecate, "-o",
             "%s/%s" % [OS.get_user_data_dir(), new_file],
             ProjectSettings.globalize_path(source_file)
         ]
 
+        var _err = OK
+        var _output = []
         match OS.get_name():
-            "OSX":
-                var _err = OS.execute(inklecate, arguments, true)
-            "X11":
-                arguments.push_front(inklecate)
-                var _err = OS.execute("mono", arguments, true)
+            "X11", "OSX":
+                _err = OS.execute("mono", arguments, true, _output)
             "Windows":
-                var _err = OS.execute(inklecate, arguments, true)
+                arguments.pop_front()
+                _err = OS.execute(inklecate, arguments, true, _output)
             _:
-                return null
+                return ERR_COMPILATION_FAILED
+        if _err != OK:
+            printerr(_output[0])
+            return ERR_COMPILATION_FAILED
 
         new_file = "user://%s" % new_file
         if !File.new().file_exists(new_file):
