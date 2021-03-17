@@ -161,6 +161,21 @@ public class InkStory : Node
 
         return false;
     }
+
+    public void SwitchFlow(String flowName)
+    {
+        story?.SwitchFlow(flowName);
+    }
+
+    public void SwitchToDefaultFlow()
+    {
+        story?.SwitchToDefaultFlow();
+    }
+
+    public void RemoveFlow(String flowName)
+    {
+        story?.RemoveFlow(flowName);
+    }
 #endregion
 
 #region Ink variables
