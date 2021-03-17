@@ -15,6 +15,7 @@ public class InkStory : Node
     [Signal] public delegate void InkContinued(String text, String[] tags);
     [Signal] public delegate void InkEnded();
     [Signal] public delegate void InkChoices(String[] choices);
+    [Signal] public delegate void InkError(String message, bool isWarning);
     public delegate void InkVariableChanged(String variableName, object variableValue);
 
     private String ObservedVariableSignalName(String name)
@@ -84,6 +85,7 @@ public class InkStory : Node
         }
 
         story = new Ink.Runtime.Story(InkFile.GetMeta("content") as String);
+        story.onError += OnStoryError;
         return true;
     }
 
@@ -372,6 +374,18 @@ public class InkStory : Node
     public String[] TagsForContentAtPath(String pathString)
     {
         return story?.TagsForContentAtPath(pathString).ToArray() ?? new String[0];
+    }
+#endregion
+
+#region Error handling
+    private void OnStoryError(String message, Ink.ErrorType errorType)
+    {
+        if (errorType == Ink.ErrorType.Author) { return; }  // This should never happen but eh? What's the cost of checking.
+        if (GetSignalConnectionList(nameof(InkError)).Count > 0) {
+            EmitSignal(nameof(InkError), message, errorType == Ink.ErrorType.Warning);
+        } else {
+            GD.PrintErr($"Ink had an error. It is strongly suggested that you connect an error handler to InkError. {message}");
+        }
     }
 #endregion
 }
