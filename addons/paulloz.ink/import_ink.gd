@@ -18,6 +18,7 @@ func get_resource_type():
 
 func get_import_options(preset):
     return [
+        {"name": "is_master_file", "default_value": true},
         {"name": "compress", "default_value": true}
     ]
 
@@ -44,6 +45,9 @@ func import_from_ink(source_file, save_path, options):
             "%s/%s" % [OS.get_user_data_dir(), new_file],
             ProjectSettings.globalize_path(source_file)
         ]
+
+        if not options["is_master_file"]:
+            return _save_resource(save_path, Resource.new(), options)
 
         var _err = OK
         var _output = []
@@ -80,8 +84,7 @@ func import_from_json(source_file, save_path, options):
     var resource = Resource.new()
     resource.set_meta("content", raw_content);
 
-    var flags = ResourceSaver.FLAG_COMPRESS if options["compress"] else 0
-    return ResourceSaver.save("%s.%s" % [save_path, get_save_extension()], resource, flags)
+    return _save_resource(save_path, resource, options)
 
 func get_source_file_content(source_file):
     var file = File.new()
@@ -93,3 +96,8 @@ func get_source_file_content(source_file):
 
     file.close()
     return raw_content
+
+func _save_resource(save_path, resource, options):
+    var flags = ResourceSaver.FLAG_COMPRESS if options["compress"] else 0
+    return ResourceSaver.save("%s.%s" % [save_path, get_save_extension()], resource, flags)
+
