@@ -281,6 +281,16 @@ public class InkStory : Node
 #endregion
 
 #region Ink external functions
+    public void BindExternalFunction(String inkFuncName, Node node, String funcName)
+    {
+        BindExternalFunction(inkFuncName, node, funcName, false);
+    }
+
+    public void BindExternalFunction(String inkFuncName, Node node, String funcName, bool lookaheadSafe)
+    {
+        story?.BindExternalFunctionGeneral(inkFuncName, (object[] foo) => node.Call(funcName, foo), lookaheadSafe);
+    }
+
     public void BindExternalFunction(String inkFuncName, Func<object> func, bool lookaheadSafe)
     {
         story?.BindExternalFunction(inkFuncName, func, lookaheadSafe);
@@ -329,16 +339,6 @@ public class InkStory : Node
     public void BindExternalFunction<T1, T2, T3, T4>(String inkFuncName, Func<T1, T2, object> func)
     {
         BindExternalFunction(inkFuncName, func, false);
-    }
-
-    public void BindExternalFunction(String inkFuncName, Node node, String funcName, bool lookaheadSafe)
-    {
-        story?.BindExternalFunctionGeneral(inkFuncName, (object[] foo) => node.Call(funcName, foo), lookaheadSafe);
-    }
-
-    public void BindExternalFunction(String inkFuncName, Node node, String funcName)
-    {
-        BindExternalFunction(inkFuncName, node, funcName, false);
     }
 
     public object EvaluateFunction(String functionName, Boolean returnTextOutput, params object [] arguments)
