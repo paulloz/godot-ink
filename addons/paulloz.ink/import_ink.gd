@@ -38,7 +38,7 @@ func import(source_file, save_path, options, r_platform_variants, r_gen_files):
 func import_from_ink(source_file, save_path, options):
     var setting = "ink/inklecate_path"
     if ProjectSettings.has_setting(setting) and ProjectSettings.property_can_revert(setting):
-        var inklecate = ProjectSettings.get_setting(setting)
+        var inklecate = ProjectSettings.globalize_path(ProjectSettings.get_setting(setting))
         var new_file = "%d.json" % int(randf() * 100000)
         var arguments = [
             "-o",

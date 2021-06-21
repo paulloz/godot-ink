@@ -9,7 +9,7 @@ public class PaullozDotInk : EditorPlugin
     private Dictionary settings = new Dictionary() {
         {"inklecate_path", new Dictionary() {
             { "type", Variant.Type.String },
-            { "hint", PropertyHint.GlobalFile },
+            { "hint", PropertyHint.File },
             { "hint_string", OS.GetName() == "OSX" ? "" : "*.exe" },
             { "default", "" }
         }},
