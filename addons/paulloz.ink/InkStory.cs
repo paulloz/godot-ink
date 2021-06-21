@@ -419,7 +419,7 @@ public class InkStory : Node
 #region Ink tags
     public String[] TagsForContentAtPath(String pathString)
     {
-        return story?.TagsForContentAtPath(pathString).ToArray() ?? new String[0];
+        return story?.TagsForContentAtPath(pathString)?.ToArray() ?? new String[0];
     }
 #endregion
 
