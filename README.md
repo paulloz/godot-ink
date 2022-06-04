@@ -13,8 +13,6 @@ The following platforms have been tested with Godot 3.2.2:
 
 I'm pretty sure this will also run fine on MacOS and Android but haven't witnessed it yet. If you end up testing an unlisted platform, please create an issue to tell me whether everything work or not.
 
-Examples can be found in my [godot-ink-example](https://github.com/paulloz/godot-ink-example) repository.
-
 ## Installation
 
 * Drop the `paulloz.ink/` folder in your project's `addons/` folder.
@@ -40,7 +38,7 @@ Examples can be found in my [godot-ink-example](https://github.com/paulloz/godot
 
 When the plugin is properly loaded, you should be able to use the new ink panel to inspect your story.
 
-![](inspector_screenshot.png)
+![](screenshots/inspector_screenshot.png)
 
 If you want to compile your `.ink` files directly, you'll also need to download the [ink compiler](https://github.com/inkle/ink/releases) on your computer and copy/paste the path to the `inklecate` binary into your project settings (*Project -> Project Settings... -> Ink -> Inklecate Path*). 
 
@@ -55,7 +53,7 @@ In **GDScript** for some properties, you'll need to use a `get_` prefix (e.g. `g
 
 First you should navigate to your `.json` or `.ink` file and import it as an `Ink story` in Godot. To do that, select the file in Godot, go to `Import`, select `Ink story` under `Import As:` and click `ReImport`.
 
-![](import_screenshot.png)
+![](screenshots/import_screenshot.png)
 
 To load your story, you can:
 

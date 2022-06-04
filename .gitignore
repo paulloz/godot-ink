@@ -11,5 +11,6 @@ export_presets.cfg
 project.godot
 *.import
 
+inklecate.exe
+ink_compiler.dll
 ink-engine-runtime.dll
-ink-engine-runtime.dll.mdb

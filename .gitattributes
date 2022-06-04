@@ -1,8 +1,15 @@
 /.github/ export-ignore
+/examples/ export-ignore
+/screenshots/ export-ignore
+
+/.editorconfig export-ignore
 /.gitattributes export-ignore
 /.gitignore export-ignore
+
 /CODE_OF_CONDUCT.md export-ignore
 /CONTRIBUTING.md export-ignore
-/README.md export-ignore
 /LICENSE export-ignore
-/*.png export-ignore
+/README.md export-ignore
+
+/icon.png export-ignore
+/project.godot export-ignore

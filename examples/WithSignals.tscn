@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://examples/TheIntercept.ink" type="Resource" id=1]
+[ext_resource path="res://Examples/StoryContainer.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Examples/WithSignals.cs" type="Script" id=3]
+[ext_resource path="res://addons/paulloz.ink/InkStory.cs" type="Script" id=4]
+
+[node name="WithSignals" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 3 )
+
+[node name="Container" parent="." instance=ExtResource( 2 )]
+
+[node name="Story" type="Node" parent="."]
+script = ExtResource( 4 )
+AutoLoadStory = true
+InkFile = ExtResource( 1 )
+
+[connection signal="ChoiceClick" from="Container" to="." method="OnChoiceClick"]
+[connection signal="InkChoices" from="Story" to="." method="OnStoryInkChoices"]
+[connection signal="InkContinued" from="Story" to="." method="OnStoryInkContinued"]
+[connection signal="InkEnded" from="Story" to="." method="OnStoryInkEnded"]

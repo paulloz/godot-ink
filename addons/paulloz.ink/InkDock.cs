@@ -1,6 +1,5 @@
 #if TOOLS
 using Godot;
-using System;
 
 [Tool]
 public class InkDock : Control
@@ -13,9 +12,8 @@ public class InkDock : Control
     private InkStory story;
     private VBoxContainer storyText;
     private VBoxContainer storyChoices;
-    
+
     private ScrollContainer scroll;
-    private ScrollBar scrollbar;
 
     public override void _Ready()
     {
@@ -28,51 +26,52 @@ public class InkDock : Control
         scroll = GetNode<ScrollContainer>("Container/Bottom/Scroll");
         story = GetNode<InkStory>("Story");
 
-        resetButton.Connect("pressed", this, nameof(onResetButtonPressed));
-        loadButton.Connect("pressed", this, nameof(onLoadButtonPressed));
-        fileDialog.Connect("popup_hide", this, nameof(onFileDialogHide));
-        story.Connect(nameof(InkStory.InkChoices), this, nameof(onStoryChoices));
-        story.Connect(nameof(InkStory.InkContinued), this, nameof(onStoryContinued));
-        story.Connect(nameof(InkStory.InkEnded), this, nameof(onStoryEnded));
+        resetButton.Connect("pressed", this, nameof(OnResetButtonPressed));
+        loadButton.Connect("pressed", this, nameof(OnLoadButtonPressed));
+        fileDialog.Connect("popup_hide", this, nameof(OnFileDialogHide));
+        story.Connect(nameof(InkStory.InkChoices), this, nameof(OnStoryChoices));
+        story.Connect(nameof(InkStory.InkContinued), this, nameof(OnStoryContinued));
+        story.Connect(nameof(InkStory.InkEnded), this, nameof(OnStoryEnded));
     }
 
-    private void resetStoryContent()
+    private void ResetStoryContent()
     {
-        removeAllStoryContent();
-        removeAllChoices();
+        RemoveAllStoryContent();
+        RemoveAllChoices();
     }
 
-    private void removeAllStoryContent()
+    private void RemoveAllStoryContent()
     {
         foreach (Node n in storyText.GetChildren())
             storyText.RemoveChild(n);
     }
 
-    private void removeAllChoices()
+    private void RemoveAllChoices()
     {
         foreach (Node n in storyChoices.GetChildren())
             storyChoices.RemoveChild(n);
     }
 
-    private void onResetButtonPressed()
+    private void OnResetButtonPressed()
     {
-        resetStoryContent();
+        ResetStoryContent();
         story.LoadStory();
         story.Continue();
     }
 
-    private void onLoadButtonPressed()
+    private void OnLoadButtonPressed()
     {
         fileDialog.PopupCentered();
     }
 
-    private void onFileDialogHide()
+    private void OnFileDialogHide()
     {
-        resetStoryContent();
+        ResetStoryContent();
         fileName.Text = "";
-        if (fileDialog.CurrentFile == null || fileDialog.CurrentFile.Length == 0) {
+        if (fileDialog.CurrentFile == null || fileDialog.CurrentFile.Length == 0)
             resetButton.Disabled = true;
-        } else {
+        else
+        {
             resetButton.Disabled = false;
             fileName.Text = fileDialog.CurrentFile;
             story.InkFile = ResourceLoader.Load(fileDialog.CurrentPath);
@@ -81,59 +80,69 @@ public class InkDock : Control
         }
     }
 
-    private void onStoryContinued(String text, String[] tags)
+    private void OnStoryContinued(string text, string[] _)
     {
         text = text.Trim();
-        if (text.Length > 0) {
-            Label newLine = new Label();
-            newLine.Autowrap = true;
-            newLine.Text = text;
-            addToStory(newLine);
+        if (text.Length > 0)
+        {
+            Label newLine = new Label()
+            {
+                Autowrap = true,
+                Text = text,
+            };
+            AddToStory(newLine);
         }
 
         story.Continue();
     }
 
-    private void onStoryChoices(String[] choices)
+    private void OnStoryChoices(string[] choices)
     {
         int i = 0;
-        foreach (String choice in choices)
+        foreach (string choice in choices)
         {
-            if (i < storyChoices.GetChildCount()) { continue; }
-            Button button = new Button();
-            button.Text = choice;
-            button.Connect("pressed", this, nameof(clickChoice), new Godot.Collections.Array() { i });
+            if (i < storyChoices.GetChildCount()) continue;
+
+            Button button = new Button()
+            {
+                Text = choice,
+            };
+            button.Connect("pressed", this, nameof(ClickChoice), new Godot.Collections.Array() { i });
             storyChoices.AddChild(button);
             ++i;
         }
     }
 
-    private void onStoryEnded()
+    private void OnStoryEnded()
     {
         CanvasItem endOfStory = new VBoxContainer();
         endOfStory.AddChild(new HSeparator());
         CanvasItem endOfStoryLine = new HBoxContainer();
         endOfStory.AddChild(endOfStoryLine);
         endOfStory.AddChild(new HSeparator());
-        Control separator = new HSeparator();
-        separator.SizeFlagsHorizontal = (int)(SizeFlags.Fill | SizeFlags.Expand);
-        Label endOfStoryText = new Label();
-        endOfStoryText.Text = "End of story";
+        Control separator = new HSeparator()
+        {
+            SizeFlagsHorizontal = (int)(SizeFlags.Fill | SizeFlags.Expand),
+        };
+        Label endOfStoryText = new Label()
+        {
+            Text = "End of story"
+        };
         endOfStoryLine.AddChild(separator);
         endOfStoryLine.AddChild(endOfStoryText);
         endOfStoryLine.AddChild(separator.Duplicate());
-        addToStory(endOfStory);
+        AddToStory(endOfStory);
     }
 
-    private void clickChoice(int idx)
+    private void ClickChoice(int idx)
     {
         story.ChooseChoiceIndex(idx);
-        removeAllChoices();
-        addToStory(new HSeparator());
+        RemoveAllChoices();
+        AddToStory(new HSeparator());
         story.Continue();
     }
 
-    private async void addToStory(CanvasItem item)
+    private async void AddToStory(CanvasItem item)
     {
         storyText.AddChild(item);
         await ToSignal(GetTree(), "idle_frame");

@@ -1,12 +1,11 @@
 #if TOOLS
 using Godot;
 using Godot.Collections;
-using System;
 
 [Tool]
 public class PaullozDotInk : EditorPlugin
 {
-    private Dictionary settings = new Dictionary() {
+    private readonly Dictionary settings = new Dictionary() {
         {"inklecate_path", new Dictionary() {
             { "type", Variant.Type.String },
             { "hint", PropertyHint.File },
@@ -19,27 +18,28 @@ public class PaullozDotInk : EditorPlugin
             { "default", false }
         }}
     };
-    private const String addonBasePath = "res://addons/paulloz.ink";
+    private const string addonBasePath = "res://addons/paulloz.ink";
 
-    private NodePath customTypeScriptPath = $"{addonBasePath}/InkStory.cs";
-    private NodePath customTypeIconPath = $"{addonBasePath}/icon.svg";
+    private readonly NodePath customTypeScriptPath = $"{addonBasePath}/InkStory.cs";
+    private readonly NodePath customTypeIconPath = $"{addonBasePath}/icon.svg";
 
-    private NodePath dockScene = $"{addonBasePath}/InkDock.tscn";
+    private readonly NodePath dockScene = $"{addonBasePath}/InkDock.tscn";
     private Control dock;
 
-    private NodePath importPluginScriptPath = $"{addonBasePath}/import_ink.gd";
+    private readonly NodePath importPluginScriptPath = $"{addonBasePath}/import_ink.gd";
     private EditorImportPlugin importPlugin;
 
     public override void _EnterTree()
     {
         // Settings
-        foreach (String key in settings.Keys)
+        foreach (string key in settings.Keys)
         {
-            String propertyName = $"ink/{key}";
+            string propertyName = $"ink/{key}";
             Dictionary setting = settings[key] as Dictionary;
             if (!ProjectSettings.HasSetting(propertyName))
                 ProjectSettings.SetSetting(propertyName, setting["default"]);
-            ProjectSettings.AddPropertyInfo(new Dictionary() {
+            ProjectSettings.AddPropertyInfo(new Dictionary()
+            {
                 { "name", propertyName },
                 { "type", setting["type"] },
                 { "hint", setting.Contains("hint") ? setting["hint"] : null },
@@ -74,12 +74,11 @@ public class PaullozDotInk : EditorPlugin
         RemoveImportPlugin(importPlugin);
 
         // Settings
-        foreach (String key in settings.Keys)
+        foreach (string key in settings.Keys)
         {
-            String property_name = $"ink/{key}";
-            if (ProjectSettings.HasSetting(property_name)) {
+            string property_name = $"ink/{key}";
+            if (ProjectSettings.HasSetting(property_name))
                 ProjectSettings.SetSetting(property_name, null);
-            }
         }
     }
 }
