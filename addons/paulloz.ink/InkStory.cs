@@ -58,7 +58,7 @@ public class InkStory : Node
             RemoveVariableObserver(varName, false);
         observedVariables.Clear();
 
-        story =  null;
+        story = null;
     }
 
     /// <summary>
