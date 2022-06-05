@@ -3,7 +3,7 @@
 # Testing and filling issues
 
 If you experience any unexpected behaviour while using godot-ink, please submit a [GitHub issue](https://github.com/paulloz/godot-ink/issues/new/choose) using the appropriate template.  
-Before your submission, take a minute to search if your problem has already been reported.  
+Before your submission, take a minute to make sure your problem hasn't been already reported.  
 
 # Submitting changes
 
@@ -19,10 +19,7 @@ If your Pull Request is related to another [GitHub issue](https://github.com/pau
 
 # Coding conventions
 
-* You should indent using four spaces (soft tabs)
+* The C# coding style is defined in the [.editorconfig](.editorconfig) file.
 * GDScript code should name everything using snake_case
-* C# code should name public members using PascalCase and everything else using camelCase
-* Curly braces are mandatory and should follow K&R style
-* Operators should be surrounder by spaces
 * Comments are nice and healthy
 * In general, keep in mind your code will be read by others and should be tidy and nice to look at

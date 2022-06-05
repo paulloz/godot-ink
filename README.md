@@ -2,196 +2,69 @@
 
 An [ink](https://github.com/inkle/ink) integration for [Godot Engine](https://github.com/godotengine/godot).  
 
-If you like **godot-ink**, please consider buying me a coffee:  
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E53SKZF)
+## Requirements
 
-The following platforms have been tested with Godot 3.2.2:  
+* Godot (Mono version) 3.3+
+* ink 1.0.0+
+
+The following export platforms have been tested with Godot 3.3.2:  
  * Windows 🗸
  * Linux 🗸
  * WebAssembly 🗸
  * iOS 🗸
 
-I'm pretty sure this will also run fine on MacOS and Android but haven't witnessed it yet. If you end up testing an unlisted platform, please create an issue to tell me whether everything work or not.
+I'm pretty sure this will also run fine on MacOS and Android but haven't witnessed it myself yet. If you end up testing an unlisted platform, please create an issue to tell me whether everything works or not.
+
+## Contributing
+
+### Bug reports, feature/improvement requests
+
+If you're experiencing difficulties with *godot-ink*, feel free to open an issue on this repo. For bug reports, please use the provided template.
+
+### Contributing
+
+Contributions are, of course, welcome. Be sure to read the [contributing guide](CONTRIBUTING.md) beforehand, and to add yourself to the [AUTHORS](AUTHORS.md) file.
+
+### Support the development
+
+If you like *godot-ink*, please consider buying me a coffee.
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E53SKZF)
 
 ## Installation
 
-* Drop the `paulloz.ink/` folder in your project's `addons/` folder.
-* Make sure you have a `.csproj` file. If not, there's a menu for that in Godot: *Project -> Tools -> Mono -> Create C# Solution*.
-* Grab (or compile) `ink-engine-runtime.dll` from the [official ink repository](https://github.com/inkle/ink) and drop it at the root of your Godot project.
-* Add the following to you `.csproj` file:
-```xml
-<ItemGroup>
-    <Reference Include="Ink">
+The installation process is a bit brittle at the moment, but as long as you're doing everything in order, everything should be alright.
+
+1. Install *godot-ink* either through the Asset Library or by dropping the `addons/paulloz.ink/` folder in your project's `addons/` folder.
+1. Check your project contains a `.csproj` file.
+    * If not, there's a menu for that in Godot:  
+    `Project → Tools → Mono → Create C# Solution`
+1. Download the last [ink release](https://github.com/inkle/ink/releases).
+1. Drop the `ink-engine-runtime.dll` at the root of your project.
+1. Reference said file in your `.csproj` file.
+    ```xml
+    <ItemGroup>
+        <Reference Include="Ink">
         <HintPath>$(ProjectDir)/ink-engine-runtime.dll</HintPath>
         <Private>False</Private>
-    </Reference>
-</ItemGroup>
-```
-* Build your project.
-* Go to *Project -> Project Settings... -> Plugins* and tick the *Enable* checkbox.
-
-:robot: To ease the installation process, I made [installation scripts](https://gist.github.com/paulloz/18911ef7b9754cebeb622e724afe4159).  
-:warning: Beware, they probably aren't bulletproof.  
-:robot: But if you want to go that way they'll skip you steps 2, 3 and 4.
-
-## How to use
+        </Reference>
+    </ItemGroup>
+    ```
+1. Build your project.
+1. Enable *godot-ink* in the plugins tab of the project settings window.
 
 When the plugin is properly loaded, you should be able to use the new ink preview panel to inspect your story.
 
 ![](screenshots/inspector_screenshot.png)
 
-If you want to compile your `.ink` files directly, you'll also need to download the [ink compiler](https://github.com/inkle/ink/releases) on your computer and copy/paste the path to the `inklecate` binary into your project settings (*Project -> Project Settings... -> Ink -> Inklecate Path*). 
+### Optional: configure to compile ink files
 
-N.B : Use `inklecate.exe` binary for both Linux and Windows environments, but use the macOS `inklecate` binary for macOS.
+If you want to compile ink files directly from Godot, there are a few additional configuration steps.
 
----
-
-Everything is handled in an `InkStory` node.  
-In **GDScript** for some properties, you'll need to use a `get_` prefix (e.g. `get_CanContinue()` to access `CanContinue`). Trust your autocompletion.
-
-### Loading the story
-
-First you should navigate to your `.json` or `.ink` file and import it as an `Ink story` in Godot. To do that, select the file in Godot, go to `Import`, select `Ink story` under `Import As:` and click `ReImport`.
-
-![](screenshots/import_screenshot.png)
-
-To load your story, you can:
-
-* Point the `InkFile` exported variable to your `.json`/`.ink` file and check the `AutoLoadStory` checkbox in the inspector.
-* Point the `InkFile` exported variable to your `.json`/`.ink` file (in the inspector or via a script) and call `story.LoadStory()`.
-
-### Running the story and making choices
-
-Getting content from the story is done by calling the `.Continue()` method.
-```csharp
-InkStory story = GetNode<InkStory>("Story");
-
-while (story.CanContinue)
-{
-    GD.Print(story.Continue());
-    // Alternatively, text can be accessed from story.CurrentText
-}
-```
-
-Choices are made with the `.ChooseChoiceIndex(int)` method.
-```csharp
-if (story.HasChoices)
-{
-    foreach (string choice in story.CurrentChoices)
-    {
-        GD.Print(choice);
-    }
-    ...
-    story.ChooseChoiceIndex(index);
-}
-```
-
-### Using signals
-
-If you don't want to bother accessing `CurrentText` and `CurrentChoices`, signals are emitted when the story continues forward and when a new choice appears.
-
-```C#
-    ...
-    story.Connect(nameof(InkStory.InkContinued), this, "OnStoryContinued");
-    story.Connect(nameof(InkStory.InkChoices), this, "OnChoices");
-}
-
-public void OnStoryContinued(string text, string[] tags)
-{
-}
-
-public void OnStoryChoices(string[] choices)
-{
-}
-```
-
-The above signals are also available through the node inspector.
-
-### Save / Load
-
-You get and set the json state by calling `.GetState()` and `.SetState(string)`.
-
-```csharp
-string state = story.GetState();
-...
-story.SetState(state);
-```
-
-Alternatively you can save and load directly from disk (either by passing a path or a file as argument) with `.LoadStateFromDisk` and `.SaveStateOnDisk`.  
-When using a path, the default behaviour is to use the `user://` folder. You can bypass this by passing a full path to the functions (e.g. `res://my_dope_save_file.json`).
-
-```csharp
-story.SaveStateOnDisk("save.json");
-story.LoadStateFromDisk("save.json");
-```
-
-If you need to, those functions can also take a `File` in parameter.
-```csharp
-File file = new File();
-file.Open("user://save.json", File.ModeFlags.Write);
-story.SaveStateOnDisk(file);
-file.Close();
-
-
-file.open("user://save.json", File.ModeFlags.Read);
-story.LoadStateFromDisk(file);
-file.Close();
-```
-
-### Tags
-
-Tags, global tags and knot tags are accessible respectively through `.CurrentTags`, `.GlobalTags` and `.TagsForContentAtPath(string)`.
-
-```csharp
-GD.Print(story.CurrentTags);
-GD.Print(story.GlobalTags);
-GD.Print(story.TagsForContentAtPath("mycoolknot"));
-```
-
-As shown above, current tags are also passed along the current text in the `InkContinued` event.
-
-### Jumping to a Knot/Stitch
-
-You can [jump to a particular knot or stitch](https://github.com/inkle/ink/blob/master/Documentation/RunningYourInk.md#jumping-to-a-particular-scene) with `.ChoosePathString(string)`. This method will return `false` if the jump failed.
-
-```csharp
-if story.ChoosePathString("mycoolknot.myradstitch") {
-    story.Continue();
-}
-```
-
-### Using Ink variables
-
-Ink variables (except InkLists for now) can be get and set.
-
-```csharp
-story.GetVariable("foo");
-story.SetVariable("foo", "bar");
-```
-
-They can also be observed with signals.
-
-```csharp
-    ...
-    story.connect(story.ObserveVariable("foo"), this, "FooObserver")
-}
-
-private void FooObserver(string name, string value)
-{
-    GD.Print($"{name} = {value}");
-}
-```
-
-If you're working with GDScript, you might want to enable **Marshall state variables** in your project's settings to avoid getting error when trying to access ink lists.
-
-#### Read/Visit count
-
-You can know how many times a knot/stitch has been visited with `.VisitCountPathString(string)`.
-
-```csharp
-GD.Print(story.VisitCountPathString("mycoolknot.myradstitch"));
-```
+1. Extract the entier [ink release](https://github.com/inkle/ink/releases) you downloaded earlier somewhere on your computer.
+    * It should contain an executable file named `inklecate`.
+1. In the project settings window, scroll down to the ink section and point the "Inklecate Path" field to the said executable file.
 
 ## License
 
-**godot-ink** is released under MIT license (see the [LICENSE](/LICENSE) file for more information).
+*godot-ink* is released under MIT license (see the [LICENSE](/LICENSE) file for more information).
