@@ -2,7 +2,7 @@ using Godot;
 
 public class WithSignals : Control
 {
-    private InkStory story;
+    private InkPlayer player;
     private StoryContainer container;
 
     private Timer timer;
@@ -10,7 +10,7 @@ public class WithSignals : Control
     public override void _Ready()
     {
         // Retrieve or create some Nodes we know we'll need quite often
-        story = GetNode<InkStory>("Story");
+        player = GetNode<InkPlayer>("InkPlayer");
         container = GetNode<StoryContainer>("Container");
         timer = new Timer()
         {
@@ -18,7 +18,7 @@ public class WithSignals : Control
             WaitTime = 0.3f,
             OneShot = true,
         };
-        timer.Connect("timeout", story, "Continue");
+        timer.Connect("timeout", player, "Continue");
         AddChild(timer);
 
         // Start the story
@@ -54,6 +54,6 @@ public class WithSignals : Control
     {
         container.CleanChoices();
         // Choose the clicked choice and continue onward
-        story.ChooseChoiceIndexAndContinue(choiceIndex);
+        player.ChooseChoiceIndexAndContinue(choiceIndex);
     }
 }

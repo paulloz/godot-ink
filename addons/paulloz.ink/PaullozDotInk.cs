@@ -20,7 +20,7 @@ public class PaullozDotInk : EditorPlugin
     };
     private const string addonBasePath = "res://addons/paulloz.ink";
 
-    private readonly NodePath customTypeScriptPath = $"{addonBasePath}/InkStory.cs";
+    private readonly NodePath customTypeScriptPath = $"{addonBasePath}/InkPlayer.cs";
     private readonly NodePath customTypeIconPath = $"{addonBasePath}/icon.svg";
 
     private readonly NodePath dockScene = $"{addonBasePath}/InkDock.tscn";
@@ -49,12 +49,14 @@ public class PaullozDotInk : EditorPlugin
         }
         ProjectSettings.Save();
 
+        // Custom types
+        Texture icon = GD.Load<Texture>(customTypeIconPath);
+        CSharpScript customTypeScript = GD.Load<CSharpScript>(customTypeScriptPath);
+        AddCustomType("InkPlayer", "Node", customTypeScript, icon);
+
         // Resources
         importPlugin = GD.Load<GDScript>(importPluginScriptPath).New() as EditorImportPlugin;
         AddImportPlugin(importPlugin);
-
-        // Custom types
-        AddCustomType("Ink Story", "Node", GD.Load<Script>(customTypeScriptPath), GD.Load<Texture>(customTypeIconPath));
 
         // Editor
         dock = GD.Load<PackedScene>(dockScene).Instance() as Control;
@@ -67,11 +69,12 @@ public class PaullozDotInk : EditorPlugin
         RemoveControlFromBottomPanel(dock);
         dock.Free();
 
-        // Custom types
-        RemoveCustomType("Ink Story");
-
         // Resources
         RemoveImportPlugin(importPlugin);
+        importPlugin.Free();
+
+        // Custom types
+        RemoveCustomType("InkPlayer");
 
         // Settings
         foreach (string key in settings.Keys)

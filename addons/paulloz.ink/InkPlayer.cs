@@ -5,7 +5,7 @@ using System.Collections.Generic;
 #if TOOLS
 [Tool]
 #endif
-public class InkStory : Node
+public class InkPlayer : Node
 {
     private bool shouldMarshallVariables = false;
 
@@ -23,17 +23,17 @@ public class InkStory : Node
     private readonly List<string> observedVariables = new List<string>();
     private Ink.Runtime.Story.VariableObserver observer;
 
-    [Export] public bool AutoLoadStory = false;
-    [Export] public Resource InkFile = null;
+    [Export] private bool autoLoadStory = false;
+    [Export] private Resource story = null;
 
-    public string CurrentText => story?.currentText ?? default;
-    public string[] CurrentTags => story?.currentTags.ToArray() ?? Array.Empty<string>();
-    public string[] CurrentChoices => story?.currentChoices.ConvertAll(choice => choice.text).ToArray() ?? Array.Empty<string>();
-    public bool CanContinue => story?.canContinue ?? false;
-    public bool HasChoices => story?.currentChoices.Count > 0;
-    public string[] GlobalTags => story?.globalTags?.ToArray() ?? Array.Empty<string>();
+    public string CurrentText => inkStory?.currentText ?? default;
+    public string[] CurrentTags => inkStory?.currentTags.ToArray() ?? default;
+    public string[] CurrentChoices => inkStory?.currentChoices.ConvertAll(choice => choice.text).ToArray() ?? default;
+    public bool CanContinue => inkStory?.canContinue ?? false;
+    public bool HasChoices => inkStory?.currentChoices.Count > 0;
+    public string[] GlobalTags => inkStory?.globalTags?.ToArray() ?? default;
 
-    private Ink.Runtime.Story story = null;
+    private Ink.Runtime.Story inkStory = null;
 
     public override void _Ready()
     {
@@ -45,76 +45,105 @@ public class InkStory : Node
                 EmitSignal(ObservedVariableSignalName(varName), varName, MarshallVariableValue(varValue));
         };
 
-        if (!AutoLoadStory) return;
+        if (!autoLoadStory) return;
 
         LoadStory();
     }
 
     private void Reset()
     {
-        if (story == null) return;
+        if (inkStory == null) return;
 
         foreach (string varName in observedVariables)
             RemoveVariableObserver(varName, false);
         observedVariables.Clear();
 
-        story = null;
+        inkStory = null;
     }
 
     /// <summary>
-    /// Actually load the story content from <see cref="InkFile"/>.
-    /// This method is automatically called in <see cref="_Ready"/> if <see cref="AutoLoadStory"/> is true.
+    /// Actually load the story content from <see cref="story"/>.
+    /// This method is automatically called in <see cref="_Ready"/> if <see cref="autoLoadStory"/> is true.
     /// </summary>
-    /// <returns>False if there was an error while loading, true otherwise.</returns>
-    public bool LoadStory()
+    /// <returns>Error.InvalidData if there was an error while loading, Error.Ok otherwise.</returns>
+    public Error LoadStory()
     {
         Reset();
 
         if (!IsJSONFileValid())
         {
             GD.PrintErr("The story you're trying to load is not valid.");
-            return false;
+            return Error.InvalidData;
         }
 
-        story = new Ink.Runtime.Story(InkFile.GetMeta("content") as string);
-        story.onError += OnStoryError;
-        return true;
+        inkStory = new Ink.Runtime.Story(story.GetMeta("content") as string);
+        inkStory.onError += OnStoryError;
+        return Error.Ok;
+    }
+
+    /// <summary>
+    /// Load the story content from <paramref name="story"/>.
+    /// </summary>
+    /// <param name="story">A reference to the TextFile resource representation of the story.</param>
+    /// <returns>Error.InvalidData if there was an error while loading, Error.Ok otherwise.</returns>
+    public Error LoadStory(Resource story)
+    {
+        this.story = story;
+        return LoadStory();
     }
 
     /// <summary>
     /// Load the story content from <paramref name="story"/>.
     /// </summary>
     /// <param name="story">A string containing the json representation of the story.</param>
-    /// <returns>False if there was an error while loading, true otherwise.</returns>
-    public bool LoadStoryFromString(string story)
+    /// <returns>Error.InvalidData if there was an error while loading, Error.Ok otherwise.</returns>
+    public Error LoadStory(string story)
     {
-        InkFile = new Resource();
-        InkFile.SetMeta("content", story);
-        return LoadStory();
+        return LoadStory(StoryFromRaw(story));
     }
 
     /// <summary>
     /// Call <see cref="LoadStory"/> and set its state to <paramref name="state"/>.
     /// </summary>
     /// <param name="state">A string containing the json representation of a story state.</param>
-    /// <returns>False if there was an error while loading, true otherwise.</returns>
-    public bool LoadStoryAndSetState(string state)
+    /// <returns>Error.InvalidData if there was an error while loading, Error.Ok otherwise.</returns>
+    public Error LoadStoryAndSetState(string state)
     {
-        if (!LoadStory())
-            return false;
+        if (LoadStory() is Error error && error != Error.Ok)
+            return error;
 
         SetState(state);
-        return true;
+        return Error.Ok;
     }
 
-    private bool IsJSONFileValid()
+    /// <summary>
+    /// Call <see cref="LoadStory"/> with <paramref name="story"/> and set its state to <paramref name="state"/>.
+    /// </summary>
+    /// <param name="story">A reference to the TextFile resource representation of the story.</param>
+    /// <param name="state">A string containing the json representation of a story state.</param>
+    /// <returns>Error.InvalidData if there was an error while loading, Error.Ok otherwise.</returns>
+    public Error LoadStoryAndSetState(Resource story, string state)
     {
-        return InkFile != null && InkFile.HasMeta("content");
+        this.story = story;
+        return LoadStoryAndSetState(state);
+    }
+
+    /// <summary>
+    /// Call <see cref="LoadStory"/> with <paramref name="story"/> and set its state to <paramref name="state"/>.
+    /// </summary>
+    /// <param name="story">A reference to the TextFile resource representation of the story.</param>
+    /// <param name="state">A string containing the json representation of a story state.</param>
+    /// <returns>Error.InvalidData if there was an error while loading, Error.Ok otherwise.</returns>
+    public Error LoadStoryAndSetState(string story, string state)
+    {
+        this.story = StoryFromRaw(story);
+        return LoadStoryAndSetState(state);
     }
 
     /// <summary>
     /// Continue the story for one line of content.
     /// </summary>
+    /// <returns>The next line of story content.</returns>
     public string Continue()
     {
         string text = null;
@@ -122,7 +151,7 @@ public class InkStory : Node
         // Continue if we can
         if (CanContinue)
         {
-            story.Continue();
+            inkStory.Continue();
             text = CurrentText;
 
             EmitSignal(nameof(InkContinued), new object[] { CurrentText, CurrentTags });
@@ -143,14 +172,15 @@ public class InkStory : Node
     /// <param name="index">The index of the choice to choose from CurrentChoices.</param>
     public void ChooseChoiceIndex(int index)
     {
-        if (index < 0 || index >= story?.currentChoices.Count) return;
-        story.ChooseChoiceIndex(index);
+        if (index < 0 || index >= inkStory?.currentChoices.Count) return;
+        inkStory.ChooseChoiceIndex(index);
     }
 
     /// <summary>
     /// Choose a choice from the CurrentChoices and automatically continue the story for one line of content.
     /// </summary>
     /// <param name="index">The index of the choice to choose from CurrentChoices.</param>
+    /// <returns>The next line of story content.</returns>
     public string ChooseChoiceIndexAndContinue(int index)
     {
         ChooseChoiceIndex(index);
@@ -164,11 +194,11 @@ public class InkStory : Node
     /// <returns>False if there was an error during the change, true otherwise.</returns>
     public bool ChoosePathString(string pathString)
     {
-        if (story == null)
+        if (inkStory != null)
         {
             try
             {
-                story.ChoosePathString(pathString);
+                inkStory.ChoosePathString(pathString);
 
                 return true;
             }
@@ -183,34 +213,35 @@ public class InkStory : Node
 
     public void SwitchFlow(string flowName)
     {
-        story?.SwitchFlow(flowName);
+        inkStory?.SwitchFlow(flowName);
     }
 
     public void SwitchToDefaultFlow()
     {
-        story?.SwitchToDefaultFlow();
+        inkStory?.SwitchToDefaultFlow();
     }
 
     public void RemoveFlow(string flowName)
     {
-        story?.RemoveFlow(flowName);
+        inkStory?.RemoveFlow(flowName);
     }
 
     public object GetVariable(string name)
     {
-        return MarshallVariableValue(story?.variablesState[name]);
+        return MarshallVariableValue(inkStory?.variablesState[name]);
     }
 
     public void SetVariable(string name, object value_)
     {
-        if (story == null) return;
+        if (inkStory == null) return;
 
-        story.variablesState[name] = value_;
+        inkStory.variablesState[name] = value_;
     }
 
     public string ObserveVariable(string name)
     {
-        if (story == null) return null;
+        if (inkStory == null)
+            return null;
 
         string signalName = ObservedVariableSignalName(name);
 
@@ -220,7 +251,7 @@ public class InkStory : Node
                 AddUserSignal(signalName);
 
             observedVariables.Add(name);
-            story.ObserveVariable(name, observer);
+            inkStory.ObserveVariable(name, observer);
         }
 
         return signalName;
@@ -228,7 +259,7 @@ public class InkStory : Node
 
     private void RemoveVariableObserver(string name, bool clear)
     {
-        if (story == null) return;
+        if (inkStory == null) return;
         if (!observedVariables.Contains(name)) return;
 
         string signalName = ObservedVariableSignalName(name);
@@ -240,7 +271,7 @@ public class InkStory : Node
             // Seems like there's no way to undo `AddUserSignal` so we're just going to unbind everything :/
         }
 
-        story.RemoveVariableObserver(null, name);
+        inkStory.RemoveVariableObserver(null, name);
 
         if (!clear) return;
 
@@ -254,7 +285,7 @@ public class InkStory : Node
 
     public int VisitCountAtPathString(string pathString)
     {
-        return story?.state.VisitCountAtPathString(pathString) ?? 0;
+        return inkStory?.state.VisitCountAtPathString(pathString) ?? 0;
     }
 
     public void BindExternalFunction(string inkFuncName, Node node, string funcName)
@@ -264,12 +295,12 @@ public class InkStory : Node
 
     public void BindExternalFunction(string inkFuncName, Node node, string funcName, bool lookaheadSafe)
     {
-        story?.BindExternalFunctionGeneral(inkFuncName, (object[] foo) => node.Call(funcName, foo), lookaheadSafe);
+        inkStory?.BindExternalFunctionGeneral(inkFuncName, (object[] foo) => node.Call(funcName, foo), lookaheadSafe);
     }
 
     public void BindExternalFunction(string inkFuncName, Func<object> func, bool lookaheadSafe)
     {
-        story?.BindExternalFunction(inkFuncName, func, lookaheadSafe);
+        inkStory?.BindExternalFunction(inkFuncName, func, lookaheadSafe);
     }
 
     public void BindExternalFunction(string inkFuncName, Func<object> func)
@@ -279,7 +310,7 @@ public class InkStory : Node
 
     public void BindExternalFunction<T>(string inkFuncName, Func<T, object> func, bool lookaheadSafe)
     {
-        story?.BindExternalFunction(inkFuncName, func, lookaheadSafe);
+        inkStory?.BindExternalFunction(inkFuncName, func, lookaheadSafe);
     }
 
     public void BindExternalFunction<T>(string inkFuncName, Func<T, object> func)
@@ -289,7 +320,7 @@ public class InkStory : Node
 
     public void BindExternalFunction<T1, T2>(string inkFuncName, Func<T1, T2, object> func, bool lookaheadSafe)
     {
-        story?.BindExternalFunction(inkFuncName, func, lookaheadSafe);
+        inkStory?.BindExternalFunction(inkFuncName, func, lookaheadSafe);
     }
 
     public void BindExternalFunction<T1, T2>(string inkFuncName, Func<T1, T2, object> func)
@@ -299,7 +330,7 @@ public class InkStory : Node
 
     public void BindExternalFunction<T1, T2, T3>(string inkFuncName, Func<T1, T2, T3, object> func, bool lookaheadSafe)
     {
-        story?.BindExternalFunction(inkFuncName, func, lookaheadSafe);
+        inkStory?.BindExternalFunction(inkFuncName, func, lookaheadSafe);
     }
 
     public void BindExternalFunction<T1, T2, T3>(string inkFuncName, Func<T1, T2, T3, object> func)
@@ -309,7 +340,7 @@ public class InkStory : Node
 
     public void BindExternalFunction<T1, T2, T3, T4>(string inkFuncName, Func<T1, T2, T3, T4, object> func, bool lookaheadSafe)
     {
-        story?.BindExternalFunction(inkFuncName, func, lookaheadSafe);
+        inkStory?.BindExternalFunction(inkFuncName, func, lookaheadSafe);
     }
 
     public void BindExternalFunction<T1, T2, T3, T4>(string inkFuncName, Func<T1, T2, object> func)
@@ -320,31 +351,31 @@ public class InkStory : Node
     public object EvaluateFunction(string functionName, bool returnTextOutput, params object[] arguments)
     {
         if (!returnTextOutput)
-            return story?.EvaluateFunction(functionName, arguments);
+            return inkStory?.EvaluateFunction(functionName, arguments);
 
         string textOutput = null;
-        object returnValue = story?.EvaluateFunction(functionName, out textOutput, arguments);
+        object returnValue = inkStory?.EvaluateFunction(functionName, out textOutput, arguments);
         return new object[] { returnValue, textOutput };
     }
 
-    private object MarshallVariableValue(object value_)
+    private object MarshallVariableValue(object value)
     {
         if (!shouldMarshallVariables)
-            return value_;
+            return value;
 
-        if (value_ != null && value_.GetType() == typeof(Ink.Runtime.InkList))
-            value_ = null;
-        return value_;
+        if (value != null && value.GetType() == typeof(Ink.Runtime.InkList))
+            value = null;
+        return value;
     }
 
     public string GetState()
     {
-        return story.state.ToJson();
+        return inkStory.state.ToJson();
     }
 
     public void SetState(string state)
     {
-        story.state.LoadJson(state);
+        inkStory.state.LoadJson(state);
     }
 
     public void SaveStateOnDisk(string path)
@@ -359,8 +390,9 @@ public class InkStory : Node
 
     public void SaveStateOnDisk(File file)
     {
-        if (file.IsOpen())
-            file.StoreString(GetState());
+        if (!file.IsOpen()) return;
+
+        file.StoreString(GetState());
     }
 
     public void LoadStateFromDisk(string path)
@@ -375,25 +407,34 @@ public class InkStory : Node
 
     public void LoadStateFromDisk(File file)
     {
-        if (file.IsOpen())
-        {
-            file.Seek(0);
-            if (file.GetLen() > 0)
-                story.state.LoadJson(file.GetAsText());
-        }
+        if (!file.IsOpen()) return;
+
+        file.Seek(0);
+        if (file.GetLen() > 0)
+            inkStory.state.LoadJson(file.GetAsText());
     }
 
     public string[] TagsForContentAtPath(string pathString)
     {
-        return story?.TagsForContentAtPath(pathString)?.ToArray() ?? Array.Empty<string>();
+        return inkStory?.TagsForContentAtPath(pathString)?.ToArray() ?? default;
     }
+
+    private bool IsJSONFileValid() => story?.HasMeta("content") ?? false;
 
     private void OnStoryError(string message, Ink.ErrorType errorType)
     {
         if (errorType == Ink.ErrorType.Author) return;  // This should never happen but eh? What's the cost of checking.
+
         if (GetSignalConnectionList(nameof(InkError)).Count > 0)
             EmitSignal(nameof(InkError), message, errorType == Ink.ErrorType.Warning);
         else
             GD.PrintErr($"Ink had an error. It is strongly suggested that you connect an error handler to InkError. {message}");
+    }
+
+    private Resource StoryFromRaw(string raw)
+    {
+        var story = new Resource();
+        story.SetMeta("content", raw);
+        return story;
     }
 }

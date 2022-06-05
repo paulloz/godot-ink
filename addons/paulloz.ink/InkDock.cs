@@ -5,7 +5,7 @@ using System.Linq;
 [Tool]
 public class InkDock : Control
 {
-    private InkStory story;
+    private InkPlayer player;
     private bool storyStarted;
 
     private Button loadButton;
@@ -54,9 +54,10 @@ public class InkDock : Control
 
     private void UpdateTop()
     {
-        bool hasStory = story != null;
+        bool hasStory = player != null;
 
-        storyNameLabel.Text = hasStory ? story.InkFile.ResourcePath : string.Empty;
+        // Do not judge me.
+        storyNameLabel.Text = hasStory ? ((Resource)player.Get("story")).ResourcePath : string.Empty;
 
         startButton.Visible = hasStory && !storyStarted;
         stopButton.Visible = hasStory && storyStarted;
@@ -69,21 +70,18 @@ public class InkDock : Control
     private void LoadStoryResource()
     {
         StopStory();
-        story = null;
+        player = null;
 
         if (!string.IsNullOrEmpty(fileDialog.CurrentFile))
         {
-            story = new InkStory()
-            {
-                AutoLoadStory = false,
-                InkFile = ResourceLoader.Load(fileDialog.CurrentPath),
-            };
+            player = new InkPlayer();
+            player.LoadStory(ResourceLoader.Load<Resource>(fileDialog.CurrentPath));
 
-            story.Connect(nameof(InkStory.InkContinued), this, nameof(OnStoryContinued));
-            story.Connect(nameof(InkStory.InkChoices), this, nameof(OnStoryChoices));
-            story.Connect(nameof(InkStory.InkEnded), this, nameof(OnStoryEnded));
+            player.Connect(nameof(InkPlayer.InkContinued), this, nameof(OnStoryContinued));
+            player.Connect(nameof(InkPlayer.InkChoices), this, nameof(OnStoryChoices));
+            player.Connect(nameof(InkPlayer.InkEnded), this, nameof(OnStoryEnded));
 
-            AddChild(story);
+            AddChild(player);
         }
 
         UpdateTop();
@@ -91,11 +89,10 @@ public class InkDock : Control
 
     private void StartStory()
     {
-        if (story == null) return;
+        if (player == null) return;
 
-        story.LoadStory();
         storyStarted = true;
-        story.Continue();
+        player.Continue();
 
         UpdateTop();
     }
@@ -103,7 +100,7 @@ public class InkDock : Control
     private void StopStory()
     {
         storyStarted = false;
-        story?.LoadStory();
+        player?.LoadStory();
 
         ClearStory(true);
     }
@@ -142,7 +139,7 @@ public class InkDock : Control
             }
         }
 
-        story.Continue();
+        player.Continue();
     }
 
     private void OnStoryChoices(string[] choices)
@@ -185,10 +182,10 @@ public class InkDock : Control
 
     private void ClickChoice(int idx)
     {
-        story.ChooseChoiceIndex(idx);
+        player.ChooseChoiceIndex(idx);
         RemoveAllChoices();
         AddToStory(new HSeparator());
-        story.Continue();
+        player.Continue();
     }
 
     private async void AddToStory(CanvasItem item)

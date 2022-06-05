@@ -84,7 +84,7 @@ func import_from_json(source_file, save_path, options):
         return ERR_FILE_UNRECOGNIZED
 
     var resource = Resource.new()
-    resource.set_meta("content", raw_content);
+    resource.set_meta("content", raw_content)
 
     return _save_resource(save_path, resource, options)
 

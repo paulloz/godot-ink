@@ -1,6 +1,21 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://addons/paulloz.ink/InkDock.cs" type="Script" id=1]
+
+[sub_resource type="Image" id=4]
+data = {
+"data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
+"format": "LumAlpha8",
+"height": 16,
+"mipmaps": false,
+"width": 16
+}
+
+[sub_resource type="ImageTexture" id=3]
+flags = 4
+flags = 4
+image = SubResource( 4 )
+size = Vector2( 16, 16 )
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.137255, 0.160784, 0.184314, 1 )
@@ -20,25 +35,26 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Left" type="VBoxContainer" parent="Container"]
-margin_right = 812.0
+margin_right = 1024.0
 margin_bottom = 600.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Top" type="HBoxContainer" parent="Container/Left"]
-margin_right = 812.0
-margin_bottom = 20.0
+margin_right = 1024.0
+margin_bottom = 22.0
 
 [node name="LoadButton" type="Button" parent="Container/Left/Top"]
-margin_right = 54.0
-margin_bottom = 20.0
+margin_right = 72.0
+margin_bottom = 22.0
 text = "Load..."
+icon = SubResource( 3 )
 
 [node name="Label" type="Label" parent="Container/Left/Top"]
-margin_left = 58.0
-margin_top = 3.0
-margin_right = 812.0
-margin_bottom = 17.0
+margin_left = 76.0
+margin_top = 4.0
+margin_right = 1024.0
+margin_bottom = 18.0
 size_flags_horizontal = 3
 
 [node name="StartButton" type="Button" parent="Container/Left/Top"]
@@ -47,6 +63,7 @@ margin_left = 679.0
 margin_right = 720.0
 margin_bottom = 20.0
 text = "Start"
+icon = SubResource( 3 )
 
 [node name="StopButton" type="Button" parent="Container/Left/Top"]
 visible = false
@@ -54,17 +71,20 @@ margin_left = 724.0
 margin_right = 764.0
 margin_bottom = 20.0
 text = "Stop"
+icon = SubResource( 3 )
 
 [node name="ClearButton" type="Button" parent="Container/Left/Top"]
 visible = false
 margin_left = 768.0
 margin_right = 812.0
 margin_bottom = 20.0
+disabled = true
 text = "Clear"
+icon = SubResource( 3 )
 
 [node name="Scroll" type="ScrollContainer" parent="Container/Left"]
-margin_top = 24.0
-margin_right = 812.0
+margin_top = 26.0
+margin_right = 1024.0
 margin_bottom = 600.0
 size_flags_horizontal = 11
 size_flags_vertical = 3
@@ -72,8 +92,8 @@ custom_styles/bg = SubResource( 1 )
 scroll_horizontal_enabled = false
 
 [node name="Margin" type="MarginContainer" parent="Container/Left/Scroll"]
-margin_right = 812.0
-margin_bottom = 576.0
+margin_right = 1024.0
+margin_bottom = 574.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/margin_right = 10
@@ -84,12 +104,13 @@ custom_constants/margin_bottom = 10
 [node name="StoryText" type="VBoxContainer" parent="Container/Left/Scroll/Margin"]
 margin_left = 10.0
 margin_top = 10.0
-margin_right = 802.0
-margin_bottom = 566.0
+margin_right = 1014.0
+margin_bottom = 564.0
 size_flags_horizontal = 11
 size_flags_vertical = 3
 
 [node name="Right" type="VBoxContainer" parent="Container"]
+visible = false
 margin_left = 824.0
 margin_right = 1024.0
 margin_bottom = 600.0

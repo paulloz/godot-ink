@@ -2,7 +2,7 @@ using Godot;
 
 public class WithLoop : Control
 {
-    private InkStory story;
+    private InkPlayer player;
     private StoryContainer container;
 
     private Timer timer;
@@ -10,7 +10,7 @@ public class WithLoop : Control
     public override void _Ready()
     {
         // Retrieve or create some Nodes we know we'll need quite often
-        story = GetNode<InkStory>("Story");
+        player = GetNode<InkPlayer>("InkPlayer");
         container = GetNode<StoryContainer>("Container");
 
         timer = new Timer()
@@ -28,23 +28,23 @@ public class WithLoop : Control
         if (timer.TimeLeft > 0) return;
 
         // Check if we have anything to consume
-        if (story.CanContinue)
+        if (player.CanContinue)
         {
-            string text = story.Continue().Trim();
+            string text = player.Continue().Trim();
             if (text.Length > 0)
                 container.Add(container.CreateText(text));
 
             // Maybe we have choices now that we moved on?
-            if (story.HasChoices)
+            if (player.HasChoices)
             {
                 container.Add(container.CreateSeparation(), 0.2f);
                 // Add a button for each choice
-                for (int i = 0; i < story.CurrentChoices.Length; ++i)
-                    container.Add(container.CreateChoice(story.CurrentChoices[i], i), 0.4f);
+                for (int i = 0; i < player.CurrentChoices.Length; ++i)
+                    container.Add(container.CreateChoice(player.CurrentChoices[i], i), 0.4f);
             }
             timer.Start();
         }
-        else if (!story.HasChoices)
+        else if (!player.HasChoices)
         {
             container.Add(container.CreateSeparation(), 0.4f);
             container.Add(container.CreateSeparation(), 0.5f);
@@ -57,6 +57,6 @@ public class WithLoop : Control
     {
         container.CleanChoices();
         // Choose the clicked choice
-        story.ChooseChoiceIndex(choiceIndex);
+        player.ChooseChoiceIndex(choiceIndex);
     }
 }
