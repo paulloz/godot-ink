@@ -74,7 +74,7 @@ VAR DEBUG = false
 === start === 
 
 //  Intro
-	- 	They are keeping me waitinggggg. 
+	- 	They are keeping me waitinggggg. # some tag, some other tag
 		*	Hut 14[]. The door was locked after I sat down. 
 		I don't even have a pen to do any work. There's a copy of the morning's intercept in my pocket, but staring at the jumbled letters will only drive me mad. 
 		I am not a machine, whatever they say about me.

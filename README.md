@@ -36,7 +36,7 @@ I'm pretty sure this will also run fine on MacOS and Android but haven't witness
 
 ## How to use
 
-When the plugin is properly loaded, you should be able to use the new ink panel to inspect your story.
+When the plugin is properly loaded, you should be able to use the new ink preview panel to inspect your story.
 
 ![](screenshots/inspector_screenshot.png)
 
@@ -66,7 +66,8 @@ Getting content from the story is done by calling the `.Continue()` method.
 ```csharp
 InkStory story = GetNode<InkStory>("Story");
 
-while (story.CanContinue) {
+while (story.CanContinue)
+{
     GD.Print(story.Continue());
     // Alternatively, text can be accessed from story.CurrentText
 }
@@ -74,8 +75,10 @@ while (story.CanContinue) {
 
 Choices are made with the `.ChooseChoiceIndex(int)` method.
 ```csharp
-if (story.HasChoices) {
-    foreach (string choice in story.CurrentChoices) {
+if (story.HasChoices)
+{
+    foreach (string choice in story.CurrentChoices)
+    {
         GD.Print(choice);
     }
     ...

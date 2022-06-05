@@ -58,7 +58,7 @@ public class PaullozDotInk : EditorPlugin
 
         // Editor
         dock = GD.Load<PackedScene>(dockScene).Instance() as Control;
-        AddControlToBottomPanel(dock, "Ink");
+        AddControlToBottomPanel(dock, "Ink preview");
     }
 
     public override void _ExitTree()

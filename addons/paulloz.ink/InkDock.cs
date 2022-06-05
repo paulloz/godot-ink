@@ -1,15 +1,22 @@
 #if TOOLS
 using Godot;
+using System.Linq;
 
 [Tool]
 public class InkDock : Control
 {
-    private Label fileName;
-    private Button resetButton;
+    private InkStory story;
+    private bool storyStarted;
+
     private Button loadButton;
     private FileDialog fileDialog;
 
-    private InkStory story;
+    private Label storyNameLabel;
+
+    private Button startButton;
+    private Button stopButton;
+    private Button clearButton;
+
     private VBoxContainer storyText;
     private VBoxContainer storyChoices;
 
@@ -17,70 +24,100 @@ public class InkDock : Control
 
     public override void _Ready()
     {
-        fileName = GetNode<Label>("Container/Top/Label");
-        resetButton = GetNode<Button>("Container/Top/ResetButton");
-        loadButton = GetNode<Button>("Container/Top/LoadButton");
+        // Initialize top.
+        loadButton = GetNode<Button>("Container/Left/Top/LoadButton");
         fileDialog = GetNode<FileDialog>("FileDialog");
-        storyText = GetNode<VBoxContainer>("Container/Bottom/Scroll/Margin/StoryText");
-        storyChoices = GetNode<VBoxContainer>("Container/Bottom/StoryChoices");
-        scroll = GetNode<ScrollContainer>("Container/Bottom/Scroll");
-        story = GetNode<InkStory>("Story");
+        storyNameLabel = GetNode<Label>("Container/Left/Top/Label");
+        startButton = GetNode<Button>("Container/Left/Top/StartButton");
+        stopButton = GetNode<Button>("Container/Left/Top/StopButton");
+        clearButton = GetNode<Button>("Container/Left/Top/ClearButton");
 
-        resetButton.Connect("pressed", this, nameof(OnResetButtonPressed));
-        loadButton.Connect("pressed", this, nameof(OnLoadButtonPressed));
-        fileDialog.Connect("popup_hide", this, nameof(OnFileDialogHide));
-        story.Connect(nameof(InkStory.InkChoices), this, nameof(OnStoryChoices));
-        story.Connect(nameof(InkStory.InkContinued), this, nameof(OnStoryContinued));
-        story.Connect(nameof(InkStory.InkEnded), this, nameof(OnStoryEnded));
+        loadButton.Connect("pressed", fileDialog, "popup_centered");
+        fileDialog.Connect("popup_hide", this, nameof(LoadStoryResource));
+        startButton.Connect("pressed", this, nameof(StartStory));
+        stopButton.Connect("pressed", this, nameof(StopStory));
+        clearButton.Connect("pressed", this, nameof(ClearStory), new Godot.Collections.Array { false });
+
+        // Initialize bottom.
+        storyText = GetNode<VBoxContainer>("Container/Left/Scroll/Margin/StoryText");
+        storyChoices = GetNode<VBoxContainer>("Container/Right/StoryChoices");
+        scroll = GetNode<ScrollContainer>("Container/Left/Scroll");
+
+        // Set icons.
+        loadButton.Icon = GetIcon("Load", "EditorIcons");
+        startButton.Icon = GetIcon("Play", "EditorIcons");
+        stopButton.Icon = GetIcon("Stop", "EditorIcons");
+        clearButton.Icon = GetIcon("Clear", "EditorIcons");
+
+        UpdateTop();
     }
 
-    private void ResetStoryContent()
+    private void UpdateTop()
+    {
+        bool hasStory = story != null;
+
+        storyNameLabel.Text = hasStory ? story.InkFile.ResourcePath : string.Empty;
+
+        startButton.Visible = hasStory && !storyStarted;
+        stopButton.Visible = hasStory && storyStarted;
+        clearButton.Visible = hasStory;
+        clearButton.Disabled = storyText.GetChildCount() <= 0;
+
+        storyChoices.GetParent<Control>().Visible = hasStory;
+    }
+
+    private void LoadStoryResource()
+    {
+        StopStory();
+        story = null;
+
+        if (!string.IsNullOrEmpty(fileDialog.CurrentFile))
+        {
+            story = new InkStory()
+            {
+                AutoLoadStory = false,
+                InkFile = ResourceLoader.Load(fileDialog.CurrentPath),
+            };
+
+            story.Connect(nameof(InkStory.InkContinued), this, nameof(OnStoryContinued));
+            story.Connect(nameof(InkStory.InkChoices), this, nameof(OnStoryChoices));
+            story.Connect(nameof(InkStory.InkEnded), this, nameof(OnStoryEnded));
+
+            AddChild(story);
+        }
+
+        UpdateTop();
+    }
+
+    private void StartStory()
+    {
+        if (story == null) return;
+
+        story.LoadStory();
+        storyStarted = true;
+        story.Continue();
+
+        UpdateTop();
+    }
+
+    private void StopStory()
+    {
+        storyStarted = false;
+        story?.LoadStory();
+
+        ClearStory(true);
+    }
+
+    private void ClearStory(bool clearChoices)
     {
         RemoveAllStoryContent();
-        RemoveAllChoices();
+        if (clearChoices)
+            RemoveAllChoices();
+
+        UpdateTop();
     }
 
-    private void RemoveAllStoryContent()
-    {
-        foreach (Node n in storyText.GetChildren())
-            storyText.RemoveChild(n);
-    }
-
-    private void RemoveAllChoices()
-    {
-        foreach (Node n in storyChoices.GetChildren())
-            storyChoices.RemoveChild(n);
-    }
-
-    private void OnResetButtonPressed()
-    {
-        ResetStoryContent();
-        story.LoadStory();
-        story.Continue();
-    }
-
-    private void OnLoadButtonPressed()
-    {
-        fileDialog.PopupCentered();
-    }
-
-    private void OnFileDialogHide()
-    {
-        ResetStoryContent();
-        fileName.Text = "";
-        if (fileDialog.CurrentFile == null || fileDialog.CurrentFile.Length == 0)
-            resetButton.Disabled = true;
-        else
-        {
-            resetButton.Disabled = false;
-            fileName.Text = fileDialog.CurrentFile;
-            story.InkFile = ResourceLoader.Load(fileDialog.CurrentPath);
-            story.LoadStory();
-            story.Continue();
-        }
-    }
-
-    private void OnStoryContinued(string text, string[] _)
+    private void OnStoryContinued(string text, string[] tags)
     {
         text = text.Trim();
         if (text.Length > 0)
@@ -91,6 +128,18 @@ public class InkDock : Control
                 Text = text,
             };
             AddToStory(newLine);
+
+            if (tags.Length > 0)
+            {
+                newLine = new Label()
+                {
+                    Autowrap = true,
+                    Align = Label.AlignEnum.Center,
+                    Text = $"# {string.Join(", ", tags)}",
+                };
+                newLine.AddColorOverride("font_color", GetColor("font_color_disabled", "Button"));
+                AddToStory(newLine);
+            }
         }
 
         story.Continue();
@@ -148,6 +197,18 @@ public class InkDock : Control
         await ToSignal(GetTree(), "idle_frame");
         await ToSignal(GetTree(), "idle_frame");
         scroll.ScrollVertical = (int)scroll.GetVScrollbar().MaxValue;
+    }
+
+    private void RemoveAllStoryContent()
+    {
+        foreach (Node n in storyText.GetChildren())
+            storyText.RemoveChild(n);
+    }
+
+    private void RemoveAllChoices()
+    {
+        foreach (Node n in storyChoices.GetChildren().OfType<Button>())
+            storyChoices.RemoveChild(n);
     }
 }
 #endif
