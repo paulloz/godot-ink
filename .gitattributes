@@ -15,3 +15,5 @@
 
 /icon.png export-ignore
 /project.godot export-ignore
+
+/addons/paulloz.ink/override.cfg

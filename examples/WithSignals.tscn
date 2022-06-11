@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://examples/TheIntercept.ink" type="TextFile" id=1]
+[ext_resource path="res://examples/TheIntercept.ink" type="Resource" id=1]
 [ext_resource path="res://Examples/StoryContainer.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Examples/WithSignals.cs" type="Script" id=3]
 [ext_resource path="res://addons/paulloz.ink/InkPlayer.cs" type="Script" id=4]

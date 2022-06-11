@@ -84,7 +84,7 @@ public class InkPlayer : Node
     /// <summary>
     /// Load the story content from <paramref name="story"/>.
     /// </summary>
-    /// <param name="story">A reference to the TextFile resource representation of the story.</param>
+    /// <param name="story">A reference to the Resource representation of the story.</param>
     /// <returns>Error.InvalidData if there was an error while loading, Error.Ok otherwise.</returns>
     public Error LoadStory(Resource story)
     {
@@ -119,7 +119,7 @@ public class InkPlayer : Node
     /// <summary>
     /// Call <see cref="LoadStory"/> with <paramref name="story"/> and set its state to <paramref name="state"/>.
     /// </summary>
-    /// <param name="story">A reference to the TextFile resource representation of the story.</param>
+    /// <param name="story">A reference to the Resource representation of the story.</param>
     /// <param name="state">A string containing the json representation of a story state.</param>
     /// <returns>Error.InvalidData if there was an error while loading, Error.Ok otherwise.</returns>
     public Error LoadStoryAndSetState(Resource story, string state)
@@ -131,7 +131,7 @@ public class InkPlayer : Node
     /// <summary>
     /// Call <see cref="LoadStory"/> with <paramref name="story"/> and set its state to <paramref name="state"/>.
     /// </summary>
-    /// <param name="story">A reference to the TextFile resource representation of the story.</param>
+    /// <param name="story">A reference to the Resource representation of the story.</param>
     /// <param name="state">A string containing the json representation of a story state.</param>
     /// <returns>Error.InvalidData if there was an error while loading, Error.Ok otherwise.</returns>
     public Error LoadStoryAndSetState(string story, string state)
