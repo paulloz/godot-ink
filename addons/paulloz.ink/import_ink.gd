@@ -52,12 +52,7 @@ func import_from_ink(source_file, save_path, options):
         var _err = OK
         var _output = []
         match OS.get_name():
-            "OSX":
-                _err = OS.execute(inklecate, arguments, true, _output)
-            "X11":
-                arguments.push_front(inklecate)
-                _err = OS.execute("mono", arguments, true, _output)
-            "Windows":
+            "OSX", "Windows", "X11":
                 _err = OS.execute(inklecate, arguments, true, _output)
             _:
                 return ERR_COMPILATION_FAILED
