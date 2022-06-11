@@ -5,6 +5,12 @@ root = true
 end_of_line = lf
 insert_final_newline = true
 
+[*.gd]
+
+indent_style = tab
+indent_size = 4
+tab_width = 4
+
 [*.cs]
 
 indent_style = space

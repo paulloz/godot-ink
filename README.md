@@ -65,6 +65,11 @@ If you want to compile ink files directly from Godot, there are a few additional
     * It should contain an executable file named `inklecate`.
 1. In the project settings window, scroll down to the ink section and point the "Inklecate Path" field to the said executable file.
 
+If you need to, this "Inklecate Path" can be overriden by setting a `override.cfg` file in the addon folder. This allows different developers on a team to have their version of the ink compiler wherever they want (if so, do not forget to ignore the `override.cfg` file in your VCS).
+```ini
+inklecate_path = "C:/Path/To/Your/inklecate.exe"
+```
+
 ## License
 
 *godot-ink* is released under MIT license (see the [LICENSE](/LICENSE) file for more information).
