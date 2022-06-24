@@ -79,7 +79,7 @@ func import_from_json(source_file: String, save_path: String, options: Dictionar
 	var raw_content: String = get_source_file_content(source_file)
 
 	var parsed_content: Dictionary = parse_json(raw_content)
-	if !parsed_content.has("inkVersion"):
+	if !parsed_content.has("inkVersion") and !parsed_content.has("customInkSnippets"):
 		return ERR_FILE_UNRECOGNIZED
 
 	var resource: Resource = Resource.new()
