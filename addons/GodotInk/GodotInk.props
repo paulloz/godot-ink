@@ -1,0 +1,6 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+      <ProjectReference Condition="$(DefineConstants.Contains('TOOLS'))" Include="$(InkProjectFolder)\compiler\ink_compiler.csproj" />
+      <ProjectReference Condition="!$(DefineConstants.Contains('TOOLS'))" Include="$(InkProjectFolder)\ink-engine-runtime\ink-engine-runtime.csproj" />
+  </ItemGroup>
+</Project>

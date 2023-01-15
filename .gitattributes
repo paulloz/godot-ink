@@ -1,7 +1,6 @@
 /.config/ export-ignore
 /.github/ export-ignore
 /examples/ export-ignore
-/screenshots/ export-ignore
 
 /.editorconfig export-ignore
 /.gitattributes export-ignore
@@ -15,5 +14,3 @@
 
 /icon.png export-ignore
 /project.godot export-ignore
-
-/addons/paulloz.ink/override.cfg
