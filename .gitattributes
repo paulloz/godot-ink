@@ -13,4 +13,8 @@
 /README.md export-ignore
 
 /icon.png export-ignore
+/icon.png.import export-ignore
 /project.godot export-ignore
+
+/GodotInk.csproj export-ignore
+/GodotInk.sln export-ignore
