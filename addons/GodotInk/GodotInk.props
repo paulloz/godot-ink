@@ -1,6 +1,6 @@
 <Project>
   <Choose>
-    <When Condition="$(DefineConstants.Contains('TOOLS'))">
+    <When Condition="'$(Configuration)' == 'Debug'">
       <ItemGroup>
         <ProjectReference Include="$(InkProjectFolder)\compiler\ink_compiler.csproj" />
       </ItemGroup>
