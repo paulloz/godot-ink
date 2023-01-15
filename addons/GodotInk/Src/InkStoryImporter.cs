@@ -11,6 +11,9 @@ namespace GodotInk;
 [Tool]
 public partial class InkStoryImporter : EditorImportPlugin
 {
+    private const string OPT_MASTER_FILE = "is_master_file";
+    private const string OPT_COMPRESS = "compress";
+
     public override string _GetImporterName() => "ink";
 
     public override string _GetVisibleName() => "Ink story";
@@ -29,8 +32,8 @@ public partial class InkStoryImporter : EditorImportPlugin
 
     public override Array<Dictionary> _GetImportOptions(string path, long presetIndex) => new()
     {
-        new() { { "name", "is_master_file" }, { "default_value", false } },
-        new() { { "name", "compress" }, { "default_value", true } }
+        new() { { "name", OPT_MASTER_FILE }, { "default_value", false } },
+        new() { { "name", OPT_COMPRESS }, { "default_value", true } }
     };
 
     public override bool _GetOptionVisibility(string path, StringName optionName, Dictionary options) => true;
@@ -40,10 +43,10 @@ public partial class InkStoryImporter : EditorImportPlugin
     {
         string destFile = $"{savePath}.{_GetSaveExtension()}";
 
-        if (!options["is_master_file"].AsBool())
+        if (!options[OPT_MASTER_FILE].AsBool())
             return (long)ResourceSaver.Save(new Resource(), destFile);
 
-        return (long)ImportFromInk(sourceFile, destFile, options["compress"].AsBool());
+        return (long)ImportFromInk(sourceFile, destFile, options[OPT_COMPRESS].AsBool());
     }
 
     private static Error ImportFromInk(string sourceFile, string destFile, bool shouldCompress)
