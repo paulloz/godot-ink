@@ -16,7 +16,7 @@ If you still want to try the current implementation, here's the installation pro
 ```
 * Create a `.csproj.user` file alongside your `.csproj` file. This file should not be tracked in VCS, must have the same name as your `.csproj` file and contain the following.
 ```xml
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project>
   <PropertyGroup>
     <InkProjectFolder>/path/to/the/ink/repository</InkProjectFolder>
   </PropertyGroup>
