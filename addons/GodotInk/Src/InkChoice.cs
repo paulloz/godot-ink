@@ -19,6 +19,11 @@ public partial class InkChoice : Godot.Object
 
     private readonly Choice inner;
 
+    private InkChoice()
+    {
+        inner = new Choice();
+    }
+
     public InkChoice(Choice inner)
     {
         this.inner = inner;
