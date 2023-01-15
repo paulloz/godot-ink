@@ -29,7 +29,8 @@ public partial class InkStoryImporter : EditorImportPlugin
 
     public override Array<Dictionary> _GetImportOptions(string path, long presetIndex) => new()
     {
-        new() { { "name", "is_master_file" }, { "default_value", false } }
+        new() { { "name", "is_master_file" }, { "default_value", false } },
+        new() { { "name", "compress" }, { "default_value", true } }
     };
 
     public override bool _GetOptionVisibility(string path, StringName optionName, Dictionary options) => true;
@@ -37,13 +38,15 @@ public partial class InkStoryImporter : EditorImportPlugin
     public override long _Import(string sourceFile, string savePath,
                                  Dictionary options, Array<string> platformVariants, Array<string> genFiles)
     {
-        if (!options["is_master_file"].AsBool())
-            return (long)ResourceSaver.Save(new Resource(), $"{savePath}.{_GetSaveExtension()}");
+        string destFile = $"{savePath}.{_GetSaveExtension()}";
 
-        return (long)ImportFromInk(sourceFile, savePath);
+        if (!options["is_master_file"].AsBool())
+            return (long)ResourceSaver.Save(new Resource(), destFile);
+
+        return (long)ImportFromInk(sourceFile, destFile, options["compress"].AsBool());
     }
 
-    private Error ImportFromInk(string sourceFile, string savePath)
+    private static Error ImportFromInk(string sourceFile, string destFile, bool shouldCompress)
     {
         using FileAccess file = FileAccess.Open(sourceFile, FileAccess.ModeFlags.Read);
 
@@ -52,14 +55,17 @@ public partial class InkStoryImporter : EditorImportPlugin
 
         Compiler compiler = new(file.GetAsText(), new Compiler.Options
         {
-            errorHandler = InkCompilerErrorHandler(sourceFile)
+            sourceFilename = sourceFile,
+            errorHandler = InkCompilerErrorHandler,
         });
 
         try
         {
-            InkStory resource = InkStory.Create(compiler.Compile().ToJson());
-
-            return ResourceSaver.Save(resource, $"{savePath}.{_GetSaveExtension()}");
+            string storyContent = compiler.Compile().ToJson();
+            InkStory resource = InkStory.Create(storyContent);
+            ResourceSaver.SaverFlags flags = shouldCompress ? ResourceSaver.SaverFlags.Compress
+                                                            : ResourceSaver.SaverFlags.None;
+            return ResourceSaver.Save(resource, destFile, flags);
         }
         catch (InvalidInkException)
         {
@@ -67,27 +73,17 @@ public partial class InkStoryImporter : EditorImportPlugin
         }
     }
 
-    private static ErrorHandler InkCompilerErrorHandler(string sourceFile)
+    private static void InkCompilerErrorHandler(string message, ErrorType errorType)
     {
-        string FormatMessage(string message)
+        switch (errorType)
         {
-            string[] splittedMessage = message.Split(':');
-            splittedMessage[1] = $" {sourceFile}{splittedMessage[1]}";
-            return string.Join(':', splittedMessage);
-        };
-
-        return (string message, ErrorType errorType) =>
-        {
-            switch (errorType)
-            {
-                case ErrorType.Warning:
-                    GD.PushWarning(FormatMessage(message));
-                    break;
-                case ErrorType.Error:
-                    GD.PushError(FormatMessage(message));
-                    throw new InvalidInkException();
-            }
-        };
+            case ErrorType.Warning:
+                GD.PushWarning(message);
+                break;
+            case ErrorType.Error:
+                GD.PushError(message);
+                throw new InvalidInkException();
+        }
     }
 
     private class InvalidInkException : System.Exception
