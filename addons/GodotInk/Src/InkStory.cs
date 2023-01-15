@@ -19,6 +19,7 @@ public partial class InkStory : Resource
     public delegate void MadeChoiceEventHandler(InkChoice choice);
 
     [ExportCategory("Internal"), ExportGroup("Internal")]
+
     [Export]
     private string RawStory
     {

@@ -27,11 +27,19 @@ public partial class InkStoryImporter : EditorImportPlugin
 
     public override long _GetImportOrder() => 0;
 
-    public override Array<Dictionary> _GetImportOptions(string path, long presetIndex) => new Array<Dictionary>();
+    public override Array<Dictionary> _GetImportOptions(string path, long presetIndex) => new()
+    {
+        new() { { "name", "is_master_file" }, { "default_value", false } }
+    };
+
+    public override bool _GetOptionVisibility(string path, StringName optionName, Dictionary options) => true;
 
     public override long _Import(string sourceFile, string savePath,
                                  Dictionary options, Array<string> platformVariants, Array<string> genFiles)
     {
+        if (!options["is_master_file"].AsBool())
+            return (long)ResourceSaver.Save(new Resource(), $"{savePath}.{_GetSaveExtension()}");
+
         return (long)ImportFromInk(sourceFile, savePath);
     }
 
