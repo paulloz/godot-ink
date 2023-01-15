@@ -75,6 +75,8 @@ public partial class InkDock : Control
     {
         story = GD.Load<InkStory>(path);
 
+        story.Continued += ContinueStory;
+
         UpdateTop();
     }
 
@@ -83,7 +85,7 @@ public partial class InkDock : Control
         if (story == null) return;
 
         storyStarted = true;
-        ContinueStory();
+        _ = story.ContinueMaximally();
 
         UpdateTop();
     }
@@ -107,9 +109,9 @@ public partial class InkDock : Control
 
     private void ContinueStory()
     {
-        if (story == null || !story.CanContinue) return;
+        if (story == null) return;
 
-        string currentText = story.Continue();
+        string currentText = story.CurrentText.Trim();
 
         if (currentText.Length > 0)
         {
@@ -152,8 +154,6 @@ public partial class InkDock : Control
                 ++i;
             }
         }
-
-        ContinueStory();
     }
 
     private void ClickChoice(int idx)
@@ -164,7 +164,8 @@ public partial class InkDock : Control
         RemoveAllChoices();
         AddToStory(new HSeparator());
 
-        ContinueStory();
+        if (story.CanContinue)
+            _ = story.ContinueMaximally();
     }
 
     private async void AddToStory(CanvasItem item)

@@ -12,6 +12,12 @@ namespace GodotInk;
 #endif
 public partial class InkStory : Resource
 {
+    [Signal]
+    public delegate void ContinuedEventHandler();
+
+    [Signal]
+    public delegate void MadeChoiceEventHandler(InkChoice choice);
+
     [ExportCategory("Internal"), ExportGroup("Internal")]
     [Export]
     private string RawStory
@@ -37,7 +43,16 @@ public partial class InkStory : Resource
 
     private void InitializeRuntimeStory()
     {
+        if (runtimeStory != null)
+        {
+            runtimeStory.onDidContinue -= OnDidContinue;
+            runtimeStory.onMakeChoice -= OnMakeChoice;
+        }
+
         runtimeStory = new Story(compiledStory);
+
+        runtimeStory.onDidContinue += OnDidContinue;
+        runtimeStory.onMakeChoice += OnMakeChoice;
     }
 
     public List<InkChoice> CurrentChoices => WrapChoices(runtimeStory.currentChoices);
@@ -59,9 +74,6 @@ public partial class InkStory : Resource
     public bool HasError => runtimeStory.hasError;
 
     public bool HasWarning => runtimeStory.hasWarning;
-
-    // TODO: Implement onError, onDidContinue, onMakeChoice, onEvaluateFunction, onCompleteEvaluateFunction,
-    // onChoosePathString.
 
     /// <summary>
     /// Reset the Story back to its initial state as it was when it was
@@ -240,6 +252,16 @@ public partial class InkStory : Resource
     /// </summary>
     /// <param name="message"></param>
     public void Warning(string message) => runtimeStory.Warning(message);
+
+    private void OnDidContinue()
+    {
+        _ = EmitSignal(SignalName.Continued);
+    }
+
+    private void OnMakeChoice(Choice choice)
+    {
+        _ = EmitSignal(SignalName.MadeChoice, new InkChoice(choice));
+    }
 
     private static Variant InkObjectToVariant(object? obj)
     {
