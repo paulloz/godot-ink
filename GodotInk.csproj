@@ -6,15 +6,5 @@
     <PublishReferencesDocumentationFiles>false</PublishReferencesDocumentationFiles>
   </PropertyGroup>
 
-  <Target Name="RemovePdbFiles" AfterTargets="publish" Condition="'$(Configuration)' == 'ExportRelease'">
-    <ItemGroup>
-      <FilesToDelete Include="$(PublishDir)*.pdb" />
-    </ItemGroup>
-    <Delete Files="@(FilesToDelete)">
-      <Output TaskParameter="DeletedFiles" ItemName="FilesDeleted" />
-    </Delete>
-    <Message Text="Files deleted: @(FilesToDelete)" />
-  </Target>
-
   <Import Project="addons\GodotInk\GodotInk.props" />
 </Project>
