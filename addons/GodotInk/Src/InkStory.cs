@@ -203,6 +203,24 @@ public partial class InkStory : Resource
     }
 
     /// <summary>
+    /// Evaluates a function defined in ink.
+    /// </summary>
+    /// <param name="functionName">The name of the function as declared in ink.</param>
+    /// <param name="arguments">
+    /// The arguments that the ink function takes, if any. Note that we don't (can't) do any
+    /// validation on the number of arguments right now, so make sure you get it right!
+    /// </param>
+    /// <returns>
+    /// The return value as returned from the ink function with `~ return myValue`, or a nil
+    /// variant if nothing is returned.
+    /// </returns>
+    public Variant EvaluateFunction(string functionName, Godot.Collections.Array<Variant> arguments)
+    {
+        object? result = runtimeStory.EvaluateFunction(functionName, VariantsToInkObjects(arguments));
+        return InkObjectToVariant(result);
+    }
+
+    /// <summary>
     /// Evaluates a function defined in ink, and gathers the possibly multi-line text as generated
     /// by the function. This text output is any text written as normal content within the function,
     /// as opposed to the return value, as returned with `~ return`.
@@ -353,20 +371,25 @@ public partial class InkStory : Resource
         };
     }
 
-    private static Variant[] InkObjectsToVariants(object?[] objects)
+    private static Variant[] InkObjectsToVariants(IList<object?> objects)
     {
-        Variant[] variants = new Variant[objects.Length];
-        for (int i = 0; i < variants.Length; ++i)
+        Variant[] variants = new Variant[objects.Count];
+        for (int i = 0; i < objects.Count; ++i)
             variants[i] = InkObjectToVariant(objects[i]);
         return variants;
     }
 
-    private static object?[] VariantsToInkObjects(Variant[] variants)
+    private static object?[] VariantsToInkObjects(IList<Variant> variants)
     {
-        object?[] objects = new object[variants.Length];
-        for (int i = 0; i < variants.Length; ++i)
+        object?[] objects = new object[variants.Count];
+        for (int i = 0; i < variants.Count; ++i)
             objects[i] = VariantToInkObject(variants[i]);
         return objects;
+    }
+
+    private static Story.ExternalFunction MakeTrampoline(Callable callable)
+    {
+        return (object?[] arguments) => VariantToInkObject(callable.Call(InkObjectsToVariants(arguments)));
     }
 
     private static List<InkChoice> WrapChoices(List<Choice> choices)
