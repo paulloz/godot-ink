@@ -43,4 +43,7 @@ public partial class InkStory
     /// </returns>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public Variant EvaluateFunction(string functionName) => EvaluateFunction(functionName, Array.Empty<Variant>());
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void BindExternalFunction(string funcName, Callable callable) => BindExternalFunction(funcName, callable, false);
 }

@@ -250,10 +250,219 @@ public partial class InkStory : Resource
     /// </summary>
     public bool AllowExternalFunctionFallbacks => runtimeStory.allowExternalFunctionFallbacks;
 
-    // TODO: Implement.
-    public void BindExternalFunction(string funcName, Func<object> func, bool lookaheadSafe = false)
+    /// <summary>
+    /// Bind a C# function to an ink EXTERNAL function declaration.
+    /// </summary>
+    /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
+    /// <param name="callable">The Godot Callable to bind.</param>
+    /// <param name="lookaheadSafe">The ink engine often evaluates further 
+    /// than you might expect beyond the current line just in case it sees 
+    /// glue that will cause the two lines to become one. In this case it's 
+    /// possible that a function can appear to be called twice instead of 
+    /// just once, and earlier than you expect. If it's safe for your 
+    /// function to be called in this way (since the result and side effect 
+    /// of the function will not change), then you can pass 'true'. 
+    /// Usually, you want to pass 'false', especially if you want some action 
+    /// to be performed in game code when this function is called.</param>
+    public void BindExternalFunction(string funcName, Callable callable, bool lookaheadSafe = false)
     {
-        throw new NotImplementedException();
+        Story.ExternalFunction trampoline = (object?[] arguments) => FromVariant(callable.Call(ToVariants(arguments)));
+        runtimeStory.BindExternalFunctionGeneral(funcName, trampoline, lookaheadSafe);
+    }
+
+    /// <summary>
+    /// Bind a C# function to an ink EXTERNAL function declaration.
+    /// </summary>
+    /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
+    /// <param name="func">The C# function to bind.</param>
+    /// <param name="lookaheadSafe">The ink engine often evaluates further 
+    /// than you might expect beyond the current line just in case it sees 
+    /// glue that will cause the two lines to become one. In this case it's 
+    /// possible that a function can appear to be called twice instead of 
+    /// just once, and earlier than you expect. If it's safe for your 
+    /// function to be called in this way (since the result and side effect 
+    /// of the function will not change), then you can pass 'true'. 
+    /// Usually, you want to pass 'false', especially if you want some action 
+    /// to be performed in game code when this function is called.</param>
+    public void BindExternalFunction(string funcName, Func<Variant> func, bool lookaheadSafe = false)
+    {
+        Func<object?> trampoline = () => FromVariant(func.Invoke());
+        runtimeStory.BindExternalFunction(funcName, trampoline, lookaheadSafe);
+    }
+
+    /// <summary>
+    /// Bind a C# function to an ink EXTERNAL function declaration.
+    /// </summary>
+    /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
+    /// <param name="func">The C# function to bind.</param>
+    /// <param name="lookaheadSafe">The ink engine often evaluates further 
+    /// than you might expect beyond the current line just in case it sees 
+    /// glue that will cause the two lines to become one. In this case it's 
+    /// possible that a function can appear to be called twice instead of 
+    /// just once, and earlier than you expect. If it's safe for your 
+    /// function to be called in this way (since the result and side effect 
+    /// of the function will not change), then you can pass 'true'. 
+    /// Usually, you want to pass 'false', especially if you want some action 
+    /// to be performed in game code when this function is called.</param>
+    public void BindExternalFunction<T>(string funcName, Func<T, Variant> func, bool lookaheadSafe = false)
+    {
+        Func<T, object?> trampoline = (T a) => FromVariant(func.Invoke(a));
+        runtimeStory.BindExternalFunction(funcName, trampoline, lookaheadSafe);
+    }
+
+    /// <summary>
+    /// Bind a C# function to an ink EXTERNAL function declaration.
+    /// </summary>
+    /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
+    /// <param name="func">The C# function to bind.</param>
+    /// <param name="lookaheadSafe">The ink engine often evaluates further 
+    /// than you might expect beyond the current line just in case it sees 
+    /// glue that will cause the two lines to become one. In this case it's 
+    /// possible that a function can appear to be called twice instead of 
+    /// just once, and earlier than you expect. If it's safe for your 
+    /// function to be called in this way (since the result and side effect 
+    /// of the function will not change), then you can pass 'true'. 
+    /// Usually, you want to pass 'false', especially if you want some action 
+    /// to be performed in game code when this function is called.</param>
+    public void BindExternalFunction<T1, T2>(string funcName, Func<T1, T2, Variant> func, bool lookaheadSafe = false)
+    {
+        Func<T1, T2, object?> trampoline = (T1 a, T2 b) => FromVariant(func.Invoke(a, b));
+        runtimeStory.BindExternalFunction(funcName, trampoline, lookaheadSafe);
+    }
+
+    /// <summary>
+    /// Bind a C# function to an ink EXTERNAL function declaration.
+    /// </summary>
+    /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
+    /// <param name="func">The C# function to bind.</param>
+    /// <param name="lookaheadSafe">The ink engine often evaluates further 
+    /// than you might expect beyond the current line just in case it sees 
+    /// glue that will cause the two lines to become one. In this case it's 
+    /// possible that a function can appear to be called twice instead of 
+    /// just once, and earlier than you expect. If it's safe for your 
+    /// function to be called in this way (since the result and side effect 
+    /// of the function will not change), then you can pass 'true'. 
+    /// Usually, you want to pass 'false', especially if you want some action 
+    /// to be performed in game code when this function is called.</param>
+    public void BindExternalFunction<T1, T2, T3>(string funcName, Func<T1, T2, T3, Variant> func, bool lookaheadSafe = false)
+    {
+        Func<T1, T2, T3, object?> trampoline = (T1 a, T2 b, T3 c) => FromVariant(func.Invoke(a, b, c));
+        runtimeStory.BindExternalFunction(funcName, trampoline, lookaheadSafe);
+    }
+
+    /// <summary>
+    /// Bind a C# function to an ink EXTERNAL function declaration.
+    /// </summary>
+    /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
+    /// <param name="func">The C# function to bind.</param>
+    /// <param name="lookaheadSafe">The ink engine often evaluates further 
+    /// than you might expect beyond the current line just in case it sees 
+    /// glue that will cause the two lines to become one. In this case it's 
+    /// possible that a function can appear to be called twice instead of 
+    /// just once, and earlier than you expect. If it's safe for your 
+    /// function to be called in this way (since the result and side effect 
+    /// of the function will not change), then you can pass 'true'. 
+    /// Usually, you want to pass 'false', especially if you want some action 
+    /// to be performed in game code when this function is called.</param>
+    public void BindExternalFunction<T1, T2, T3, T4>(string funcName, Func<T1, T2, T3, T4, Variant> func, bool lookaheadSafe = false)
+    {
+        Func<T1, T2, T3, T4, object?> trampoline = (T1 a, T2 b, T3 c, T4 d) => FromVariant(func.Invoke(a, b, c, d));
+        runtimeStory.BindExternalFunction(funcName, trampoline, lookaheadSafe);
+    }
+
+    /// <summary>
+    /// Bind a C# Action to an ink EXTERNAL function declaration.
+    /// </summary>
+    /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
+    /// <param name="act">The C# action to bind.</param>
+    /// <param name="lookaheadSafe">The ink engine often evaluates further 
+    /// than you might expect beyond the current line just in case it sees 
+    /// glue that will cause the two lines to become one. In this case it's 
+    /// possible that a function can appear to be called twice instead of 
+    /// just once, and earlier than you expect. If it's safe for your 
+    /// function to be called in this way (since the result and side effect 
+    /// of the function will not change), then you can pass 'true'. 
+    /// Usually, you want to pass 'false', especially if you want some action 
+    /// to be performed in game code when this function is called.</param>
+    public void BindExternalFunction(string funcName, Action action, bool lookaheadSafe = false)
+    {
+        runtimeStory.BindExternalFunction(funcName, action, lookaheadSafe);
+    }
+
+    /// <summary>
+    /// Bind a C# Action to an ink EXTERNAL function declaration.
+    /// </summary>
+    /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
+    /// <param name="act">The C# action to bind.</param>
+    /// <param name="lookaheadSafe">The ink engine often evaluates further 
+    /// than you might expect beyond the current line just in case it sees 
+    /// glue that will cause the two lines to become one. In this case it's 
+    /// possible that a function can appear to be called twice instead of 
+    /// just once, and earlier than you expect. If it's safe for your 
+    /// function to be called in this way (since the result and side effect 
+    /// of the function will not change), then you can pass 'true'. 
+    /// Usually, you want to pass 'false', especially if you want some action 
+    /// to be performed in game code when this function is called.</param>
+    public void BindExternalFunction<T>(string funcName, Action<T> action, bool lookaheadSafe = false)
+    {
+        runtimeStory.BindExternalFunction(funcName, action, lookaheadSafe);
+    }
+
+    /// <summary>
+    /// Bind a C# Action to an ink EXTERNAL function declaration.
+    /// </summary>
+    /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
+    /// <param name="act">The C# action to bind.</param>
+    /// <param name="lookaheadSafe">The ink engine often evaluates further 
+    /// than you might expect beyond the current line just in case it sees 
+    /// glue that will cause the two lines to become one. In this case it's 
+    /// possible that a function can appear to be called twice instead of 
+    /// just once, and earlier than you expect. If it's safe for your 
+    /// function to be called in this way (since the result and side effect 
+    /// of the function will not change), then you can pass 'true'. 
+    /// Usually, you want to pass 'false', especially if you want some action 
+    /// to be performed in game code when this function is called.</param>
+    public void BindExternalFunction<T1, T2>(string funcName, Action<T1, T2> action, bool lookaheadSafe = false)
+    {
+        runtimeStory.BindExternalFunction(funcName, action, lookaheadSafe);
+    }
+
+    /// <summary>
+    /// Bind a C# Action to an ink EXTERNAL function declaration.
+    /// </summary>
+    /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
+    /// <param name="act">The C# action to bind.</param>
+    /// <param name="lookaheadSafe">The ink engine often evaluates further 
+    /// than you might expect beyond the current line just in case it sees 
+    /// glue that will cause the two lines to become one. In this case it's 
+    /// possible that a function can appear to be called twice instead of 
+    /// just once, and earlier than you expect. If it's safe for your 
+    /// function to be called in this way (since the result and side effect 
+    /// of the function will not change), then you can pass 'true'. 
+    /// Usually, you want to pass 'false', especially if you want some action 
+    /// to be performed in game code when this function is called.</param>
+    public void BindExternalFunction<T1, T2, T3>(string funcName, Action<T1, T2, T3> action, bool lookaheadSafe = false)
+    {
+        runtimeStory.BindExternalFunction(funcName, action, lookaheadSafe);
+    }
+
+    /// <summary>
+    /// Bind a C# Action to an ink EXTERNAL function declaration.
+    /// </summary>
+    /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
+    /// <param name="act">The C# action to bind.</param>
+    /// <param name="lookaheadSafe">The ink engine often evaluates further 
+    /// than you might expect beyond the current line just in case it sees 
+    /// glue that will cause the two lines to become one. In this case it's 
+    /// possible that a function can appear to be called twice instead of 
+    /// just once, and earlier than you expect. If it's safe for your 
+    /// function to be called in this way (since the result and side effect 
+    /// of the function will not change), then you can pass 'true'. 
+    /// Usually, you want to pass 'false', especially if you want some action 
+    /// to be performed in game code when this function is called.</param>
+    public void BindExternalFunction<T1, T2, T3, T4>(string funcName, Action<T1, T2, T3, T4> action, bool lookaheadSafe = false)
+    {
+        runtimeStory.BindExternalFunction(funcName, action, lookaheadSafe);
     }
 
     /// <summary>
