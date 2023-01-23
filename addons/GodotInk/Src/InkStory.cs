@@ -4,6 +4,7 @@ using Godot;
 using Ink.Runtime;
 using System;
 using System.Collections.Generic;
+using static GodotInk.MarshalUtils;
 
 namespace GodotInk;
 
@@ -56,7 +57,7 @@ public partial class InkStory : Resource
         runtimeStory.onMakeChoice += OnMadeChoice;
     }
 
-    public List<InkChoice> CurrentChoices => WrapChoices(runtimeStory.currentChoices);
+    public List<InkChoice> CurrentChoices => ToVariants(runtimeStory.currentChoices);
 
     public string CurrentText => runtimeStory.currentText;
 
@@ -155,7 +156,7 @@ public partial class InkStory : Resource
 
     public void ChoosePathString(string path, bool resetCallstack, params Variant[] arguments)
     {
-        runtimeStory.ChoosePathString(path, resetCallstack, VariantsToInkObjects(arguments));
+        runtimeStory.ChoosePathString(path, resetCallstack, FromVariants(arguments));
     }
 
     public void ChoosePathString(string path, params Variant[] arguments)
@@ -198,8 +199,8 @@ public partial class InkStory : Resource
     /// </returns>
     public Variant EvaluateFunction(string functionName, params Variant[] arguments)
     {
-        object? result = runtimeStory.EvaluateFunction(functionName, VariantsToInkObjects(arguments));
-        return InkObjectToVariant(result);
+        object? result = runtimeStory.EvaluateFunction(functionName, FromVariants(arguments));
+        return ToVariant(result);
     }
 
     /// <summary>
@@ -216,8 +217,8 @@ public partial class InkStory : Resource
     /// </returns>
     public Variant EvaluateFunction(string functionName, Godot.Collections.Array<Variant> arguments)
     {
-        object? result = runtimeStory.EvaluateFunction(functionName, VariantsToInkObjects(arguments));
-        return InkObjectToVariant(result);
+        object? result = runtimeStory.EvaluateFunction(functionName, FromVariants(arguments));
+        return ToVariant(result);
     }
 
     /// <summary>
@@ -237,8 +238,8 @@ public partial class InkStory : Resource
     /// </returns>
     public Variant EvaluateFunction(string functionName, out string textOutput, params Variant[] arguments)
     {
-        object? result = runtimeStory.EvaluateFunction(functionName, out textOutput, VariantsToInkObjects(arguments));
-        return InkObjectToVariant(result);
+        object? result = runtimeStory.EvaluateFunction(functionName, out textOutput, FromVariants(arguments));
+        return ToVariant(result);
     }
 
     /// <summary>
@@ -335,68 +336,5 @@ public partial class InkStory : Resource
     private void OnMadeChoice(Choice choice)
     {
         _ = EmitSignal(SignalName.MadeChoice, new InkChoice(choice));
-    }
-
-    private static Variant InkObjectToVariant(object? obj)
-    {
-        return obj switch
-        {
-            bool b => Variant.CreateFrom(b),
-
-            int n => Variant.CreateFrom(n),
-            float n => Variant.CreateFrom(n),
-
-            string str => Variant.CreateFrom(str),
-
-            null => new Variant(),
-
-            _ => throw new ArgumentException($"Argument of type {obj.GetType()} is not valid."),
-        };
-    }
-
-    private static object? VariantToInkObject(Variant variant)
-    {
-        return variant.VariantType switch
-        {
-            Variant.Type.Bool => variant.AsBool(),
-
-            Variant.Type.Int => variant.AsInt32(),
-            Variant.Type.Float => variant.AsSingle(),
-
-            Variant.Type.String => variant.AsString(),
-
-            Variant.Type.Nil => null,
-
-            _ => throw new ArgumentException($"Argument of type {variant.Obj?.GetType()} is not valid."),
-        };
-    }
-
-    private static Variant[] InkObjectsToVariants(IList<object?> objects)
-    {
-        Variant[] variants = new Variant[objects.Count];
-        for (int i = 0; i < objects.Count; ++i)
-            variants[i] = InkObjectToVariant(objects[i]);
-        return variants;
-    }
-
-    private static object?[] VariantsToInkObjects(IList<Variant> variants)
-    {
-        object?[] objects = new object[variants.Count];
-        for (int i = 0; i < variants.Count; ++i)
-            objects[i] = VariantToInkObject(variants[i]);
-        return objects;
-    }
-
-    private static Story.ExternalFunction MakeTrampoline(Callable callable)
-    {
-        return (object?[] arguments) => VariantToInkObject(callable.Call(InkObjectsToVariants(arguments)));
-    }
-
-    private static List<InkChoice> WrapChoices(List<Choice> choices)
-    {
-        List<InkChoice> inkChoices = new();
-        foreach (Choice choice in choices)
-            inkChoices.Add(new InkChoice(choice));
-        return inkChoices;
     }
 }
