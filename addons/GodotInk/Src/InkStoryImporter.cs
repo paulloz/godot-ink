@@ -24,13 +24,13 @@ public partial class InkStoryImporter : EditorImportPlugin
 
     public override string _GetSaveExtension() => "res";
 
-    public override double _GetPriority() => 1.0;
+    public override float _GetPriority() => 1.0f;
 
-    public override long _GetPresetCount() => 0;
+    public override int _GetPresetCount() => 0;
 
-    public override long _GetImportOrder() => 0;
+    public override int _GetImportOrder() => 0;
 
-    public override Array<Dictionary> _GetImportOptions(string path, long presetIndex) => new()
+    public override Array<Dictionary> _GetImportOptions(string path, int presetIndex) => new()
     {
         new() { { "name", OPT_MASTER_FILE }, { "default_value", false } },
         new() { { "name", OPT_COMPRESS }, { "default_value", true } }
@@ -38,15 +38,15 @@ public partial class InkStoryImporter : EditorImportPlugin
 
     public override bool _GetOptionVisibility(string path, StringName optionName, Dictionary options) => true;
 
-    public override long _Import(string sourceFile, string savePath,
+    public override int _Import(string sourceFile, string savePath,
                                  Dictionary options, Array<string> platformVariants, Array<string> genFiles)
     {
         string destFile = $"{savePath}.{_GetSaveExtension()}";
 
         if (!options[OPT_MASTER_FILE].AsBool())
-            return (long)ResourceSaver.Save(new Resource(), destFile);
+            return (int)ResourceSaver.Save(new Resource(), destFile);
 
-        return (long)ImportFromInk(sourceFile, destFile, options[OPT_COMPRESS].AsBool());
+        return (int)ImportFromInk(sourceFile, destFile, options[OPT_COMPRESS].AsBool());
     }
 
     private static Error ImportFromInk(string sourceFile, string destFile, bool shouldCompress)

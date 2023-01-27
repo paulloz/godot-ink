@@ -9,7 +9,7 @@ namespace GodotInk;
 #if TOOLS
 [Tool]
 #endif
-public partial class InkChoice : Godot.Object
+public partial class InkChoice : GodotObject
 {
     public string Text => inner.text;
     public string PathStringOnChoice => inner.pathStringOnChoice;
