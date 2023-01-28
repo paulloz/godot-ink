@@ -61,33 +61,68 @@ public partial class InkStory : Resource
         runtimeStory.onMakeChoice += OnMadeChoice;
     }
 
-    public List<InkChoice> CurrentChoices => ToVariants(runtimeStory.currentChoices);
-
     public string CurrentText => runtimeStory.currentText;
+
+    public List<InkChoice> CurrentChoices => ToVariants(runtimeStory.currentChoices);
 
     public List<string> CurrentTags => runtimeStory.currentTags;
 
-    public List<string> CurrentErrors => runtimeStory.currentErrors;
+    public bool HasWarning => runtimeStory.hasWarning;
 
     public List<string> CurrentWarnings => runtimeStory.currentWarnings;
 
-    public string CurrentFlowName => runtimeStory.currentFlowName;
-
-    public bool CurrentFlowIsDefaultFlow => runtimeStory.currentFlowIsDefaultFlow;
-
-    public List<string> AliveFlowNames => runtimeStory.aliveFlowNames;
-
     public bool HasError => runtimeStory.hasError;
 
-    public bool HasWarning => runtimeStory.hasWarning;
+    public List<string> CurrentErrors => runtimeStory.currentErrors;
 
     /// <summary>
-    /// Reset the Story back to its initial state as it was when it was
-    /// first constructed.
+    /// Check whether more content is available if you were to call <c>Continue()</c> - i.e.
+    /// are we mid story rather than at a choice point or at the end.
     /// </summary>
-    public void ResetState()
+    public bool CanContinue => runtimeStory.canContinue;
+
+    /// <summary>
+    /// Continue the story for one line of content, if possible.
+    /// If you're not sure if there's more content available, for example if you
+    /// want to check whether you're at a choice point or at the end of the story,
+    /// you should call <c>canContinue</c> before calling this function.
+    /// </summary>
+    /// <returns>The line of text content.</returns>
+    public string Continue()
     {
-        runtimeStory.ResetState();
+        return runtimeStory.Continue();
+    }
+
+    /// <summary>
+    /// Continue the story until the next choice point or until it runs out of content.
+    /// This is as opposed to the Continue() method which only evaluates one line of
+    /// output at a time.
+    /// </summary>
+    /// <returns>The resulting text evaluated by the ink engine, concatenated together.</returns>
+    public string ContinueMaximally()
+    {
+        return runtimeStory.ContinueMaximally();
+    }
+
+    /// <summary>
+    /// Chooses the Choice from the currentChoices list with the given
+    /// index. Internally, this sets the current content path to that
+    /// pointed to by the Choice, ready to continue story evaluation.
+    /// </summary>
+    /// <param name="choiceIdx">The index of the choice to choose.</param>
+    public void ChooseChoiceIndex(int choiceIdx)
+    {
+        runtimeStory.ChooseChoiceIndex(choiceIdx);
+    }
+
+    public void ChoosePathString(string path, bool resetCallstack, params Variant[] arguments)
+    {
+        runtimeStory.ChoosePathString(path, resetCallstack, FromVariants(arguments));
+    }
+
+    public void ChoosePathString(string path, params Variant[] arguments)
+    {
+        ChoosePathString(path, true, arguments);
     }
 
     /// <summary>
@@ -104,13 +139,36 @@ public partial class InkStory : Resource
     }
 
     /// <summary>
-    /// 
+    /// Reset the Story back to its initial state as it was when it was
+    /// first constructed.
     /// </summary>
-    /// <param name="flowName"></param>
-    public void SwitchFlow(string flowName)
+    public void ResetState()
     {
-        runtimeStory.SwitchFlow(flowName);
+        runtimeStory.ResetState();
     }
+
+    /// <summary>
+    /// Get any global tags associated with the story. These are defined as
+    /// hash tags defined at the very top of the story.
+    /// </summary>
+    public List<string> GlobalTags => runtimeStory.globalTags;
+
+    /// <summary>
+    /// Gets any tags associated with a particular knot or knot.stitch.
+    /// These are defined as hash tags defined at the very top of a knot or stitch.
+    /// </summary>
+    /// <param name="path">The path of the knot or stitch, in the form "knot" or "knot.stitch".</param>
+    /// <returns>The list of tags.</returns>
+    public List<string> TagsForContentAtPath(string path)
+    {
+        return runtimeStory.TagsForContentAtPath(path);
+    }
+
+    public string CurrentFlowName => runtimeStory.currentFlowName;
+
+    public bool CurrentFlowIsDefaultFlow => runtimeStory.currentFlowIsDefaultFlow;
+
+    public List<string> AliveFlowNames => runtimeStory.aliveFlowNames;
 
     /// <summary>
     /// 
@@ -124,60 +182,27 @@ public partial class InkStory : Resource
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="flowName"></param>
+    public void SwitchFlow(string flowName)
+    {
+        runtimeStory.SwitchFlow(flowName);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
     public void SwitchToDefaultFlow()
     {
         runtimeStory.SwitchToDefaultFlow();
     }
 
     /// <summary>
-    /// Continue the story for one line of content, if possible.
-    /// If you're not sure if there's more content available, for example if you
-    /// want to check whether you're at a choice point or at the end of the story,
-    /// you should call <c>canContinue</c> before calling this function.
+    /// An ink file can provide a fallback functions for when when an EXTERNAL has been left
+    /// unbound by the client, and the fallback function will be called instead. Useful when
+    /// testing a story in playmode, when it's not possible to write a client-side C# external
+    /// function, but you don't want it to fail to run.
     /// </summary>
-    /// <returns>The line of text content.</returns>
-    public string Continue()
-    {
-        return runtimeStory.Continue();
-    }
-
-    /// <summary>
-    /// Check whether more content is available if you were to call <c>Continue()</c> - i.e.
-    /// are we mid story rather than at a choice point or at the end.
-    /// </summary>
-    public bool CanContinue => runtimeStory.canContinue;
-
-    /// <summary>
-    /// Continue the story until the next choice point or until it runs out of content.
-    /// This is as opposed to the Continue() method which only evaluates one line of
-    /// output at a time.
-    /// </summary>
-    /// <returns>The resulting text evaluated by the ink engine, concatenated together.</returns>
-    public string ContinueMaximally()
-    {
-        return runtimeStory.ContinueMaximally();
-    }
-
-    public void ChoosePathString(string path, bool resetCallstack, params Variant[] arguments)
-    {
-        runtimeStory.ChoosePathString(path, resetCallstack, FromVariants(arguments));
-    }
-
-    public void ChoosePathString(string path, params Variant[] arguments)
-    {
-        ChoosePathString(path, true, arguments);
-    }
-
-    /// <summary>
-    /// Chooses the Choice from the currentChoices list with the given
-    /// index. Internally, this sets the current content path to that
-    /// pointed to by the Choice, ready to continue story evaluation.
-    /// </summary>
-    /// <param name="choiceIdx">The index of the choice to choose.</param>
-    public void ChooseChoiceIndex(int choiceIdx)
-    {
-        runtimeStory.ChooseChoiceIndex(choiceIdx);
-    }
+    public bool AllowExternalFunctionFallbacks => runtimeStory.allowExternalFunctionFallbacks;
 
     /// <summary>
     /// Checks if a function exists.
@@ -245,14 +270,6 @@ public partial class InkStory : Resource
         object? result = runtimeStory.EvaluateFunction(functionName, out textOutput, FromVariants(arguments));
         return ToVariant(result);
     }
-
-    /// <summary>
-    /// An ink file can provide a fallback functions for when when an EXTERNAL has been left
-    /// unbound by the client, and the fallback function will be called instead. Useful when
-    /// testing a story in playmode, when it's not possible to write a client-side C# external
-    /// function, but you don't want it to fail to run.
-    /// </summary>
-    public bool AllowExternalFunctionFallbacks => runtimeStory.allowExternalFunctionFallbacks;
 
     /// <summary>
     /// Bind a C# function to an ink EXTERNAL function declaration.
@@ -478,41 +495,6 @@ public partial class InkStory : Resource
         runtimeStory.UnbindExternalFunction(funcName);
     }
 
-    // TODO: Implement.
-    public void ObserveVariable(string variableName, Story.VariableObserver observer)
-    {
-        throw new NotImplementedException();
-    }
-
-    // TODO: Implement.
-    public void ObserveVariables(IList<string> variableNames, Story.VariableObserver observer)
-    {
-        throw new NotImplementedException();
-    }
-
-    // TODO: Implement.
-    public void RemoveVariableObserver(Story.VariableObserver? observer = null, string? specificVariableName = null)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// Get any global tags associated with the story. These are defined as
-    /// hash tags defined at the very top of the story.
-    /// </summary>
-    public List<string> GlobalTags => runtimeStory.globalTags;
-
-    /// <summary>
-    /// Gets any tags associated with a particular knot or knot.stitch.
-    /// These are defined as hash tags defined at the very top of a knot or stitch.
-    /// </summary>
-    /// <param name="path">The path of the knot or stitch, in the form "knot" or "knot.stitch".</param>
-    /// <returns>The list of tags.</returns>
-    public List<string> TagsForContentAtPath(string path)
-    {
-        return runtimeStory.TagsForContentAtPath(path);
-    }
-
     /// <summary>
     /// 
     /// </summary>
@@ -539,8 +521,6 @@ public partial class InkStory : Resource
     public void Warning(string message)
     {
         runtimeStory.Warning(message);
-    }
-
     }
 
     private void OnContinued()
