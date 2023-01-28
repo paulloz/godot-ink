@@ -22,7 +22,7 @@ public partial class InkStory : Resource
     [ExportCategory("Internal"), ExportGroup("Internal")]
 
     [Export]
-    private string RawStory
+    protected virtual string RawStory
     {
         get => rawStory;
         set

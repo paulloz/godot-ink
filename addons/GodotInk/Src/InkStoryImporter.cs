@@ -44,7 +44,7 @@ public partial class InkStoryImporter : EditorImportPlugin
         string destFile = $"{savePath}.{_GetSaveExtension()}";
 
         if (!options[OPT_MAIN_FILE].AsBool())
-            return (int)ResourceSaver.Save(new Resource(), destFile);
+            return (int)ResourceSaver.Save(new StubInkStory(), destFile);
 
         return (int)ImportFromInk(sourceFile, destFile, options[OPT_COMPRESS].AsBool());
     }
