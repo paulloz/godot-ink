@@ -24,22 +24,22 @@ public partial class InkStory : Resource
     [Export]
     private string RawStory
     {
-        get => compiledStory;
+        get => rawStory;
         set
         {
-            compiledStory = value;
+            rawStory = value;
             InitializeRuntimeStory();
         }
     }
 
-    private string compiledStory = string.Empty;
+    private string rawStory = string.Empty;
     private Story runtimeStory = null!;
 
     public static InkStory Create(string rawStory)
     {
         return new InkStory()
         {
-            compiledStory = rawStory
+            rawStory = rawStory
         };
     }
 
@@ -51,7 +51,7 @@ public partial class InkStory : Resource
             runtimeStory.onMakeChoice -= OnMadeChoice;
         }
 
-        runtimeStory = new Story(compiledStory);
+        runtimeStory = new Story(rawStory);
 
         runtimeStory.onDidContinue += OnContinued;
         runtimeStory.onMakeChoice += OnMadeChoice;
