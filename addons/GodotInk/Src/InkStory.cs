@@ -8,6 +8,8 @@ using static GodotInk.MarshalUtils;
 
 namespace GodotInk;
 
+using PropertyList = Godot.Collections.Array<Godot.Collections.Dictionary>;
+
 #if TOOLS
 [Tool]
 #endif
@@ -19,9 +21,6 @@ public partial class InkStory : Resource
     [Signal]
     public delegate void MadeChoiceEventHandler(InkChoice choice);
 
-    [ExportCategory("Internal"), ExportGroup("Internal")]
-
-    [Export]
     protected virtual string RawStory
     {
         get => rawStory;
@@ -541,6 +540,8 @@ public partial class InkStory : Resource
         runtimeStory.Warning(message);
     }
 
+    }
+
     private void OnContinued()
     {
         _ = EmitSignal(SignalName.Continued);
@@ -549,5 +550,19 @@ public partial class InkStory : Resource
     private void OnMadeChoice(Choice choice)
     {
         _ = EmitSignal(SignalName.MadeChoice, new InkChoice(choice));
+    }
+
+    public override PropertyList _GetPropertyList()
+    {
+        PropertyList properties = base._GetPropertyList() ?? new();
+
+        properties.Add(new()
+        {
+            { "name", PropertyName.RawStory },
+            { "type", Variant.From(Variant.Type.Object) },
+            { "usage", Variant.From(PropertyUsageFlags.NoEditor) },
+        });
+
+        return properties;
     }
 }
