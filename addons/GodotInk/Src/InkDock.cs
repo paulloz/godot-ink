@@ -7,18 +7,19 @@ using System.Linq;
 namespace GodotInk;
 
 [Tool]
-public partial class InkDock : Control
+public partial class InkDock : VBoxContainer
 {
     private Button loadButton = null!;
     private Button startButton = null!;
     private Button stopButton = null!;
     private Button clearButton = null!;
-    private FileDialog fileDialog = null!;
 
     private Label storyNameLabel = null!;
     private VBoxContainer storyText = null!;
     private VBoxContainer storyChoices = null!;
     private ScrollContainer scroll = null!;
+
+    private EditorFileDialog fileDialog = null!;
 
     private InkStory? story;
     private bool storyStarted;
@@ -27,17 +28,28 @@ public partial class InkDock : Control
     {
         base._Ready();
 
+        CustomMinimumSize = new Vector2(0.0f, 228.0f);
+
+        // Initialize file dialog.
+        fileDialog = new()
+        {
+            FileMode = EditorFileDialog.FileModeEnum.OpenFile,
+            Access = EditorFileDialog.AccessEnum.Resources,
+        };
+        fileDialog.AddFilter("*.ink", "Ink Stories");
+        fileDialog.FileSelected += LoadStory;
+
+        AddChild(fileDialog);
+
         // Initialize top.
         loadButton = GetNode<Button>("Container/Left/Top/LoadButton");
-        fileDialog = GetNode<FileDialog>("FileDialog");
         storyNameLabel = GetNode<Label>("Container/Left/Top/Label");
         startButton = GetNode<Button>("Container/Left/Top/StartButton");
         stopButton = GetNode<Button>("Container/Left/Top/StopButton");
         clearButton = GetNode<Button>("Container/Left/Top/ClearButton");
 
         // Connect UI events.
-        loadButton.Pressed += () => fileDialog.PopupCentered();
-        fileDialog.FileSelected += LoadStory;
+        loadButton.Pressed += () => fileDialog.PopupCenteredClamped(new Vector2I(1050, 700), 0.8f);
         startButton.Pressed += StartStory;
         stopButton.Pressed += StopStory;
         clearButton.Pressed += () => ClearStory(false);
