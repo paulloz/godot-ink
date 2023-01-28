@@ -2,6 +2,8 @@
 
 An [ink](https://github.com/inkle/ink) integration for [Godot Engine](https://github.com/godotengine/godot).  
 
+**🔔 This version is only compatible with Godot 3. If you are looking to use Godot 4, please head to the [dedicated branch](https://github.com/paulloz/godot-ink/tree/godot-v4).**
+
 ## Requirements
 
 * Godot (Mono version) 3.3+
