@@ -12,10 +12,11 @@ public partial class StubInkStory : InkStory
         set
         {
 #if TOOLS
-            if (Engine.IsEditorHint())
-                return;
+            if (Engine.IsEditorHint()) return;
 #endif
-            throw new Ink.Runtime.StoryException("Not imported as main file.");
+            throw new InvalidInkException(
+                "To load this story directly, please import it with 'is_main_file' set to true."
+            );
         }
     }
 }

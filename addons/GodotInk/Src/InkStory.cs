@@ -30,8 +30,7 @@ public partial class InkStory : Resource
             rawStory = value;
 #if TOOLS
             // There's really no need to instantiate Ink.Runtime in the editor itself.
-            if (Engine.IsEditorHint())
-                return;
+            if (Engine.IsEditorHint()) return;
 #endif
             InitializeRuntimeStory();
         }

@@ -88,17 +88,6 @@ public partial class InkStoryImporter : EditorImportPlugin
                 throw new InvalidInkException();
         }
     }
-
-    private class InvalidInkException : System.Exception
-    {
-        public InvalidInkException() : base()
-        {
-        }
-
-        public InvalidInkException(string message) : base(message)
-        {
-        }
-    }
 }
 
 #endif
