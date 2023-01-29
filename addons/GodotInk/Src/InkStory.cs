@@ -201,6 +201,11 @@ public partial class InkStory : Resource
         return runtimeStory.state.VisitCountAtPathString(pathString);
     }
 
+    public Variant FetchVariable(string variableName)
+    {
+        return ToVariant(runtimeStory.variablesState.GetVariableWithName(variableName));
+    }
+
     /// <summary>
     /// 
     /// </summary>
