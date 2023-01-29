@@ -1,0 +1,8 @@
+[gd_resource type="Theme" load_steps=2 format=3]
+
+[ext_resource type="FontFile" uid="uid://dct2kher4ppwh" path="res://Examples/TeenyTiny/Assets/Kenney Mini.ttf" id="1_2e5tv"]
+
+[resource]
+RichTextLabel/colors/default_color = Color(0.870588, 0.870588, 0.870588, 1)
+RichTextLabel/font_sizes/normal_font_size = 8
+RichTextLabel/fonts/normal_font = ExtResource("1_2e5tv")

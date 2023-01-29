@@ -2,7 +2,7 @@
 
 importer="ink"
 type="Resource"
-uid="uid://7c4xpy3v7ewp"
+uid="uid://c1d3i03df51yq"
 path="res://.godot/imported/TheIntercept.ink-32fb29d7fa47e48c163ae951283153cf.res"
 
 [deps]
@@ -12,5 +12,5 @@ dest_files=["res://.godot/imported/TheIntercept.ink-32fb29d7fa47e48c163ae9512831
 
 [params]
 
-is_main_file=true
+is_main_file=false
 compress=true
