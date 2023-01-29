@@ -26,6 +26,7 @@ public static class MarshalUtils
             string str => Variant.CreateFrom(str),
 
             Ink.Runtime.Choice choice => new InkChoice(choice),
+            Ink.Runtime.InkList list => new InkList(list),
 
             null => new Variant(),
 
