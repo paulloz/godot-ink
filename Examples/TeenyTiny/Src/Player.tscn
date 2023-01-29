@@ -1,0 +1,100 @@
+[gd_scene load_steps=8 format=3 uid="uid://bj3yp5lmr2voa"]
+
+[ext_resource type="Script" path="res://Examples/TeenyTiny/Src/Player.cs" id="1_0dtpm"]
+[ext_resource type="Texture2D" uid="uid://ddhvukl68vwhx" path="res://Examples/TeenyTiny/Assets/Dungeon.png" id="2_wurm7"]
+
+[sub_resource type="Animation" id="Animation_hvjfu"]
+resource_name = "Idle"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MainSprite:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_8pvey"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MainSprite:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_p2cds"]
+resource_name = "Walk"
+length = 0.2
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MainSprite:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [Vector2(0, 0), Vector2(0, -2)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_4ekud"]
+_data = {
+"Idle": SubResource("Animation_hvjfu"),
+"RESET": SubResource("Animation_8pvey"),
+"Walk": SubResource("Animation_p2cds")
+}
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ueaw0"]
+radius = 7.0
+
+[node name="Player" type="CharacterBody2D"]
+position = Vector2(56, 47)
+collision_layer = 256
+collision_mask = 2
+motion_mode = 1
+script = ExtResource("1_0dtpm")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "Idle"
+libraries = {
+"": SubResource("AnimationLibrary_4ekud")
+}
+
+[node name="MainSprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_wurm7")
+hframes = 12
+vframes = 11
+frame = 84
+metadata/_edit_lock_ = true
+
+[node name="Pivot" type="Node2D" parent="."]
+position = Vector2(0, 1)
+
+[node name="Ray" type="RayCast2D" parent="Pivot"]
+target_position = Vector2(0, 12)
+collision_mask = 4
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+position = Vector2(0, 1)
+shape = SubResource("CircleShape2D_ueaw0")
+metadata/_edit_lock_ = true
+
+[node name="Camera" type="Camera2D" parent="."]
+current = true
+zoom = Vector2(2, 2)
+limit_left = 0
+limit_top = 0
