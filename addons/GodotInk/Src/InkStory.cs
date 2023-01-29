@@ -39,6 +39,9 @@ public partial class InkStory : Resource
     private string rawStory = string.Empty;
     private Story runtimeStory = null!;
 
+    private readonly Dictionary<string, HashSet<Callable>> observers = new();
+    private readonly Dictionary<string, Story.VariableObserver> internalObservers = new();
+
     public static InkStory Create(string rawStory)
     {
         return new InkStory()
@@ -213,7 +216,17 @@ public partial class InkStory : Resource
     /// <param name="observer"></param>
     public void ObserveVariable(string variableName, Callable observer)
     {
-        runtimeStory.ObserveVariable(variableName, WrapObserver(observer));
+        if (!internalObservers.ContainsKey(variableName))
+        {
+            Story.VariableObserver internalObserver = BuildObserver();
+            runtimeStory.ObserveVariable(variableName, internalObserver);
+            internalObservers[variableName] = internalObserver;
+        }
+
+        if (observers.ContainsKey(variableName))
+            _ = observers[variableName].Add(observer);
+        else
+            observers[variableName] = new() { observer };
     }
 
     /// <summary>
@@ -223,7 +236,20 @@ public partial class InkStory : Resource
     /// <param name="observer"></param>
     public void ObserveVariable(string[] variableNames, Callable observer)
     {
-        runtimeStory.ObserveVariables(new List<string>(variableNames), WrapObserver(observer));
+        foreach (string variableName in variableNames)
+            ObserveVariable(variableName, observer);
+    }
+
+    private Story.VariableObserver BuildObserver()
+    {
+        return delegate (string name, object? value)
+        {
+            if (!observers.TryGetValue(name, out var callables)) return;
+
+            Variant variant = ToVariant(value);
+            foreach (Callable callable in callables)
+                _ = callable.Call(name, variant);
+        };
     }
 
     /// <summary>
@@ -232,7 +258,19 @@ public partial class InkStory : Resource
     /// <param name="callable"></param>
     public void RemoveVariableObserver(Callable callable)
     {
-        throw new NotImplementedException();
+        foreach (string variableName in observers.Keys)
+            RemoveVariableObserver(callable, variableName);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="specificVariableName"></param>
+    public void RemoveVariableObserver(string specificVariableName)
+    {
+        runtimeStory.RemoveVariableObserver(null, specificVariableName);
+        _ = internalObservers.Remove(specificVariableName);
+        _ = observers.Remove(specificVariableName);
     }
 
     /// <summary>
@@ -240,9 +278,16 @@ public partial class InkStory : Resource
     /// </summary>
     /// <param name="callable"></param>
     /// <param name="specificVariableName"></param>
-    public void RemoveVariableObserver(Callable callable, string? specificVariableName)
+    public void RemoveVariableObserver(Callable callable, string specificVariableName)
     {
-        throw new NotImplementedException();
+        var callables = observers[specificVariableName];
+        if (!callables.Contains(callable)) return;
+
+        _ = callables.Remove(callable);
+        if (callables.Count > 0) return;
+
+        runtimeStory.RemoveVariableObserver(null, specificVariableName);
+        _ = internalObservers.Remove(specificVariableName);
     }
 
     /// <summary>
@@ -594,10 +639,5 @@ public partial class InkStory : Resource
         });
 
         return properties;
-    }
-
-    private static Story.VariableObserver WrapObserver(Callable observer)
-    {
-        return delegate (string name, object value) { _ = observer.Call(name, ToVariant(value)); };
     }
 }
