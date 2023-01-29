@@ -196,6 +196,11 @@ public partial class InkStory : Resource
         runtimeStory.SwitchToDefaultFlow();
     }
 
+    public int VisitCountAtPathString(string pathString)
+    {
+        return runtimeStory.state.VisitCountAtPathString(pathString);
+    }
+
     /// <summary>
     /// 
     /// </summary>
