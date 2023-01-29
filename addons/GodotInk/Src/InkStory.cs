@@ -197,6 +197,45 @@ public partial class InkStory : Resource
     }
 
     /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="variableName"></param>
+    /// <param name="observer"></param>
+    public void ObserveVariable(string variableName, Callable observer)
+    {
+        runtimeStory.ObserveVariable(variableName, WrapObserver(observer));
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="variableNames"></param>
+    /// <param name="observer"></param>
+    public void ObserveVariable(string[] variableNames, Callable observer)
+    {
+        runtimeStory.ObserveVariables(new List<string>(variableNames), WrapObserver(observer));
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="callable"></param>
+    public void RemoveVariableObserver(Callable callable)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="callable"></param>
+    /// <param name="specificVariableName"></param>
+    public void RemoveVariableObserver(Callable callable, string? specificVariableName)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
     /// An ink file can provide a fallback functions for when when an EXTERNAL has been left
     /// unbound by the client, and the fallback function will be called instead. Useful when
     /// testing a story in playmode, when it's not possible to write a client-side C# external
@@ -545,5 +584,10 @@ public partial class InkStory : Resource
         });
 
         return properties;
+    }
+
+    private static Story.VariableObserver WrapObserver(Callable observer)
+    {
+        return delegate (string name, object value) { _ = observer.Call(name, ToVariant(value)); };
     }
 }
