@@ -1,0 +1,26 @@
+name: 🚥 .NET Format check
+on:
+  pull_request:
+    paths:
+      - '**.cs'
+  workflow_dispatch:
+jobs:
+  main:
+    name: 🚥 .NET Format check
+    runs-on: ubuntu-latest
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_NOLOGO: 1
+    steps:
+      - name: 📦 Checkout
+        uses: actions/checkout@v3
+      - name: 🔩 Set up .NET environment
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+      - name: 📦 Restore Dependencies
+        run: |
+          dotnet restore
+          dotnet msbuild -t:DownloadInkDependency -p:Configuration=Debug
+      - name: 🔬 Verify style, whitespaces, and run diagnostics
+        run: dotnet format --verify-no-changes GodotInk.csproj
