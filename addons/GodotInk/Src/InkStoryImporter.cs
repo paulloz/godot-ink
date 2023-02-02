@@ -38,15 +38,15 @@ public partial class InkStoryImporter : EditorImportPlugin
 
     public override bool _GetOptionVisibility(string path, StringName optionName, Dictionary options) => true;
 
-    public override int _Import(string sourceFile, string savePath,
-                                 Dictionary options, Array<string> platformVariants, Array<string> genFiles)
+    public override Error _Import(string sourceFile, string savePath,
+                                Dictionary options, Array<string> platformVariants, Array<string> genFiles)
     {
         string destFile = $"{savePath}.{_GetSaveExtension()}";
 
         if (!options[OPT_MAIN_FILE].AsBool())
-            return (int)ResourceSaver.Save(new StubInkStory(), destFile);
+            return ResourceSaver.Save(new StubInkStory(), destFile);
 
-        return (int)ImportFromInk(sourceFile, destFile, options[OPT_COMPRESS].AsBool());
+        return ImportFromInk(sourceFile, destFile, options[OPT_COMPRESS].AsBool());
     }
 
     private static Error ImportFromInk(string sourceFile, string destFile, bool shouldCompress)
