@@ -174,7 +174,7 @@ public partial class InkStory : Resource
     public List<string> AliveFlowNames => runtimeStory.aliveFlowNames;
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="flowName"></param>
     public void RemoveFlow(string flowName)
@@ -183,7 +183,7 @@ public partial class InkStory : Resource
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="flowName"></param>
     public void SwitchFlow(string flowName)
@@ -192,7 +192,7 @@ public partial class InkStory : Resource
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public void SwitchToDefaultFlow()
     {
@@ -206,11 +206,26 @@ public partial class InkStory : Resource
 
     public Variant FetchVariable(string variableName)
     {
-        return ToVariant(runtimeStory.variablesState.GetVariableWithName(variableName));
+        return ToVariant(runtimeStory.variablesState[variableName]);
+    }
+
+    public T FetchVariable<[MustBeVariant] T>(string variableName)
+    {
+        return FetchVariable(variableName).As<T>();
+    }
+
+    public void StoreVariable(string variableName, Variant value)
+    {
+        runtimeStory.variablesState[variableName] = FromVariant(value);
+    }
+
+    public void StoreVariable<[MustBeVariant] T>(string variableName, T value)
+    {
+        StoreVariable(variableName, Variant.From(value));
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="variableName"></param>
     /// <param name="observer"></param>
@@ -230,7 +245,7 @@ public partial class InkStory : Resource
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="variableNames"></param>
     /// <param name="observer"></param>
@@ -253,7 +268,7 @@ public partial class InkStory : Resource
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="callable"></param>
     public void RemoveVariableObserver(Callable callable)
@@ -263,7 +278,7 @@ public partial class InkStory : Resource
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="specificVariableName"></param>
     public void RemoveVariableObserver(string specificVariableName)
@@ -274,7 +289,7 @@ public partial class InkStory : Resource
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="callable"></param>
     /// <param name="specificVariableName"></param>
@@ -370,14 +385,14 @@ public partial class InkStory : Resource
     /// </summary>
     /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
     /// <param name="callable">The Godot Callable to bind.</param>
-    /// <param name="lookaheadSafe">The ink engine often evaluates further 
-    /// than you might expect beyond the current line just in case it sees 
-    /// glue that will cause the two lines to become one. In this case it's 
-    /// possible that a function can appear to be called twice instead of 
-    /// just once, and earlier than you expect. If it's safe for your 
-    /// function to be called in this way (since the result and side effect 
-    /// of the function will not change), then you can pass 'true'. 
-    /// Usually, you want to pass 'false', especially if you want some action 
+    /// <param name="lookaheadSafe">The ink engine often evaluates further
+    /// than you might expect beyond the current line just in case it sees
+    /// glue that will cause the two lines to become one. In this case it's
+    /// possible that a function can appear to be called twice instead of
+    /// just once, and earlier than you expect. If it's safe for your
+    /// function to be called in this way (since the result and side effect
+    /// of the function will not change), then you can pass 'true'.
+    /// Usually, you want to pass 'false', especially if you want some action
     /// to be performed in game code when this function is called.</param>
     public void BindExternalFunction(string funcName, Callable callable, bool lookaheadSafe = false)
     {
@@ -390,14 +405,14 @@ public partial class InkStory : Resource
     /// </summary>
     /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
     /// <param name="func">The C# function to bind.</param>
-    /// <param name="lookaheadSafe">The ink engine often evaluates further 
-    /// than you might expect beyond the current line just in case it sees 
-    /// glue that will cause the two lines to become one. In this case it's 
-    /// possible that a function can appear to be called twice instead of 
-    /// just once, and earlier than you expect. If it's safe for your 
-    /// function to be called in this way (since the result and side effect 
-    /// of the function will not change), then you can pass 'true'. 
-    /// Usually, you want to pass 'false', especially if you want some action 
+    /// <param name="lookaheadSafe">The ink engine often evaluates further
+    /// than you might expect beyond the current line just in case it sees
+    /// glue that will cause the two lines to become one. In this case it's
+    /// possible that a function can appear to be called twice instead of
+    /// just once, and earlier than you expect. If it's safe for your
+    /// function to be called in this way (since the result and side effect
+    /// of the function will not change), then you can pass 'true'.
+    /// Usually, you want to pass 'false', especially if you want some action
     /// to be performed in game code when this function is called.</param>
     public void BindExternalFunction(string funcName, Func<Variant> func, bool lookaheadSafe = false)
     {
@@ -410,14 +425,14 @@ public partial class InkStory : Resource
     /// </summary>
     /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
     /// <param name="func">The C# function to bind.</param>
-    /// <param name="lookaheadSafe">The ink engine often evaluates further 
-    /// than you might expect beyond the current line just in case it sees 
-    /// glue that will cause the two lines to become one. In this case it's 
-    /// possible that a function can appear to be called twice instead of 
-    /// just once, and earlier than you expect. If it's safe for your 
-    /// function to be called in this way (since the result and side effect 
-    /// of the function will not change), then you can pass 'true'. 
-    /// Usually, you want to pass 'false', especially if you want some action 
+    /// <param name="lookaheadSafe">The ink engine often evaluates further
+    /// than you might expect beyond the current line just in case it sees
+    /// glue that will cause the two lines to become one. In this case it's
+    /// possible that a function can appear to be called twice instead of
+    /// just once, and earlier than you expect. If it's safe for your
+    /// function to be called in this way (since the result and side effect
+    /// of the function will not change), then you can pass 'true'.
+    /// Usually, you want to pass 'false', especially if you want some action
     /// to be performed in game code when this function is called.</param>
     public void BindExternalFunction<T>(string funcName, Func<T, Variant> func, bool lookaheadSafe = false)
     {
@@ -430,14 +445,14 @@ public partial class InkStory : Resource
     /// </summary>
     /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
     /// <param name="func">The C# function to bind.</param>
-    /// <param name="lookaheadSafe">The ink engine often evaluates further 
-    /// than you might expect beyond the current line just in case it sees 
-    /// glue that will cause the two lines to become one. In this case it's 
-    /// possible that a function can appear to be called twice instead of 
-    /// just once, and earlier than you expect. If it's safe for your 
-    /// function to be called in this way (since the result and side effect 
-    /// of the function will not change), then you can pass 'true'. 
-    /// Usually, you want to pass 'false', especially if you want some action 
+    /// <param name="lookaheadSafe">The ink engine often evaluates further
+    /// than you might expect beyond the current line just in case it sees
+    /// glue that will cause the two lines to become one. In this case it's
+    /// possible that a function can appear to be called twice instead of
+    /// just once, and earlier than you expect. If it's safe for your
+    /// function to be called in this way (since the result and side effect
+    /// of the function will not change), then you can pass 'true'.
+    /// Usually, you want to pass 'false', especially if you want some action
     /// to be performed in game code when this function is called.</param>
     public void BindExternalFunction<T1, T2>(string funcName, Func<T1, T2, Variant> func, bool lookaheadSafe = false)
     {
@@ -450,14 +465,14 @@ public partial class InkStory : Resource
     /// </summary>
     /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
     /// <param name="func">The C# function to bind.</param>
-    /// <param name="lookaheadSafe">The ink engine often evaluates further 
-    /// than you might expect beyond the current line just in case it sees 
-    /// glue that will cause the two lines to become one. In this case it's 
-    /// possible that a function can appear to be called twice instead of 
-    /// just once, and earlier than you expect. If it's safe for your 
-    /// function to be called in this way (since the result and side effect 
-    /// of the function will not change), then you can pass 'true'. 
-    /// Usually, you want to pass 'false', especially if you want some action 
+    /// <param name="lookaheadSafe">The ink engine often evaluates further
+    /// than you might expect beyond the current line just in case it sees
+    /// glue that will cause the two lines to become one. In this case it's
+    /// possible that a function can appear to be called twice instead of
+    /// just once, and earlier than you expect. If it's safe for your
+    /// function to be called in this way (since the result and side effect
+    /// of the function will not change), then you can pass 'true'.
+    /// Usually, you want to pass 'false', especially if you want some action
     /// to be performed in game code when this function is called.</param>
     public void BindExternalFunction<T1, T2, T3>(string funcName, Func<T1, T2, T3, Variant> func, bool lookaheadSafe = false)
     {
@@ -470,14 +485,14 @@ public partial class InkStory : Resource
     /// </summary>
     /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
     /// <param name="func">The C# function to bind.</param>
-    /// <param name="lookaheadSafe">The ink engine often evaluates further 
-    /// than you might expect beyond the current line just in case it sees 
-    /// glue that will cause the two lines to become one. In this case it's 
-    /// possible that a function can appear to be called twice instead of 
-    /// just once, and earlier than you expect. If it's safe for your 
-    /// function to be called in this way (since the result and side effect 
-    /// of the function will not change), then you can pass 'true'. 
-    /// Usually, you want to pass 'false', especially if you want some action 
+    /// <param name="lookaheadSafe">The ink engine often evaluates further
+    /// than you might expect beyond the current line just in case it sees
+    /// glue that will cause the two lines to become one. In this case it's
+    /// possible that a function can appear to be called twice instead of
+    /// just once, and earlier than you expect. If it's safe for your
+    /// function to be called in this way (since the result and side effect
+    /// of the function will not change), then you can pass 'true'.
+    /// Usually, you want to pass 'false', especially if you want some action
     /// to be performed in game code when this function is called.</param>
     public void BindExternalFunction<T1, T2, T3, T4>(string funcName, Func<T1, T2, T3, T4, Variant> func, bool lookaheadSafe = false)
     {
@@ -490,14 +505,14 @@ public partial class InkStory : Resource
     /// </summary>
     /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
     /// <param name="act">The C# action to bind.</param>
-    /// <param name="lookaheadSafe">The ink engine often evaluates further 
-    /// than you might expect beyond the current line just in case it sees 
-    /// glue that will cause the two lines to become one. In this case it's 
-    /// possible that a function can appear to be called twice instead of 
-    /// just once, and earlier than you expect. If it's safe for your 
-    /// function to be called in this way (since the result and side effect 
-    /// of the function will not change), then you can pass 'true'. 
-    /// Usually, you want to pass 'false', especially if you want some action 
+    /// <param name="lookaheadSafe">The ink engine often evaluates further
+    /// than you might expect beyond the current line just in case it sees
+    /// glue that will cause the two lines to become one. In this case it's
+    /// possible that a function can appear to be called twice instead of
+    /// just once, and earlier than you expect. If it's safe for your
+    /// function to be called in this way (since the result and side effect
+    /// of the function will not change), then you can pass 'true'.
+    /// Usually, you want to pass 'false', especially if you want some action
     /// to be performed in game code when this function is called.</param>
     public void BindExternalFunction(string funcName, Action action, bool lookaheadSafe = false)
     {
@@ -509,14 +524,14 @@ public partial class InkStory : Resource
     /// </summary>
     /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
     /// <param name="act">The C# action to bind.</param>
-    /// <param name="lookaheadSafe">The ink engine often evaluates further 
-    /// than you might expect beyond the current line just in case it sees 
-    /// glue that will cause the two lines to become one. In this case it's 
-    /// possible that a function can appear to be called twice instead of 
-    /// just once, and earlier than you expect. If it's safe for your 
-    /// function to be called in this way (since the result and side effect 
-    /// of the function will not change), then you can pass 'true'. 
-    /// Usually, you want to pass 'false', especially if you want some action 
+    /// <param name="lookaheadSafe">The ink engine often evaluates further
+    /// than you might expect beyond the current line just in case it sees
+    /// glue that will cause the two lines to become one. In this case it's
+    /// possible that a function can appear to be called twice instead of
+    /// just once, and earlier than you expect. If it's safe for your
+    /// function to be called in this way (since the result and side effect
+    /// of the function will not change), then you can pass 'true'.
+    /// Usually, you want to pass 'false', especially if you want some action
     /// to be performed in game code when this function is called.</param>
     public void BindExternalFunction<T>(string funcName, Action<T> action, bool lookaheadSafe = false)
     {
@@ -528,14 +543,14 @@ public partial class InkStory : Resource
     /// </summary>
     /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
     /// <param name="act">The C# action to bind.</param>
-    /// <param name="lookaheadSafe">The ink engine often evaluates further 
-    /// than you might expect beyond the current line just in case it sees 
-    /// glue that will cause the two lines to become one. In this case it's 
-    /// possible that a function can appear to be called twice instead of 
-    /// just once, and earlier than you expect. If it's safe for your 
-    /// function to be called in this way (since the result and side effect 
-    /// of the function will not change), then you can pass 'true'. 
-    /// Usually, you want to pass 'false', especially if you want some action 
+    /// <param name="lookaheadSafe">The ink engine often evaluates further
+    /// than you might expect beyond the current line just in case it sees
+    /// glue that will cause the two lines to become one. In this case it's
+    /// possible that a function can appear to be called twice instead of
+    /// just once, and earlier than you expect. If it's safe for your
+    /// function to be called in this way (since the result and side effect
+    /// of the function will not change), then you can pass 'true'.
+    /// Usually, you want to pass 'false', especially if you want some action
     /// to be performed in game code when this function is called.</param>
     public void BindExternalFunction<T1, T2>(string funcName, Action<T1, T2> action, bool lookaheadSafe = false)
     {
@@ -547,14 +562,14 @@ public partial class InkStory : Resource
     /// </summary>
     /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
     /// <param name="act">The C# action to bind.</param>
-    /// <param name="lookaheadSafe">The ink engine often evaluates further 
-    /// than you might expect beyond the current line just in case it sees 
-    /// glue that will cause the two lines to become one. In this case it's 
-    /// possible that a function can appear to be called twice instead of 
-    /// just once, and earlier than you expect. If it's safe for your 
-    /// function to be called in this way (since the result and side effect 
-    /// of the function will not change), then you can pass 'true'. 
-    /// Usually, you want to pass 'false', especially if you want some action 
+    /// <param name="lookaheadSafe">The ink engine often evaluates further
+    /// than you might expect beyond the current line just in case it sees
+    /// glue that will cause the two lines to become one. In this case it's
+    /// possible that a function can appear to be called twice instead of
+    /// just once, and earlier than you expect. If it's safe for your
+    /// function to be called in this way (since the result and side effect
+    /// of the function will not change), then you can pass 'true'.
+    /// Usually, you want to pass 'false', especially if you want some action
     /// to be performed in game code when this function is called.</param>
     public void BindExternalFunction<T1, T2, T3>(string funcName, Action<T1, T2, T3> action, bool lookaheadSafe = false)
     {
@@ -566,14 +581,14 @@ public partial class InkStory : Resource
     /// </summary>
     /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
     /// <param name="act">The C# action to bind.</param>
-    /// <param name="lookaheadSafe">The ink engine often evaluates further 
-    /// than you might expect beyond the current line just in case it sees 
-    /// glue that will cause the two lines to become one. In this case it's 
-    /// possible that a function can appear to be called twice instead of 
-    /// just once, and earlier than you expect. If it's safe for your 
-    /// function to be called in this way (since the result and side effect 
-    /// of the function will not change), then you can pass 'true'. 
-    /// Usually, you want to pass 'false', especially if you want some action 
+    /// <param name="lookaheadSafe">The ink engine often evaluates further
+    /// than you might expect beyond the current line just in case it sees
+    /// glue that will cause the two lines to become one. In this case it's
+    /// possible that a function can appear to be called twice instead of
+    /// just once, and earlier than you expect. If it's safe for your
+    /// function to be called in this way (since the result and side effect
+    /// of the function will not change), then you can pass 'true'.
+    /// Usually, you want to pass 'false', especially if you want some action
     /// to be performed in game code when this function is called.</param>
     public void BindExternalFunction<T1, T2, T3, T4>(string funcName, Action<T1, T2, T3, T4> action, bool lookaheadSafe = false)
     {
@@ -590,7 +605,7 @@ public partial class InkStory : Resource
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="message"></param>
     public void Error(string message)
@@ -599,7 +614,7 @@ public partial class InkStory : Resource
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="message"></param>
     /// <param name="useEndLineNumber"></param>
@@ -609,7 +624,7 @@ public partial class InkStory : Resource
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="message"></param>
     public void Warning(string message)
