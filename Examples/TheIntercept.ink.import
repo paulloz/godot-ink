@@ -1,0 +1,16 @@
+[remap]
+
+importer="ink"
+type="Resource"
+uid="uid://7c4xpy3v7ewp"
+path="res://.godot/imported/TheIntercept.ink-32fb29d7fa47e48c163ae951283153cf.res"
+
+[deps]
+
+source_file="res://Examples/TheIntercept.ink"
+dest_files=["res://.godot/imported/TheIntercept.ink-32fb29d7fa47e48c163ae951283153cf.res"]
+
+[params]
+
+is_main_file=true
+compress=true

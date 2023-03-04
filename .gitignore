@@ -1,18 +1,8 @@
 .vscode/
 *.code-workspace
 
-.import/
-.mono/
-Properties/
-*.sln
-*.csproj
+.godot/
+
+*.csproj.user
 
 export_presets.cfg
-project.godot
-*.import
-
-inklecate.exe
-ink_compiler.dll
-ink-engine-runtime.dll
-
-addons/paulloz.ink/override.cfg

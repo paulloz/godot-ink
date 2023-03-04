@@ -1,0 +1,38 @@
+<Project>
+  <PropertyGroup>
+    <InkVersion>v1.1.1</InkVersion>
+    <!-- Directories -->
+    <GodotDotDirectory>$([System.IO.Path]::Combine($(GodotProjectDir),'.godot'))</GodotDotDirectory>
+    <GodotMonoDirectory>$([System.IO.Path]::Combine($(GodotDotDirectory),'mono'))</GodotMonoDirectory>
+    <UnzipDirectory>$([System.IO.Path]::Combine($(GodotDotDirectory),'ink'))</UnzipDirectory>
+    <InkVersionDirectory>$([System.IO.Path]::Combine($(GodotMonoDirectory),'ink-$(InkVersion)'))</InkVersionDirectory>
+    <!-- File -->
+    <InkZip>inklecate_windows.zip</InkZip>
+    <InkZipPath>$([System.IO.Path]::Combine($(GodotDotDirectory),$(InkZip)))</InkZipPath>
+    <InkUrl>https://github.com/inkle/ink/releases/download/$(InkVersion)/$(InkZip)</InkUrl>
+    <InkCompiler>ink_compiler.dll</InkCompiler>
+    <InkCompilerPath>$([System.IO.Path]::Combine($(InkVersionDirectory),$(InkCompiler)))</InkCompilerPath>
+    <InkRuntime>ink-engine-runtime.dll</InkRuntime>
+    <InkRuntimePath>$([System.IO.Path]::Combine($(InkVersionDirectory),$(InkRuntime)))</InkRuntimePath>
+  </PropertyGroup>
+
+  <Target Name="DownloadInkDependency" AfterTargets="BeforeBuild" Condition="!Exists('$(InkCompilerPath)') Or !Exists('$(InkRuntimePath)')">
+    <!-- Download and unzip -->
+    <DownloadFile SourceUrl="$(InkUrl)" DestinationFolder="$(GodotDotDirectory)" />
+    <Unzip SourceFiles="$(InkZipPath)" DestinationFolder="$(UnzipDirectory)" />
+    <!-- Extract what we want -->
+    <ItemGroup>
+      <FilesToMove Include="$([System.IO.Path]::Combine($(UnzipDirectory),$(InkCompiler)))" />
+      <FilesToMove Include="$([System.IO.Path]::Combine($(UnzipDirectory),$(InkRuntime)))" />
+    </ItemGroup>
+    <Move SourceFiles="@(FilesToMove)" DestinationFolder="$(InkVersionDirectory)" />
+    <!-- Cleanup -->
+    <Delete Files="$(InkZipPath)" />
+    <RemoveDir Directories="$(UnzipDirectory)" />
+  </Target>
+
+  <ItemGroup>
+    <Reference Include="$(InkCompilerPath)" Condition="'$(Configuration)' == 'Debug'" />
+    <Reference Include="$(InkRuntimePath)" />
+  </ItemGroup>
+</Project>
