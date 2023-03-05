@@ -632,6 +632,44 @@ public partial class InkStory : Resource
         runtimeStory.Warning(message);
     }
 
+    /// <summary>
+    /// Save the current story state a JSON string.
+    /// </summary>
+    /// <returns>The current state seialized into a JSON string.</returns>
+    public string SaveState()
+    {
+        return runtimeStory.state.ToJson();
+    }
+
+    /// <summary>
+    /// Save the current story state to a JSON file.
+    /// </summary>
+    /// <param name="filePath">The path to the file we will be writing to.</param>
+    public void SaveStateFile(string filePath)
+    {
+        using FileAccess file = FileAccess.Open(filePath, FileAccess.ModeFlags.Write);
+        file.StoreString(SaveState());
+    }
+
+    /// <summary>
+    /// Load a JSON string as the current story state.
+    /// </summary>
+    /// <param name="jsonState">The JSON string to load.</param>
+    public void LoadState(string jsonState)
+    {
+        runtimeStory.state.LoadJson(jsonState);
+    }
+
+    /// <summary>
+    /// Load the content of a JSON file as the current story state.
+    /// </summary>
+    /// <param name="filePath">The path to the file we will be reading from.</param>
+    public void LoadStateFile(string filePath)
+    {
+        using FileAccess file = FileAccess.Open(filePath, FileAccess.ModeFlags.Read);
+        LoadState(file.GetAsText());
+    }
+
     private void OnContinued()
     {
         _ = EmitSignal(SignalName.Continued);
