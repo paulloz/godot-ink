@@ -2,6 +2,7 @@
 #nullable enable
 
 using Godot;
+using System;
 using System.Linq;
 
 namespace GodotInk;
@@ -85,11 +86,19 @@ public partial class InkDock : VBoxContainer
 
     private void LoadStory(string path)
     {
-        story = GD.Load<InkStory>(path);
+        try
+        {
+            story = GD.Load<InkStory>(path);
 
-        story.Continued += ContinueStory;
+            story.Continued += ContinueStory;
 
-        UpdateTop();
+            UpdateTop();
+        }
+        catch (InvalidCastException)
+        {
+            GD.PrintErr($"{path} is not a valid ink story. "
+                       + "Please make sure it was imported with `is_main_file` set to `true`.");
+        }
     }
 
     private void StartStory()
@@ -105,7 +114,14 @@ public partial class InkDock : VBoxContainer
     private void StopStory()
     {
         storyStarted = false;
-        story?.ResetState();
+        try
+        {
+            story?.ResetState();
+        }
+        catch (ObjectDisposedException)
+        {
+            story = null;
+        }
 
         ClearStory(true);
     }
@@ -198,6 +214,15 @@ public partial class InkDock : VBoxContainer
     {
         foreach (Node n in storyChoices.GetChildren().OfType<Button>())
             storyChoices.RemoveChild(n);
+    }
+
+    public void WhenInkResourceReimported(string resourcePath)
+    {
+        if (story?.ResourcePath == resourcePath)
+        {
+            story = null;
+            StopStory();
+        }
     }
 }
 
