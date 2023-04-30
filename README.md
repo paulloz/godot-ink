@@ -4,17 +4,11 @@ An [ink](https://github.com/inkle/ink) integration for [Godot Engine](https://gi
 
 ## Notice
 
-This branch contains the new version of **godot-ink** for Godot 4. It is under heavy development.  
+This branch contains the new version of **godot-ink** for Godot 4. It might be incomplete or unstable.  
 
-If you still want to try the current implementation, here's the installation process.
+An installation and quick start guide is available [here](../../wiki).  
 
-* Copy `addons/GodotInk/` into your `addons/` folder.
-* Reference the addon's `.props` file in your `.csproj`.
-```xml
-  <Import Project="addons/GodotInk/GodotInk.props" />
-```
-* Build once.
-* Enable the addon.
+Please fill an [issue](../../issues) for any bug or missing feature you encounter.
 
 ## License
 
