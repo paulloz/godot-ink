@@ -61,9 +61,8 @@ public partial class InkStoryImporter : EditorImportPlugin
         {
             sourceFilename = sourceFile,
             errorHandler = InkCompilerErrorHandler,
-            fileHandler = 
-                new RelativePathFileHandler(
-                    Path.GetDirectoryName(sourceFile) ?? Directory.GetCurrentDirectory()),
+            fileHandler = new FileHandler(
+                    Path.GetDirectoryName(file.GetPathAbsolute()) ?? ProjectSettings.GlobalizePath("res://")),
         });
 
         try
@@ -93,10 +92,11 @@ public partial class InkStoryImporter : EditorImportPlugin
         }
     }
 
-    private class RelativePathFileHandler : Ink.IFileHandler {
+    private class FileHandler : Ink.IFileHandler
+    {
         private readonly string rootDir;
 
-        public RelativePathFileHandler(string rootDir) => this.rootDir = rootDir;
+        public FileHandler(string rootDir) => this.rootDir = rootDir;
 
         public string ResolveInkFilename(string includeName) => Path.Combine(rootDir, includeName);
 
