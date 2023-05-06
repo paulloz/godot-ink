@@ -5,6 +5,7 @@
 using Godot;
 using Godot.Collections;
 using Ink;
+using System.IO;
 
 namespace GodotInk;
 
@@ -51,15 +52,17 @@ public partial class InkStoryImporter : EditorImportPlugin
 
     private static Error ImportFromInk(string sourceFile, string destFile, bool shouldCompress)
     {
-        using FileAccess file = FileAccess.Open(sourceFile, FileAccess.ModeFlags.Read);
+        using Godot.FileAccess file = Godot.FileAccess.Open(sourceFile, Godot.FileAccess.ModeFlags.Read);
 
         if (file == null)
-            return FileAccess.GetOpenError();
+            return Godot.FileAccess.GetOpenError();
 
         Compiler compiler = new(file.GetAsText(), new Compiler.Options
         {
             sourceFilename = sourceFile,
             errorHandler = InkCompilerErrorHandler,
+            fileHandler = new FileHandler(
+                    Path.GetDirectoryName(file.GetPathAbsolute()) ?? ProjectSettings.GlobalizePath("res://")),
         });
 
         try
@@ -87,6 +90,17 @@ public partial class InkStoryImporter : EditorImportPlugin
                 GD.PushError(message);
                 throw new InvalidInkException();
         }
+    }
+
+    private class FileHandler : Ink.IFileHandler
+    {
+        private readonly string rootDir;
+
+        public FileHandler(string rootDir) => this.rootDir = rootDir;
+
+        public string ResolveInkFilename(string includeName) => Path.Combine(rootDir, includeName);
+
+        public string LoadInkFileContents(string fullFilename) => File.ReadAllText(fullFilename);
     }
 }
 
