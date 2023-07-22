@@ -3,6 +3,9 @@
 using Godot;
 using System;
 using System.ComponentModel;
+using System.Linq;
+
+using VariantGArray = Godot.Collections.Array<Godot.Variant>;
 
 namespace GodotInk;
 
@@ -33,6 +36,30 @@ public partial class InkStory
     [EditorBrowsable(EditorBrowsableState.Never)]
     public string GetCurrentText() => CurrentText;
 #pragma warning restore IDE0022
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void ChoosePathString(string path)
+    {
+        ChoosePathString(path, true, Array.Empty<Variant>());
+    }
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void ChoosePathString(string path, bool resetCallstack)
+    {
+        ChoosePathString(path, resetCallstack, Array.Empty<Variant>());
+    }
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void ChoosePathString(string path, VariantGArray arguments)
+    {
+        ChoosePathString(path, true, arguments.ToArray());
+    }
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public void ChoosePathString(string path, bool resetCallstack, VariantGArray arguments)
+    {
+        ChoosePathString(path, resetCallstack, arguments.ToArray());
+    }
 
 
     /// <summary>

@@ -119,14 +119,9 @@ public partial class InkStory : Resource
         runtimeStory.ChooseChoiceIndex(choiceIdx);
     }
 
-    public void ChoosePathString(string path, bool resetCallstack, params Variant[] arguments)
+    public void ChoosePathString(string path, bool resetCallstack = true, params Variant[] arguments)
     {
         runtimeStory.ChoosePathString(path, resetCallstack, FromVariants(arguments));
-    }
-
-    public void ChoosePathString(string path, params Variant[] arguments)
-    {
-        ChoosePathString(path, true, arguments);
     }
 
     /// <summary>
