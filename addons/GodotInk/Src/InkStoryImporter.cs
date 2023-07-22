@@ -15,6 +15,7 @@ public partial class InkStoryImporter : EditorImportPlugin
     private const string OPT_MAIN_FILE = "is_main_file";
     private const string OPT_COMPRESS = "compress";
 
+#pragma warning disable IDE0022
     public override string _GetImporterName() => "ink";
 
     public override string _GetVisibleName() => "Ink story";
@@ -38,6 +39,7 @@ public partial class InkStoryImporter : EditorImportPlugin
     };
 
     public override bool _GetOptionVisibility(string path, StringName optionName, Dictionary options) => true;
+#pragma warning restore IDE0022
 
     public override Error _Import(string sourceFile, string savePath,
                                 Dictionary options, Array<string> platformVariants, Array<string> genFiles)
@@ -92,15 +94,24 @@ public partial class InkStoryImporter : EditorImportPlugin
         }
     }
 
-    private class FileHandler : Ink.IFileHandler
+    private class FileHandler : IFileHandler
     {
         private readonly string rootDir;
 
-        public FileHandler(string rootDir) => this.rootDir = rootDir;
+        public FileHandler(string rootDir)
+        {
+            this.rootDir = rootDir;
+        }
 
-        public string ResolveInkFilename(string includeName) => Path.Combine(rootDir, includeName);
+        public string ResolveInkFilename(string includeName)
+        {
+            return Path.Combine(rootDir, includeName);
+        }
 
-        public string LoadInkFileContents(string fullFilename) => File.ReadAllText(fullFilename);
+        public string LoadInkFileContents(string fullFilename)
+        {
+            return File.ReadAllText(fullFilename);
+        }
     }
 }
 
