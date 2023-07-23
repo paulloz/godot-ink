@@ -18,6 +18,7 @@ public partial class InkList : GodotObject
     {
     }
 
+#pragma warning disable IDE0022
     public InkList Inverse => new(inner.inverse);
     public InkList All => new(inner.all);
 
@@ -46,4 +47,5 @@ public partial class InkList : GodotObject
 
     public void SetInitialOriginName(string initialOriginName) => inner.SetInitialOriginName(initialOriginName);
     public void SetInitialOriginNames(string[] initialOriginNames) => inner.SetInitialOriginNames(new(initialOriginNames));
+#pragma warning restore IDE0022
 }

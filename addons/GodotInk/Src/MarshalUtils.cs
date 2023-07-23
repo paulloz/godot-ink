@@ -64,7 +64,7 @@ public static class MarshalUtils
     /// <param name="objects">The collection of Godot Variants to convert.</param>
     /// <returns>The collection of converted ink variables.</returns>
     /// <exception cref="ArgumentException"></exception>
-    public static Variant[] ToVariants(IList<object?> objects)
+    public static Variant[] ToVariants(IReadOnlyList<object?> objects)
     {
         Variant[] variants = new Variant[objects.Count];
         for (int i = 0; i < objects.Count; ++i)
@@ -79,7 +79,7 @@ public static class MarshalUtils
     /// <param name="objects">The collection of ink variables to convert.</param>
     /// <returns>The collection of converted Godot Variants.</returns>
     /// <exception cref="ArgumentException"></exception>
-    public static object?[] FromVariants(IList<Variant> variants)
+    public static object?[] FromVariants(IReadOnlyList<Variant> variants)
     {
         object?[] objects = new object[variants.Count];
         for (int i = 0; i < variants.Count; ++i)
@@ -89,7 +89,7 @@ public static class MarshalUtils
 
     // Specific case for List<Choice>, we want to stay true to the ink implementation and return
     // a List<T> instead of a T[]. So we're converting to a List<InkChoice>.
-    public static List<InkChoice> ToVariants(List<Ink.Runtime.Choice> choices)
+    public static List<InkChoice> ToVariants(IReadOnlyList<Ink.Runtime.Choice> choices)
     {
         List<InkChoice> inkChoices = new();
         foreach (Ink.Runtime.Choice choice in choices)

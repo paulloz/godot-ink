@@ -5,7 +5,12 @@ root = true
 end_of_line = lf
 insert_final_newline = true
 
-[*.gd]
+[*.{xml,csproj}]
+
+indent_size = 2
+tab_width = 2
+
+[*.{gd,gdshader}]
 
 indent_style = tab
 indent_size = 4
@@ -17,23 +22,31 @@ indent_style = space
 indent_size = 4
 tab_width = 4
 
-dotnet_sort_system_directives_first = false
+# Using directives
 dotnet_separate_import_directive_groups = false
+dotnet_sort_system_directives_first = false
+csharp_using_directive_placement = outside_namespace
 
-csharp_new_line_before_open_brace = all
-csharp_new_line_before_else = true
-csharp_new_line_before_catch = true
-csharp_new_line_before_finally = true
-csharp_new_line_before_members_in_object_initializers = true
-csharp_new_line_before_members_in_anonymous_types = true
-csharp_new_line_between_query_expression_clauses = true
+# Namespaces
+dotnet_style_namespace_match_folder = false
+csharp_style_namespace_declarations = file_scoped
 
-csharp_indent_case_contents = true
-csharp_indent_switch_labels = true
+# Indentation style
 csharp_indent_block_contents = true
 csharp_indent_braces = false
+csharp_indent_case_contents = true
 csharp_indent_case_contents_when_block = false
+csharp_indent_switch_labels = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_else = true
+csharp_new_line_before_finally = true
+csharp_new_line_before_members_in_anonymous_types = true
+csharp_new_line_before_members_in_object_initializers = true
+csharp_new_line_before_open_brace = all
+csharp_new_line_between_query_expression_clauses = true
+csharp_prefer_braces = when_multiline
 
+# Spaces
 csharp_space_after_cast = false
 csharp_space_after_keywords_in_control_flow_statements = true
 csharp_space_before_colon_in_inheritance_clause = true
@@ -56,48 +69,108 @@ csharp_space_before_open_square_brackets = false
 csharp_space_between_empty_square_brackets = false
 csharp_space_between_square_brackets = false
 
-csharp_preserve_single_line_statements = true
+# Preserve single line in some cases
 csharp_preserve_single_line_blocks = true
+csharp_preserve_single_line_statements = true
 
-csharp_using_directive_placement = outside_namespace
+csharp_style_expression_bodied_local_functions = when_on_single_line
+csharp_style_expression_bodied_methods = false
 
-csharp_style_namespace_declarations = block_scoped
+# Analyzers
+dotnet_analyzer_diagnostic.severity = suggestion
 
+dotnet_diagnostic.IDE0001.severity = suggestion # Name can be simplified.
+dotnet_diagnostic.IDE0005.severity = warning    # Unused using directives.
+dotnet_diagnostic.IDE0008.severity = silent     # Explicit types vs. var.
+dotnet_diagnostic.IDE0010.severity = silent     # Incomplete switch statements.
+dotnet_diagnostic.IDE0072.severity = silent     # ^ Ditto.
+dotnet_diagnostic.IDE0022.severity = warning    # Use of expression body for methods.
+dotnet_diagnostic.IDE0046.severity = silent     # Use conditional expression for return.
+dotnet_diagnostic.IDE0055.severity = silent     # Formatting rule.
+dotnet_diagnostic.IDE0059.severity = warning    # Useless assignation.
+dotnet_diagnostic.IDE1006.severity = default    # Naming rule.
+dotnet_diagnostic.CA1710.severity = silent      # Meaningful names.
+dotnet_diagnostic.CA1716.severity = silent      # Identifiers should not match keywords.
+dotnet_diagnostic.CA1725.severity = silent      # Parameter names should match base declaration.
+dotnet_diagnostic.CA1805.severity = suggestion  # Explicit initialization to default value.
+dotnet_diagnostic.CA2201.severity = silent      # Exception type is not specific enough.
+dotnet_diagnostic.CS8602.severity = error       # Possible null.
 
-dotnet_diagnostic.IDE0001.severity = suggestion
-dotnet_diagnostic.IDE0002.severity = suggestion
-dotnet_diagnostic.IDE0004.severity = warning
-dotnet_diagnostic.IDE0005.severity = error
-dotnet_diagnostic.IDE0035.severity = error
-dotnet_diagnostic.IDE0039.severity = none
-dotnet_diagnostic.IDE0051.severity = warning
-dotnet_diagnostic.IDE0052.severity = warning
-dotnet_diagnostic.IDE0058.severity = warning
-dotnet_diagnostic.IDE0059.severity = error
-dotnet_diagnostic.IDE0060.severity = suggestion
-dotnet_diagnostic.IDE0079.severity = suggestion
-dotnet_diagnostic.IDE0080.severity = error
-dotnet_diagnostic.IDE0100.severity = error
-dotnet_diagnostic.IDE0110.severity = error
-dotnet_diagnostic.IDE0110.severity = error
+# Naming rules
 
-dotnet_diagnostic.CA1802.severity = error
-dotnet_diagnostic.CA1805.severity = warning
-dotnet_diagnostic.CA1806.severity = warning
-dotnet_diagnostic.CA1810.severity = warning
-dotnet_diagnostic.CA1815.severity = suggestion
-dotnet_diagnostic.CA1819.severity = error
-dotnet_diagnostic.CA1820.severity = suggestion
-dotnet_diagnostic.CA1822.severity = suggestion
-dotnet_diagnostic.CA1823.severity = warning
-dotnet_diagnostic.CA1825.severity = warning
-dotnet_diagnostic.CA1826.severity = warning
-dotnet_diagnostic.CA1827.severity = warning
-dotnet_diagnostic.CA1828.severity = warning
-dotnet_diagnostic.CA1829.severity = warning
-dotnet_diagnostic.CA1836.severity = warning
-dotnet_diagnostic.CA1841.severity = warning
+dotnet_naming_rule.interfaces.severity = warning
+dotnet_naming_rule.interfaces.symbols = interface
+dotnet_naming_rule.interfaces.style = prefix_I
 
-dotnet_diagnostic.CA2207.severity = warning
-dotnet_diagnostic.CA2211.severity = warning
-dotnet_diagnostic.CA2227.severity = error
+dotnet_naming_rule.types.severity = warning
+dotnet_naming_rule.types.symbols = types
+dotnet_naming_rule.types.style = pascal_case
+
+dotnet_naming_rule.non_field_members.severity = warning
+dotnet_naming_rule.non_field_members.symbols = non_field_members
+dotnet_naming_rule.non_field_members.style = pascal_case
+
+dotnet_naming_rule.private_fields.severity = silent
+dotnet_naming_rule.private_fields.symbols = private_fields
+dotnet_naming_rule.private_fields.style = prefix_underscore
+
+dotnet_naming_rule.constants.severity = warning
+dotnet_naming_rule.constants.symbols = constant_fields
+dotnet_naming_rule.constants.style = constant_style
+
+dotnet_naming_rule.type_parameters.severity = warning
+dotnet_naming_rule.type_parameters.symbols = type_parameters
+dotnet_naming_rule.type_parameters.style = prefix_T
+
+# Naming symbols
+
+dotnet_naming_symbols.interface.applicable_kinds = interface
+dotnet_naming_symbols.interface.applicable_accessibilities = *
+dotnet_naming_symbols.interface.required_modifiers =
+
+dotnet_naming_symbols.types.applicable_kinds = class, struct, interface, enum
+dotnet_naming_symbols.types.applicable_accessibilities = *
+dotnet_naming_symbols.types.required_modifiers =
+
+dotnet_naming_symbols.non_field_members.applicable_kinds = property, event, method
+dotnet_naming_symbols.non_field_members.applicable_accessibilities = *
+dotnet_naming_symbols.non_field_members.required_modifiers =
+
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+dotnet_naming_symbols.private_fields.required_modifiers =
+
+dotnet_naming_symbols.constant_fields.applicable_kinds = field
+dotnet_naming_symbols.constant_fields.applicable_accessibilities = *
+dotnet_naming_symbols.constant_fields.required_modifiers = const
+
+dotnet_naming_symbols.type_parameters.applicable_kinds = type_parameter
+dotnet_naming_symbols.type_parameters.applicable_accessibilities = *
+dotnet_naming_symbols.type_parameters.required_modifiers =
+
+# Naming styles
+
+dotnet_naming_style.pascal_case.required_prefix =
+dotnet_naming_style.pascal_case.required_suffix =
+dotnet_naming_style.pascal_case.word_separator =
+dotnet_naming_style.pascal_case.capitalization = pascal_case
+
+dotnet_naming_style.prefix_I.required_prefix = I
+dotnet_naming_style.prefix_I.required_suffix =
+dotnet_naming_style.prefix_I.word_separator =
+dotnet_naming_style.prefix_I.capitalization = pascal_case
+
+dotnet_naming_style.prefix_underscore.required_prefix = _
+dotnet_naming_style.prefix_underscore.required_suffix =
+dotnet_naming_style.prefix_underscore.word_separator =
+dotnet_naming_style.prefix_underscore.capitalization = camel_case
+
+dotnet_naming_style.constant_style.required_prefix =
+dotnet_naming_style.constant_style.required_suffix =
+dotnet_naming_style.constant_style.word_separator =
+dotnet_naming_style.constant_style.capitalization = all_upper
+
+dotnet_naming_style.prefix_T.required_prefix = T
+dotnet_naming_style.prefix_T.required_suffix =
+dotnet_naming_style.prefix_T.word_separator =
+dotnet_naming_style.prefix_t.capitalization = pascal_case

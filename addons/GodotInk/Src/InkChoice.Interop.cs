@@ -6,6 +6,7 @@ namespace GodotInk;
 
 public partial class InkChoice
 {
+#pragma warning disable IDE0022
     /// <summary>
     /// This method is here for GDScript compatibility. Use <see cref="CanContinue" /> instead.
     /// </summary>
@@ -35,4 +36,5 @@ public partial class InkChoice
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public Godot.Collections.Array<string> GetTags() => new(Tags);
+#pragma warning restore IDE0022
 }

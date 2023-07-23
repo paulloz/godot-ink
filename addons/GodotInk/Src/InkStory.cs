@@ -4,11 +4,12 @@ using Godot;
 using Ink.Runtime;
 using System;
 using System.Collections.Generic;
+
 using static GodotInk.MarshalUtils;
 
-namespace GodotInk;
-
 using PropertyList = Godot.Collections.Array<Godot.Collections.Dictionary>;
+
+namespace GodotInk;
 
 #if TOOLS
 [Tool]
@@ -118,14 +119,9 @@ public partial class InkStory : Resource
         runtimeStory.ChooseChoiceIndex(choiceIdx);
     }
 
-    public void ChoosePathString(string path, bool resetCallstack, params Variant[] arguments)
+    public void ChoosePathString(string path, bool resetCallstack = true, params Variant[] arguments)
     {
         runtimeStory.ChoosePathString(path, resetCallstack, FromVariants(arguments));
-    }
-
-    public void ChoosePathString(string path, params Variant[] arguments)
-    {
-        ChoosePathString(path, true, arguments);
     }
 
     /// <summary>
@@ -396,8 +392,9 @@ public partial class InkStory : Resource
     /// to be performed in game code when this function is called.</param>
     public void BindExternalFunction(string funcName, Callable callable, bool lookaheadSafe = false)
     {
-        Story.ExternalFunction trampoline = (object?[] arguments) => FromVariant(callable.Call(ToVariants(arguments)));
         runtimeStory.BindExternalFunctionGeneral(funcName, trampoline, lookaheadSafe);
+
+        object? trampoline(object?[] arguments) => FromVariant(callable.Call(ToVariants(arguments)));
     }
 
     /// <summary>
@@ -416,8 +413,9 @@ public partial class InkStory : Resource
     /// to be performed in game code when this function is called.</param>
     public void BindExternalFunction(string funcName, Func<Variant> func, bool lookaheadSafe = false)
     {
-        Func<object?> trampoline = () => FromVariant(func.Invoke());
         runtimeStory.BindExternalFunction(funcName, trampoline, lookaheadSafe);
+
+        object? trampoline() => FromVariant(func.Invoke());
     }
 
     /// <summary>
@@ -436,8 +434,9 @@ public partial class InkStory : Resource
     /// to be performed in game code when this function is called.</param>
     public void BindExternalFunction<T>(string funcName, Func<T, Variant> func, bool lookaheadSafe = false)
     {
-        Func<T, object?> trampoline = (T a) => FromVariant(func.Invoke(a));
-        runtimeStory.BindExternalFunction(funcName, trampoline, lookaheadSafe);
+        runtimeStory.BindExternalFunction(funcName, (Func<T, object?>)trampoline, lookaheadSafe);
+
+        object? trampoline(T a) => FromVariant(func.Invoke(a));
     }
 
     /// <summary>
@@ -456,8 +455,9 @@ public partial class InkStory : Resource
     /// to be performed in game code when this function is called.</param>
     public void BindExternalFunction<T1, T2>(string funcName, Func<T1, T2, Variant> func, bool lookaheadSafe = false)
     {
-        Func<T1, T2, object?> trampoline = (T1 a, T2 b) => FromVariant(func.Invoke(a, b));
-        runtimeStory.BindExternalFunction(funcName, trampoline, lookaheadSafe);
+        runtimeStory.BindExternalFunction(funcName, (Func<T1, T2, object?>)trampoline, lookaheadSafe);
+
+        object? trampoline(T1 a, T2 b) => FromVariant(func.Invoke(a, b));
     }
 
     /// <summary>
@@ -476,8 +476,9 @@ public partial class InkStory : Resource
     /// to be performed in game code when this function is called.</param>
     public void BindExternalFunction<T1, T2, T3>(string funcName, Func<T1, T2, T3, Variant> func, bool lookaheadSafe = false)
     {
-        Func<T1, T2, T3, object?> trampoline = (T1 a, T2 b, T3 c) => FromVariant(func.Invoke(a, b, c));
-        runtimeStory.BindExternalFunction(funcName, trampoline, lookaheadSafe);
+        runtimeStory.BindExternalFunction(funcName, (Func<T1, T2, T3, object?>)trampoline, lookaheadSafe);
+
+        object? trampoline(T1 a, T2 b, T3 c) => FromVariant(func.Invoke(a, b, c));
     }
 
     /// <summary>
@@ -496,8 +497,9 @@ public partial class InkStory : Resource
     /// to be performed in game code when this function is called.</param>
     public void BindExternalFunction<T1, T2, T3, T4>(string funcName, Func<T1, T2, T3, T4, Variant> func, bool lookaheadSafe = false)
     {
-        Func<T1, T2, T3, T4, object?> trampoline = (T1 a, T2 b, T3 c, T4 d) => FromVariant(func.Invoke(a, b, c, d));
-        runtimeStory.BindExternalFunction(funcName, trampoline, lookaheadSafe);
+        runtimeStory.BindExternalFunction(funcName, (Func<T1, T2, T3, T4, object?>)trampoline, lookaheadSafe);
+
+        object? trampoline(T1 a, T2 b, T3 c, T4 d) => FromVariant(func.Invoke(a, b, c, d));
     }
 
     /// <summary>
