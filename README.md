@@ -12,7 +12,10 @@ You'll find a quick-start guide, and the general documentation on the project's
 
 ### Installation
 
-1. [Download](../archive/refs/heads/main.zip) and extract the code at the root of your project.
+The following instructions assume that you have a working Godot and .NET installation. If not, please refer to the
+official [engine documentation](https://docs.godotengine.org/).
+
+1. [Download](https://github.com/paulloz/godot-ink/releases/latest) and extract the code at the root of your project.
    You should see a new `addons/GodotInk/` folder in your project's directory.
 
 1. Add the following line in your `.csproj` file (before the closing `</Project>` tag).
