@@ -77,7 +77,6 @@ csharp_style_expression_bodied_local_functions = when_on_single_line
 csharp_style_expression_bodied_methods = false
 
 # Analyzers
-dotnet_analyzer_diagnostic.severity = suggestion
 
 dotnet_diagnostic.IDE0001.severity = suggestion # Name can be simplified.
 dotnet_diagnostic.IDE0005.severity = warning    # Unused using directives.
@@ -86,7 +85,6 @@ dotnet_diagnostic.IDE0010.severity = silent     # Incomplete switch statements.
 dotnet_diagnostic.IDE0072.severity = silent     # ^ Ditto.
 dotnet_diagnostic.IDE0022.severity = warning    # Use of expression body for methods.
 dotnet_diagnostic.IDE0046.severity = silent     # Use conditional expression for return.
-dotnet_diagnostic.IDE0055.severity = silent     # Formatting rule.
 dotnet_diagnostic.IDE0059.severity = warning    # Useless assignation.
 dotnet_diagnostic.IDE1006.severity = default    # Naming rule.
 dotnet_diagnostic.CA1710.severity = silent      # Meaningful names.
