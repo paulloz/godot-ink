@@ -1,7 +1,6 @@
 #nullable enable
 
 using Godot;
-using Ink.Runtime;
 using System.Collections.Generic;
 
 namespace GodotInk;
@@ -17,14 +16,14 @@ public partial class InkChoice : GodotObject
     public int Index => inner.index;
     public List<string> Tags => inner.tags;
 
-    private readonly Choice inner;
+    private readonly Ink.Runtime.Choice inner;
 
     private InkChoice()
     {
-        inner = new Choice();
+        inner = new Ink.Runtime.Choice();
     }
 
-    public InkChoice(Choice inner)
+    public InkChoice(Ink.Runtime.Choice inner)
     {
         this.inner = inner;
     }

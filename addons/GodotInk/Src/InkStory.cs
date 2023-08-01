@@ -1,7 +1,6 @@
 #nullable enable
 
 using Godot;
-using Ink.Runtime;
 using System;
 using System.Collections.Generic;
 
@@ -38,10 +37,10 @@ public partial class InkStory : Resource
     }
 
     private string rawStory = string.Empty;
-    private Story runtimeStory = null!;
+    private Ink.Runtime.Story runtimeStory = null!;
 
     private readonly Dictionary<string, HashSet<Callable>> observers = new();
-    private readonly Dictionary<string, Story.VariableObserver> internalObservers = new();
+    private readonly Dictionary<string, Ink.Runtime.Story.VariableObserver> internalObservers = new();
 
     public static InkStory Create(string rawStory)
     {
@@ -59,7 +58,7 @@ public partial class InkStory : Resource
             runtimeStory.onMakeChoice -= OnMadeChoice;
         }
 
-        runtimeStory = new Story(rawStory);
+        runtimeStory = new Ink.Runtime.Story(rawStory);
 
         runtimeStory.onDidContinue += OnContinued;
         runtimeStory.onMakeChoice += OnMadeChoice;
@@ -229,7 +228,7 @@ public partial class InkStory : Resource
     {
         if (!internalObservers.ContainsKey(variableName))
         {
-            Story.VariableObserver internalObserver = BuildObserver();
+            Ink.Runtime.Story.VariableObserver internalObserver = BuildObserver();
             runtimeStory.ObserveVariable(variableName, internalObserver);
             internalObservers[variableName] = internalObserver;
         }
@@ -251,7 +250,7 @@ public partial class InkStory : Resource
             ObserveVariable(variableName, observer);
     }
 
-    private Story.VariableObserver BuildObserver()
+    private Ink.Runtime.Story.VariableObserver BuildObserver()
     {
         return delegate (string name, object? value)
         {
@@ -677,7 +676,7 @@ public partial class InkStory : Resource
         _ = EmitSignal(SignalName.Continued);
     }
 
-    private void OnMadeChoice(Choice choice)
+    private void OnMadeChoice(Ink.Runtime.Choice choice)
     {
         _ = EmitSignal(SignalName.MadeChoice, new InkChoice(choice));
     }
