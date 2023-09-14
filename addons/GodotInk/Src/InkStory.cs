@@ -10,8 +10,9 @@ using PropertyList = Godot.Collections.Array<Godot.Collections.Dictionary>;
 
 namespace GodotInk;
 
-#if TOOLS
 [Tool]
+#if GODOT4_1_1_OR_GREATER
+[GlobalClass, Icon("res://addons/GodotInk/GodotInk.svg")]
 #endif
 public partial class InkStory : Resource
 {
