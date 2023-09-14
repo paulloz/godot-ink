@@ -5,9 +5,7 @@ using System.Collections.Generic;
 
 namespace GodotInk;
 
-#if TOOLS
 [Tool]
-#endif
 public partial class InkChoice : GodotObject
 {
     public string Text => inner.text;
