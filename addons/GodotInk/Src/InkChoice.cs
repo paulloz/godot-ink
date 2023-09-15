@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace GodotInk;
 
 [Tool]
-public partial class InkChoice : GodotObject
+public partial class InkChoice : RefCounted
 {
     public string Text => inner.text;
     public string PathStringOnChoice => inner.pathStringOnChoice;
