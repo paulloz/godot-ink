@@ -4,7 +4,7 @@ using Godot;
 
 namespace GodotInk;
 
-public partial class InkList : GodotObject
+public partial class InkList : RefCounted
 {
     private readonly Ink.Runtime.InkList inner;
 
