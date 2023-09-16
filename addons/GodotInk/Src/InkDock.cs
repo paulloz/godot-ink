@@ -22,6 +22,7 @@ public partial class InkDock : VBoxContainer
 
     private EditorFileDialog fileDialog = null!;
 
+    private string storyPath = "";
     private InkStory? story;
     private bool storyStarted;
 
@@ -74,7 +75,7 @@ public partial class InkDock : VBoxContainer
     {
         bool hasStory = story != null;
 
-        storyNameLabel.Text = hasStory ? story!.ResourcePath : string.Empty;
+        storyNameLabel.Text = hasStory ? storyPath : string.Empty;
 
         startButton.Visible = hasStory && !storyStarted;
         stopButton.Visible = hasStory && storyStarted;
@@ -88,7 +89,8 @@ public partial class InkDock : VBoxContainer
     {
         try
         {
-            story = GD.Load<InkStory>(path);
+            storyPath = path;
+            story = ResourceLoader.Load<InkStory>(path, null, ResourceLoader.CacheMode.Ignore);
 
             story.Continued += ContinueStory;
 
@@ -106,14 +108,20 @@ public partial class InkDock : VBoxContainer
         if (story == null) return;
 
         storyStarted = true;
-        _ = story.ContinueMaximally();
+        story.ContinueMaximally();
 
         UpdateTop();
     }
 
     private void StopStory()
     {
+        StopStory(false);
+    }
+
+    private void StopStory(bool setStoryToNull)
+    {
         storyStarted = false;
+
         try
         {
             story?.ResetState();
@@ -122,6 +130,9 @@ public partial class InkDock : VBoxContainer
         {
             story = null;
         }
+
+        if (setStoryToNull)
+            story = null;
 
         ClearStory(true);
     }
@@ -193,14 +204,14 @@ public partial class InkDock : VBoxContainer
         AddToStory(new HSeparator());
 
         if (story.CanContinue)
-            _ = story.ContinueMaximally();
+            story.ContinueMaximally();
     }
 
     private async void AddToStory(CanvasItem item)
     {
         storyText.AddChild(item);
-        _ = await ToSignal(GetTree(), "process_frame");
-        _ = await ToSignal(GetTree(), "process_frame");
+        await ToSignal(GetTree(), "process_frame");
+        await ToSignal(GetTree(), "process_frame");
         scroll.ScrollVertical = (int)scroll.GetVScrollBar().MaxValue;
     }
 
@@ -216,13 +227,9 @@ public partial class InkDock : VBoxContainer
             storyChoices.RemoveChild(n);
     }
 
-    public void WhenInkResourceReimported(string resourcePath)
+    public void WhenInkResourceReimported()
     {
-        if (story?.ResourcePath == resourcePath)
-        {
-            story = null;
-            StopStory();
-        }
+        StopStory(true);
     }
 }
 
