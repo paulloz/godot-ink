@@ -1,0 +1,16 @@
+[remap]
+
+importer="ink"
+type="Resource"
+uid="uid://tfcha875kanu"
+path="res://.godot/imported/ExampleHouse.ink-2bb3fa4161eebe8b806bcf0d6ec968fb.res"
+
+[deps]
+
+source_file="res://Examples/TeenyTiny/Assets/ExampleHouse.ink"
+dest_files=["res://.godot/imported/ExampleHouse.ink-2bb3fa4161eebe8b806bcf0d6ec968fb.res"]
+
+[params]
+
+is_main_file=false
+compress=true

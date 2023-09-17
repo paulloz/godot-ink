@@ -1,5 +1,7 @@
 EXTERNAL Animate(id)
 
+INCLUDE ExampleHouse.ink
+
 LIST Inventory = ChestKey, Mushrooms
 
 -> DONE
@@ -36,17 +38,6 @@ LIST Inventory = ChestKey, Mushrooms
         There's only a bunch of old mushrooms in there.
         Exciting, I guess.
         Who knows what I could do with that. -> DONE
-
-=== PickChestKeyUp
-    { Chest:
-        Cool, the key for the [color=orange]chest[/color] I saw earlier.
-        I'll bag that
-    - else:
-        I found a key!
-        I'm pretty sure there [color=orange]something[/color] it could open somewhere.
-    }
-    ~ Inventory += ChestKey
-     -> DONE
 
 === FlowerGirl
     [rainbow]Hello![/rainbow]
