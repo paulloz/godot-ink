@@ -53,7 +53,6 @@ func _when_resources_reimported(resources : PackedStringArray) -> void:
 		return
 
 	for resource in resources:
-		if resource.get_extension() != "ink":
-			continue
-
-		_dock.call("WhenInkResourceReimported", resource)
+		if resource.get_extension() == "ink":
+			_dock.call("WhenInkResourceReimported")
+			return
