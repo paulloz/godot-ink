@@ -7,24 +7,45 @@ var _dock: Control
 
 
 func _enter_tree() -> void:
-	_importer = preload("res://addons/GodotInk/Src/InkStoryImporter.cs").new() as EditorImportPlugin
+	var importer_script : CSharpScript = load("res://addons/GodotInk/Src/InkStoryImporter.cs") as CSharpScript
+	if not importer_script.can_instantiate():
+		return
+	_importer = importer_script.new() as EditorImportPlugin
 	add_import_plugin(_importer)
 
-	_dock = preload("res://addons/GodotInk/Src/InkDock.tscn").instantiate() as Control
+	var dock_scene : PackedScene = load("res://addons/GodotInk/Src/InkDock.tscn") as PackedScene
+	_dock = dock_scene.instantiate() as Control
 	add_control_to_bottom_panel(_dock, "Ink preview")
 	
-	get_editor_interface().get_resource_filesystem().resources_reimported.connect(_when_resources_reimported)
+	var fs : EditorFileSystem = get_editor_interface().get_resource_filesystem()
+	if not fs.resources_reimported.is_connected(_when_resources_reimported):
+		fs.resources_reimported.connect(_when_resources_reimported)
 
 
 func _exit_tree() -> void:
-	get_editor_interface().get_resource_filesystem().resources_reimported.disconnect(_when_resources_reimported)
+	var fs : EditorFileSystem = get_editor_interface().get_resource_filesystem()
+	if fs.resources_reimported.is_connected(_when_resources_reimported):
+		fs.resources_reimported.disconnect(_when_resources_reimported)
 
-	remove_control_from_bottom_panel(_dock)
-	_dock.free()
-	_dock = null
+	if _dock != null:
+		remove_control_from_bottom_panel(_dock)
+		_dock.free()
+		_dock = null
 
-	remove_import_plugin(_importer)
-	_importer = null
+	if _importer != null:
+		remove_import_plugin(_importer)
+		_importer = null
+
+
+func _notification(what : int) -> void:
+	if what == NOTIFICATION_POST_ENTER_TREE:
+		if _importer != null:
+			return
+		get_editor_interface().set_plugin_enabled("GodotInk", false)
+		printerr("GodotInk could not be loaded.\n" +
+				 "Make sure your .csproj file references GodotInk.props, and rebuild the solution.\n" +
+				 "See the installation guide for more information: https://github.com/paulloz/godot-ink/wiki\n" +
+				 "If you think this is not an issue on your end, please open a bug report: https://github.com/paulloz/godot-ink/issues/new/choose")
 
 
 func _when_resources_reimported(resources : PackedStringArray) -> void:
