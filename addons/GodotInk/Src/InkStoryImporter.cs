@@ -102,7 +102,7 @@ public partial class InkStoryImporter : EditorImportPlugin
         using Godot.FileAccess file = Godot.FileAccess.Open(sourceFile, Godot.FileAccess.ModeFlags.Read);
         return includeRegex.Matches(file.GetAsText())
                            .OfType<Match>()
-                           .Select(match => sourceFile.GetBaseDir().PathJoin(match.Groups["Path"].Value))
+                           .Select(match => sourceFile.GetBaseDir().PathJoin(match.Groups["Path"].Value.TrimEnd('\r')))
                            .ToList();
     }
 
