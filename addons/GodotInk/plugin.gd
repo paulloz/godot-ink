@@ -7,13 +7,15 @@ var _dock: Control
 
 
 func _enter_tree() -> void:
-	var importer_script : CSharpScript = load("res://addons/GodotInk/Src/InkStoryImporter.cs") as CSharpScript
+	var src_path : String = get_script().get_path().get_base_dir().path_join("Src")
+
+	var importer_script : CSharpScript = load(src_path.path_join("InkStoryImporter.cs")) as CSharpScript
 	if not importer_script.can_instantiate():
 		return
 	_importer = importer_script.new() as EditorImportPlugin
 	add_import_plugin(_importer)
 
-	var dock_scene : PackedScene = load("res://addons/GodotInk/Src/InkDock.tscn") as PackedScene
+	var dock_scene : PackedScene = load(src_path.path_join("InkDock.tscn")) as PackedScene
 	_dock = dock_scene.instantiate() as Control
 	add_control_to_bottom_panel(_dock, "Ink preview")
 	
