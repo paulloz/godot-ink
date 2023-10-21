@@ -44,10 +44,12 @@ func _notification(what : int) -> void:
 		if _importer != null:
 			return
 		get_editor_interface().set_plugin_enabled("GodotInk", false)
-		printerr("GodotInk could not be loaded.\n" +
-				 "Make sure your .csproj file references GodotInk.props, and rebuild the solution.\n" +
-				 "See the installation guide for more information: https://github.com/paulloz/godot-ink/wiki\n" +
-				 "If you think this is not an issue on your end, please open a bug report: https://github.com/paulloz/godot-ink/issues/new/choose")
+		printerr(
+			"GodotInk could not be loaded.\n" +
+			"Make sure your .csproj file references GodotInk.props, and rebuild the solution.\n" +
+			"See the installation guide for more information: https://github.com/paulloz/godot-ink/wiki\n" +
+			"If you think this is not an issue on your end, please open a bug report: https://github.com/paulloz/godot-ink/issues/new/choose"
+		)
 
 
 func _when_resources_reimported(resources : PackedStringArray) -> void:
