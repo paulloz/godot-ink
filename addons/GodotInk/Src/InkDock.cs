@@ -10,6 +10,8 @@ namespace GodotInk;
 [Tool]
 public partial class InkDock : VBoxContainer
 {
+    private static readonly StringName CHOICE_INDEX_META = "Index";
+
     private Button loadButton = null!;
     private Button startButton = null!;
     private Button stopButton = null!;
@@ -25,6 +27,8 @@ public partial class InkDock : VBoxContainer
     private string storyPath = "";
     private InkStory? story;
     private bool storyStarted;
+
+    private string backupSave = "";
 
     public override void _Ready()
     {
@@ -92,8 +96,6 @@ public partial class InkDock : VBoxContainer
             storyPath = path;
             story = ResourceLoader.Load<InkStory>(path, null, ResourceLoader.CacheMode.Ignore);
 
-            story.Continued += ContinueStory;
-
             UpdateTop();
         }
         catch (InvalidCastException)
@@ -108,7 +110,7 @@ public partial class InkDock : VBoxContainer
         if (story == null) return;
 
         storyStarted = true;
-        story.ContinueMaximally();
+        ContinueStory();
 
         UpdateTop();
     }
@@ -149,8 +151,9 @@ public partial class InkDock : VBoxContainer
     private void ContinueStory()
     {
         if (story == null) return;
+        if (!story.CanContinue) return;
 
-        string currentText = story.CurrentText.Trim();
+        string currentText = story.ContinueMaximally().Trim();
 
         if (currentText.Length > 0)
         {
@@ -174,23 +177,38 @@ public partial class InkDock : VBoxContainer
             }
         }
 
-        if (story.CurrentChoices.Count > 0)
+        foreach (InkChoice choice in story.CurrentChoices)
         {
-            int i = 0;
-            foreach (InkChoice choice in story.CurrentChoices)
+            Button button = new() { Text = choice.Text };
+            button.SetMeta(CHOICE_INDEX_META, choice.Index);
+
+            button.Connect(Button.SignalName.Pressed, Callable.From(ClickChoice));
+
+            storyChoices.AddChild(button);
+        }
+
+        backupSave = storyStarted ? story.SaveState() : "";
+    }
+
+    private void ClickChoice()
+    {
+        if (storyChoices.GetChildren().OfType<Button>().First(button => button.ButtonPressed) is not Button button) return;
+        if (!button.HasMeta(CHOICE_INDEX_META)) return;
+
+        try
+        {
+            ClickChoice(button.GetMeta(CHOICE_INDEX_META).As<int>());
+        }
+        catch
+        {
+            story?.LoadState(backupSave);
+            try
             {
-                if (i < storyChoices.GetChildCount()) continue;
-
-                Button button = new()
-                {
-                    Text = choice.Text,
-                };
-
-                button.Pressed += () => ClickChoice(choice.Index);
-
-                storyChoices.AddChild(button);
-
-                ++i;
+                ClickChoice(button.GetMeta(CHOICE_INDEX_META).As<int>());
+            }
+            catch
+            {
+                StopStory(true);
             }
         }
     }
@@ -200,11 +218,11 @@ public partial class InkDock : VBoxContainer
         if (story == null) return;
 
         story.ChooseChoiceIndex(idx);
+
         RemoveAllChoices();
         AddToStory(new HSeparator());
 
-        if (story.CanContinue)
-            story.ContinueMaximally();
+        ContinueStory();
     }
 
     private async void AddToStory(CanvasItem item)
@@ -218,13 +236,13 @@ public partial class InkDock : VBoxContainer
     private void RemoveAllStoryContent()
     {
         foreach (Node n in storyText.GetChildren())
-            storyText.RemoveChild(n);
+            n.QueueFree();
     }
 
     private void RemoveAllChoices()
     {
         foreach (Node n in storyChoices.GetChildren().OfType<Button>())
-            storyChoices.RemoveChild(n);
+            n.QueueFree();
     }
 
     public void WhenInkResourceReimported()
