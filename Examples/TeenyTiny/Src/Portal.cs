@@ -14,8 +14,21 @@ public partial class Portal : Area2D
 
     private void WhenBodyEntered(Node2D body)
     {
-        if (body is not Player) return;
+        if (body is not Player player) return;
 
-        body.GlobalPosition = destination;
+        Teleport(player);
+    }
+
+    private async void Teleport(Player player)
+    {
+        var transition = GetNode<ColorRect>("/root/TeenyTiny/UILayer/UIRoot/Transition");
+
+        transition.Visible = true;
+
+        player.GlobalPosition = destination;
+
+        await ToSignal(GetTree().CreateTimer(0.1f), SceneTreeTimer.SignalName.Timeout);
+
+        transition.Visible = false;
     }
 }

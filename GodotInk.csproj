@@ -4,6 +4,7 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>GodotInk</RootNamespace>
     <PublishReferencesDocumentationFiles>false</PublishReferencesDocumentationFiles>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <Import Project="addons\GodotInk\GodotInk.props" />
 </Project>
