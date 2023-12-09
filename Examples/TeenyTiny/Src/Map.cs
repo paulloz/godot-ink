@@ -46,6 +46,7 @@ public partial class Map : TileMap, IDialogueService
 
         // And bind some functions.
         story.BindExternalFunction("Animate", Callable.From<string>(Animate));
+        story.BindExternalFunction("ShakeWindow", Callable.From(ShakeWindow));
     }
 
     private void ObserveInventory(string _, InkList list)
@@ -68,5 +69,10 @@ public partial class Map : TileMap, IDialogueService
                         GetCellAtlasCoords(1, cellCoords) + new Vector2I(2, 0));
                 break;
         }
+    }
+
+    private void ShakeWindow()
+    {
+
     }
 }

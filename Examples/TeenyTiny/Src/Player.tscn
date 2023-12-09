@@ -69,10 +69,10 @@ motion_mode = 1
 script = ExtResource("1_0dtpm")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-autoplay = "Idle"
 libraries = {
 "": SubResource("AnimationLibrary_4ekud")
 }
+autoplay = "Idle"
 
 [node name="MainSprite" type="Sprite2D" parent="."]
 texture = ExtResource("2_wurm7")
@@ -94,7 +94,8 @@ shape = SubResource("CircleShape2D_ueaw0")
 metadata/_edit_lock_ = true
 
 [node name="Camera" type="Camera2D" parent="."]
-current = true
 zoom = Vector2(2, 2)
 limit_left = 0
 limit_top = 0
+limit_right = 288
+limit_bottom = 224
