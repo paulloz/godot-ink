@@ -11,7 +11,7 @@ using PropertyList = Godot.Collections.Array<Godot.Collections.Dictionary>;
 namespace GodotInk;
 
 [Tool]
-#if GODOT4_1_1_OR_GREATER
+#if GODOT4_1_OR_GREATER
 [GlobalClass, Icon("../GodotInk.svg")]
 #endif
 public partial class InkStory : Resource
