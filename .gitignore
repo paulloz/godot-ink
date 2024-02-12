@@ -1,5 +1,8 @@
+# Visual Studio Code
 .vscode/
 *.code-workspace
+# JetBrains Rider
+.idea/
 
 .godot/
 
