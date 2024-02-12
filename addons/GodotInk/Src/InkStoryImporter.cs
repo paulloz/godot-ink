@@ -32,7 +32,7 @@ public partial class InkStoryImporter : EditorImportPlugin
 
     public override string[] _GetRecognizedExtensions() => new string[] { "ink" };
 
-    public override string _GetResourceType() => "Resource";
+    public override string _GetResourceType() => nameof(Resource);
 
     public override string _GetSaveExtension() => "res";
 
@@ -116,6 +116,9 @@ public partial class InkStoryImporter : EditorImportPlugin
             case ErrorType.Error:
                 GD.PushError(message);
                 throw new InvalidInkException();
+            case ErrorType.Author:
+            default:
+                break;
         }
     }
 

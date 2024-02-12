@@ -58,11 +58,11 @@ public static class MarshalUtils
     }
 
     /// <summary>
-    /// Convert from a collection of Godot Variants to a collection of ink variables. The
+    /// Convert from a collection of ink variables to a collection of Godot Variants. The
     /// collection doesn't need to be homogeneous in type.
     /// </summary>
-    /// <param name="objects">The collection of Godot Variants to convert.</param>
-    /// <returns>The collection of converted ink variables.</returns>
+    /// <param name="objects">The collection of ink variables to convert.</param>
+    /// <returns>The collection of converted Godot Variants.</returns>
     /// <exception cref="ArgumentException"></exception>
     public static Variant[] ToVariants(IReadOnlyList<object?> objects)
     {
@@ -76,11 +76,11 @@ public static class MarshalUtils
     }
 
     /// <summary>
-    /// Convert from a collection of ink variables to a collection of Godot Variants. The
+    /// Convert from a collection of Godot Variants to a collection of ink variables. The
     /// collection doesn't need to be homogeneous in type.
     /// </summary>
-    /// <param name="objects">The collection of ink variables to convert.</param>
-    /// <returns>The collection of converted Godot Variants.</returns>
+    /// <param name="variants">The collection of Godot Variants to convert.</param>
+    /// <returns>The collection of converted ink variables.</returns>
     /// <exception cref="ArgumentException"></exception>
     public static object?[] FromVariants(IReadOnlyList<Variant> variants)
     {
