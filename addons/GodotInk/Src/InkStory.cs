@@ -67,17 +67,17 @@ public partial class InkStory : Resource
 
     public string CurrentText => runtimeStory.currentText;
 
-    public List<InkChoice> CurrentChoices => ToVariants(runtimeStory.currentChoices);
+    public IReadOnlyList<InkChoice> CurrentChoices => ToVariants(runtimeStory.currentChoices);
 
-    public List<string> CurrentTags => runtimeStory.currentTags;
+    public IReadOnlyList<string> CurrentTags => runtimeStory.currentTags;
 
     public bool HasWarning => runtimeStory.hasWarning;
 
-    public List<string> CurrentWarnings => runtimeStory.currentWarnings;
+    public IReadOnlyList<string> CurrentWarnings => runtimeStory.currentWarnings;
 
     public bool HasError => runtimeStory.hasError;
 
-    public List<string> CurrentErrors => runtimeStory.currentErrors;
+    public IReadOnlyList<string> CurrentErrors => runtimeStory.currentErrors;
 
     /// <summary>
     /// Check whether more content is available if you were to call <c>Continue()</c> - i.e.
@@ -150,7 +150,7 @@ public partial class InkStory : Resource
     /// Get any global tags associated with the story. These are defined as
     /// hash tags defined at the very top of the story.
     /// </summary>
-    public List<string> GlobalTags => runtimeStory.globalTags;
+    public IReadOnlyList<string> GlobalTags => runtimeStory.globalTags;
 
     /// <summary>
     /// Gets any tags associated with a particular knot or knot.stitch.
@@ -158,7 +158,7 @@ public partial class InkStory : Resource
     /// </summary>
     /// <param name="path">The path of the knot or stitch, in the form "knot" or "knot.stitch".</param>
     /// <returns>The list of tags.</returns>
-    public List<string> TagsForContentAtPath(string path)
+    public IReadOnlyList<string> TagsForContentAtPath(string path)
     {
         return runtimeStory.TagsForContentAtPath(path);
     }
@@ -167,7 +167,7 @@ public partial class InkStory : Resource
 
     public bool CurrentFlowIsDefaultFlow => runtimeStory.currentFlowIsDefaultFlow;
 
-    public List<string> AliveFlowNames => runtimeStory.aliveFlowNames;
+    public IReadOnlyList<string> AliveFlowNames => runtimeStory.aliveFlowNames;
 
     /// <summary>
     ///
@@ -304,7 +304,7 @@ public partial class InkStory : Resource
     /// <summary>
     /// An ink file can provide a fallback functions for when when an EXTERNAL has been left
     /// unbound by the client, and the fallback function will be called instead. Useful when
-    /// testing a story in playmode, when it's not possible to write a client-side C# external
+    /// testing a story in play mode, when it's not possible to write a client-side C# external
     /// function, but you don't want it to fail to run.
     /// </summary>
     public bool AllowExternalFunctionFallbacks => runtimeStory.allowExternalFunctionFallbacks;
@@ -506,7 +506,7 @@ public partial class InkStory : Resource
     /// Bind a C# Action to an ink EXTERNAL function declaration.
     /// </summary>
     /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
-    /// <param name="act">The C# action to bind.</param>
+    /// <param name="action">The C# action to bind.</param>
     /// <param name="lookaheadSafe">The ink engine often evaluates further
     /// than you might expect beyond the current line just in case it sees
     /// glue that will cause the two lines to become one. In this case it's
@@ -525,7 +525,7 @@ public partial class InkStory : Resource
     /// Bind a C# Action to an ink EXTERNAL function declaration.
     /// </summary>
     /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
-    /// <param name="act">The C# action to bind.</param>
+    /// <param name="action">The C# action to bind.</param>
     /// <param name="lookaheadSafe">The ink engine often evaluates further
     /// than you might expect beyond the current line just in case it sees
     /// glue that will cause the two lines to become one. In this case it's
@@ -544,7 +544,7 @@ public partial class InkStory : Resource
     /// Bind a C# Action to an ink EXTERNAL function declaration.
     /// </summary>
     /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
-    /// <param name="act">The C# action to bind.</param>
+    /// <param name="action">The C# action to bind.</param>
     /// <param name="lookaheadSafe">The ink engine often evaluates further
     /// than you might expect beyond the current line just in case it sees
     /// glue that will cause the two lines to become one. In this case it's
@@ -563,7 +563,7 @@ public partial class InkStory : Resource
     /// Bind a C# Action to an ink EXTERNAL function declaration.
     /// </summary>
     /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
-    /// <param name="act">The C# action to bind.</param>
+    /// <param name="action">The C# action to bind.</param>
     /// <param name="lookaheadSafe">The ink engine often evaluates further
     /// than you might expect beyond the current line just in case it sees
     /// glue that will cause the two lines to become one. In this case it's
@@ -582,7 +582,7 @@ public partial class InkStory : Resource
     /// Bind a C# Action to an ink EXTERNAL function declaration.
     /// </summary>
     /// <param name="funcName">EXTERNAL ink function name to bind to.</param>
-    /// <param name="act">The C# action to bind.</param>
+    /// <param name="action">The C# action to bind.</param>
     /// <param name="lookaheadSafe">The ink engine often evaluates further
     /// than you might expect beyond the current line just in case it sees
     /// glue that will cause the two lines to become one. In this case it's
@@ -637,7 +637,7 @@ public partial class InkStory : Resource
     /// <summary>
     /// Save the current story state a JSON string.
     /// </summary>
-    /// <returns>The current state seialized into a JSON string.</returns>
+    /// <returns>The current state serialized into a JSON string.</returns>
     public string SaveState()
     {
         return runtimeStory.state.ToJson();
@@ -684,9 +684,9 @@ public partial class InkStory : Resource
 
     public override PropertyList _GetPropertyList()
     {
-        PropertyList properties = base._GetPropertyList() ?? new();
+        PropertyList properties = base._GetPropertyList() ?? new PropertyList();
 
-        properties.Add(new()
+        properties.Add(new Godot.Collections.Dictionary()
         {
             { "name", PropertyName.RawStory },
             { "type", Variant.From(Variant.Type.Object) },
