@@ -67,17 +67,17 @@ public partial class InkStory : Resource
 
     public string CurrentText => runtimeStory.currentText;
 
-    public List<InkChoice> CurrentChoices => ToVariants(runtimeStory.currentChoices);
+    public IReadOnlyList<InkChoice> CurrentChoices => ToVariants(runtimeStory.currentChoices);
 
-    public List<string> CurrentTags => runtimeStory.currentTags;
+    public IReadOnlyList<string> CurrentTags => runtimeStory.currentTags;
 
     public bool HasWarning => runtimeStory.hasWarning;
 
-    public List<string> CurrentWarnings => runtimeStory.currentWarnings;
+    public IReadOnlyList<string> CurrentWarnings => runtimeStory.currentWarnings;
 
     public bool HasError => runtimeStory.hasError;
 
-    public List<string> CurrentErrors => runtimeStory.currentErrors;
+    public IReadOnlyList<string> CurrentErrors => runtimeStory.currentErrors;
 
     /// <summary>
     /// Check whether more content is available if you were to call <c>Continue()</c> - i.e.
@@ -150,7 +150,7 @@ public partial class InkStory : Resource
     /// Get any global tags associated with the story. These are defined as
     /// hash tags defined at the very top of the story.
     /// </summary>
-    public List<string> GlobalTags => runtimeStory.globalTags;
+    public IReadOnlyList<string> GlobalTags => runtimeStory.globalTags;
 
     /// <summary>
     /// Gets any tags associated with a particular knot or knot.stitch.
@@ -158,7 +158,7 @@ public partial class InkStory : Resource
     /// </summary>
     /// <param name="path">The path of the knot or stitch, in the form "knot" or "knot.stitch".</param>
     /// <returns>The list of tags.</returns>
-    public List<string> TagsForContentAtPath(string path)
+    public IReadOnlyList<string> TagsForContentAtPath(string path)
     {
         return runtimeStory.TagsForContentAtPath(path);
     }
@@ -167,7 +167,7 @@ public partial class InkStory : Resource
 
     public bool CurrentFlowIsDefaultFlow => runtimeStory.currentFlowIsDefaultFlow;
 
-    public List<string> AliveFlowNames => runtimeStory.aliveFlowNames;
+    public IReadOnlyList<string> AliveFlowNames => runtimeStory.aliveFlowNames;
 
     /// <summary>
     ///

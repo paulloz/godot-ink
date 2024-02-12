@@ -66,6 +66,9 @@ public static class MarshalUtils
     /// <exception cref="ArgumentException"></exception>
     public static Variant[] ToVariants(IReadOnlyList<object?> objects)
     {
+        if (objects.Count <= 0)
+            return Array.Empty<Variant>();
+
         Variant[] variants = new Variant[objects.Count];
         for (int i = 0; i < objects.Count; ++i)
             variants[i] = ToVariant(objects[i]);
@@ -81,6 +84,9 @@ public static class MarshalUtils
     /// <exception cref="ArgumentException"></exception>
     public static object?[] FromVariants(IReadOnlyList<Variant> variants)
     {
+        if (variants.Count <= 0)
+            return Array.Empty<object?>();
+
         object?[] objects = new object[variants.Count];
         for (int i = 0; i < variants.Count; ++i)
             objects[i] = FromVariant(variants[i]);
