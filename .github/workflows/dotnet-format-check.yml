@@ -13,9 +13,9 @@ jobs:
       DOTNET_NOLOGO: 1
     steps:
       - name: 📦 Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: 🔩 Set up .NET environment
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '6.0.x'
       - name: 📦 Restore Dependencies
