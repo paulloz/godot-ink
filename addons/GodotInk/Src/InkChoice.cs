@@ -6,6 +6,9 @@ using System.Collections.Generic;
 namespace GodotInk;
 
 [Tool]
+#if GODOT4_1_OR_GREATER
+[GlobalClass]
+#endif
 public partial class InkChoice : RefCounted
 {
     public string Text => inner.text;

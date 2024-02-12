@@ -4,6 +4,9 @@ using Godot;
 
 namespace GodotInk;
 
+#if GODOT4_1_OR_GREATER
+[GlobalClass]
+#endif
 public partial class InkList : RefCounted
 {
     private readonly Ink.Runtime.InkList inner;
