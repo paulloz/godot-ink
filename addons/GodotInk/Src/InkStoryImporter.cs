@@ -76,6 +76,7 @@ public partial class InkStoryImporter : EditorImportPlugin
 
         Compiler compiler = new(file.GetAsText(), new Compiler.Options
         {
+            countAllVisits = true,
             sourceFilename = sourceFile,
             errorHandler = InkCompilerErrorHandler,
             fileHandler = new FileHandler(
