@@ -66,10 +66,11 @@ public partial class InkDock : VBoxContainer
         scroll = GetNode<ScrollContainer>("Container/Left/Scroll");
 
         // Set icons.
-        loadButton.Icon = GetThemeIcon("Load", "EditorIcons");
-        startButton.Icon = GetThemeIcon("Play", "EditorIcons");
-        stopButton.Icon = GetThemeIcon("Stop", "EditorIcons");
-        clearButton.Icon = GetThemeIcon("Clear", "EditorIcons");
+        var editorTheme = EditorInterface.Singleton.GetEditorTheme();
+        loadButton.Icon = editorTheme.GetIcon("Load", "EditorIcons");
+        startButton.Icon = editorTheme.GetIcon("Play", "EditorIcons");
+        stopButton.Icon = editorTheme.GetIcon("Stop", "EditorIcons");
+        clearButton.Icon = editorTheme.GetIcon("Clear", "EditorIcons");
 
         // Update UI.
         UpdateTop();
@@ -157,7 +158,7 @@ public partial class InkDock : VBoxContainer
 
         if (currentText.Length > 0)
         {
-            Label newLine = new()
+            var newLine = new Label()
             {
                 AutowrapMode = TextServer.AutowrapMode.WordSmart,
                 Text = currentText,
@@ -182,7 +183,7 @@ public partial class InkDock : VBoxContainer
             Button button = new() { Text = choice.Text };
             button.SetMeta(CHOICE_INDEX_META, choice.Index);
 
-            button.Connect(Button.SignalName.Pressed, Callable.From(ClickChoice));
+            button.Connect(BaseButton.SignalName.Pressed, Callable.From(ClickChoice));
 
             storyChoices.AddChild(button);
         }
@@ -192,7 +193,7 @@ public partial class InkDock : VBoxContainer
 
     private void ClickChoice()
     {
-        if (storyChoices.GetChildren().OfType<Button>().First(button => button.ButtonPressed) is not Button button) return;
+        if (storyChoices.GetChildren().OfType<Button>().First(b => b.ButtonPressed) is not { } button) return;
         if (!button.HasMeta(CHOICE_INDEX_META)) return;
 
         try
@@ -241,8 +242,8 @@ public partial class InkDock : VBoxContainer
 
     private void RemoveAllChoices()
     {
-        foreach (Node n in storyChoices.GetChildren().OfType<Button>())
-            n.QueueFree();
+        foreach (Button button in storyChoices.GetChildren().OfType<Button>())
+            button.QueueFree();
     }
 
     public void WhenInkResourceReimported()

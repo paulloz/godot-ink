@@ -23,7 +23,7 @@ public partial class InkStoryImporter : EditorImportPlugin
     private const string OPT_MAIN_FILE = "is_main_file";
     private const string OPT_COMPRESS = "compress";
 
-    private static readonly Regex includeRegex = new(@"^\s*INCLUDE\s*(?<Path>.*)\s*$", RegexOptions.Multiline | RegexOptions.Compiled);
+    private static readonly Regex INCLUDE_REGEX = new(@"^\s*INCLUDE\s*(?<Path>.*)\s*$", RegexOptions.Multiline | RegexOptions.Compiled);
 
 #pragma warning disable IDE0022
     public override string _GetImporterName() => "ink";
@@ -61,7 +61,7 @@ public partial class InkStoryImporter : EditorImportPlugin
             : ResourceSaver.Save(new StubInkStory(), destFile);
 
         string[] additionalFiles = GetCache().Where(kvp => kvp.Value.Contains(sourceFile)).Select(kvp => kvp.Key).ToArray();
-        foreach (var additionalFile in additionalFiles)
+        foreach (string additionalFile in additionalFiles)
             AppendImportExternalResource(additionalFile);
 
         return returnValue;
@@ -101,8 +101,7 @@ public partial class InkStoryImporter : EditorImportPlugin
     private static List<string> ExtractIncludes(string sourceFile)
     {
         using Godot.FileAccess file = Godot.FileAccess.Open(sourceFile, Godot.FileAccess.ModeFlags.Read);
-        return includeRegex.Matches(file.GetAsText())
-                           .OfType<Match>()
+        return INCLUDE_REGEX.Matches(file.GetAsText())
                            .Select(match => sourceFile.GetBaseDir().PathJoin(match.Groups["Path"].Value.TrimEnd('\r')))
                            .ToList();
     }

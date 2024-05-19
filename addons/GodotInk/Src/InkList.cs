@@ -11,6 +11,11 @@ public partial class InkList : RefCounted
 {
     private readonly Ink.Runtime.InkList inner;
 
+    public InkList()
+    {
+        inner = new Ink.Runtime.InkList();
+    }
+
     public InkList(Ink.Runtime.InkList inner)
     {
         this.inner = inner;

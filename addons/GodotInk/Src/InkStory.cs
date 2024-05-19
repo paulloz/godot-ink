@@ -81,7 +81,7 @@ public partial class InkStory : Resource
 
     /// <summary>
     /// Check whether more content is available if you were to call <c>Continue()</c> - i.e.
-    /// are we mid story rather than at a choice point or at the end.
+    /// are we mid-story rather than at a choice point or at the end.
     /// </summary>
     public bool CanContinue => runtimeStory.canContinue;
 
@@ -148,7 +148,7 @@ public partial class InkStory : Resource
 
     /// <summary>
     /// Get any global tags associated with the story. These are defined as
-    /// hash tags defined at the very top of the story.
+    /// hashtags defined at the very top of the story.
     /// </summary>
     public IReadOnlyList<string> GlobalTags => runtimeStory.globalTags;
 
@@ -234,10 +234,10 @@ public partial class InkStory : Resource
             internalObservers[variableName] = internalObserver;
         }
 
-        if (observers.ContainsKey(variableName))
-            _ = observers[variableName].Add(observer);
+        if (observers.TryGetValue(variableName, out HashSet<Callable>? observerSet))
+            observerSet.Add(observer);
         else
-            observers[variableName] = new() { observer };
+            observers[variableName] = new HashSet<Callable>() { observer };
     }
 
     /// <summary>
@@ -255,10 +255,10 @@ public partial class InkStory : Resource
     {
         return delegate (string name, object? value)
         {
-            if (!observers.TryGetValue(name, out var callables)) return;
+            if (!observers.TryGetValue(name, out HashSet<Callable>? observerSet)) return;
 
             Variant variant = ToVariant(value);
-            foreach (Callable callable in callables)
+            foreach (Callable callable in observerSet)
                 _ = callable.Call(name, variant);
         };
     }
@@ -302,7 +302,7 @@ public partial class InkStory : Resource
     }
 
     /// <summary>
-    /// An ink file can provide a fallback functions for when when an EXTERNAL has been left
+    /// An ink file can provide a fallback functions for when an EXTERNAL has been left
     /// unbound by the client, and the fallback function will be called instead. Useful when
     /// testing a story in play mode, when it's not possible to write a client-side C# external
     /// function, but you don't want it to fail to run.
@@ -392,9 +392,11 @@ public partial class InkStory : Resource
     /// to be performed in game code when this function is called.</param>
     public void BindExternalFunction(string funcName, Callable callable, bool lookaheadSafe = false)
     {
-        runtimeStory.BindExternalFunctionGeneral(funcName, trampoline, lookaheadSafe);
+        runtimeStory.BindExternalFunctionGeneral(funcName, Trampoline, lookaheadSafe);
 
-        object? trampoline(object?[] arguments) => FromVariant(callable.Call(ToVariants(arguments)));
+        return;
+
+        object? Trampoline(object?[] arguments) => FromVariant(callable.Call(ToVariants(arguments)));
     }
 
     /// <summary>
@@ -413,9 +415,11 @@ public partial class InkStory : Resource
     /// to be performed in game code when this function is called.</param>
     public void BindExternalFunction(string funcName, Func<Variant> func, bool lookaheadSafe = false)
     {
-        runtimeStory.BindExternalFunction(funcName, trampoline, lookaheadSafe);
+        runtimeStory.BindExternalFunction(funcName, Trampoline, lookaheadSafe);
 
-        object? trampoline() => FromVariant(func.Invoke());
+        return;
+
+        object? Trampoline() => FromVariant(func.Invoke());
     }
 
     /// <summary>
@@ -434,9 +438,11 @@ public partial class InkStory : Resource
     /// to be performed in game code when this function is called.</param>
     public void BindExternalFunction<T>(string funcName, Func<T, Variant> func, bool lookaheadSafe = false)
     {
-        runtimeStory.BindExternalFunction(funcName, (Func<T, object?>)trampoline, lookaheadSafe);
+        runtimeStory.BindExternalFunction(funcName, (Func<T, object?>)Trampoline, lookaheadSafe);
 
-        object? trampoline(T a) => FromVariant(func.Invoke(a));
+        return;
+
+        object? Trampoline(T a) => FromVariant(func.Invoke(a));
     }
 
     /// <summary>
@@ -455,9 +461,11 @@ public partial class InkStory : Resource
     /// to be performed in game code when this function is called.</param>
     public void BindExternalFunction<T1, T2>(string funcName, Func<T1, T2, Variant> func, bool lookaheadSafe = false)
     {
-        runtimeStory.BindExternalFunction(funcName, (Func<T1, T2, object?>)trampoline, lookaheadSafe);
+        runtimeStory.BindExternalFunction(funcName, (Func<T1, T2, object?>)Trampoline, lookaheadSafe);
 
-        object? trampoline(T1 a, T2 b) => FromVariant(func.Invoke(a, b));
+        return;
+
+        object? Trampoline(T1 a, T2 b) => FromVariant(func.Invoke(a, b));
     }
 
     /// <summary>
@@ -476,9 +484,11 @@ public partial class InkStory : Resource
     /// to be performed in game code when this function is called.</param>
     public void BindExternalFunction<T1, T2, T3>(string funcName, Func<T1, T2, T3, Variant> func, bool lookaheadSafe = false)
     {
-        runtimeStory.BindExternalFunction(funcName, (Func<T1, T2, T3, object?>)trampoline, lookaheadSafe);
+        runtimeStory.BindExternalFunction(funcName, (Func<T1, T2, T3, object?>)Trampoline, lookaheadSafe);
 
-        object? trampoline(T1 a, T2 b, T3 c) => FromVariant(func.Invoke(a, b, c));
+        return;
+
+        object? Trampoline(T1 a, T2 b, T3 c) => FromVariant(func.Invoke(a, b, c));
     }
 
     /// <summary>
@@ -497,9 +507,11 @@ public partial class InkStory : Resource
     /// to be performed in game code when this function is called.</param>
     public void BindExternalFunction<T1, T2, T3, T4>(string funcName, Func<T1, T2, T3, T4, Variant> func, bool lookaheadSafe = false)
     {
-        runtimeStory.BindExternalFunction(funcName, (Func<T1, T2, T3, T4, object?>)trampoline, lookaheadSafe);
+        runtimeStory.BindExternalFunction(funcName, (Func<T1, T2, T3, T4, object?>)Trampoline, lookaheadSafe);
 
-        object? trampoline(T1 a, T2 b, T3 c, T4 d) => FromVariant(func.Invoke(a, b, c, d));
+        return;
+
+        object? Trampoline(T1 a, T2 b, T3 c, T4 d) => FromVariant(func.Invoke(a, b, c, d));
     }
 
     /// <summary>

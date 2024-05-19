@@ -108,13 +108,17 @@ dotnet_naming_rule.non_field_members.severity = warning
 dotnet_naming_rule.non_field_members.symbols = non_field_members
 dotnet_naming_rule.non_field_members.style = pascal_case
 
-dotnet_naming_rule.private_fields.severity = silent
+dotnet_naming_rule.private_fields.severity = warning
 dotnet_naming_rule.private_fields.symbols = private_fields
-dotnet_naming_rule.private_fields.style = prefix_underscore
+dotnet_naming_rule.private_fields.style = camel_case
 
 dotnet_naming_rule.constants.severity = warning
 dotnet_naming_rule.constants.symbols = constant_fields
 dotnet_naming_rule.constants.style = constant_style
+
+dotnet_naming_rule.static_readonly.severity = warning
+dotnet_naming_rule.static_readonly.symbols = static_readonly_fields
+dotnet_naming_rule.static_readonly.style = constant_style
 
 dotnet_naming_rule.type_parameters.severity = warning
 dotnet_naming_rule.type_parameters.symbols = type_parameters
@@ -142,6 +146,10 @@ dotnet_naming_symbols.constant_fields.applicable_kinds = field
 dotnet_naming_symbols.constant_fields.applicable_accessibilities = *
 dotnet_naming_symbols.constant_fields.required_modifiers = const
 
+dotnet_naming_symbols.static_readonly_fields.applicable_kinds = field
+dotnet_naming_symbols.static_readonly_fields.applicable_accessibilities = *
+dotnet_naming_symbols.static_readonly_fields.required_modifiers = static, readonly
+
 dotnet_naming_symbols.type_parameters.applicable_kinds = type_parameter
 dotnet_naming_symbols.type_parameters.applicable_accessibilities = *
 dotnet_naming_symbols.type_parameters.required_modifiers =
@@ -152,6 +160,11 @@ dotnet_naming_style.pascal_case.required_prefix =
 dotnet_naming_style.pascal_case.required_suffix =
 dotnet_naming_style.pascal_case.word_separator =
 dotnet_naming_style.pascal_case.capitalization = pascal_case
+
+dotnet_naming_style.camel_case.required_prefix =
+dotnet_naming_style.camel_case.required_suffix =
+dotnet_naming_style.camel_case.word_separator =
+dotnet_naming_style.camel_case.capitalization = camel_case
 
 dotnet_naming_style.prefix_I.required_prefix = I
 dotnet_naming_style.prefix_I.required_suffix =

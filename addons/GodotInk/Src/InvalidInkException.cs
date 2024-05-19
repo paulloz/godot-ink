@@ -4,7 +4,7 @@ namespace GodotInk;
 
 public class InvalidInkException : System.Exception
 {
-    public InvalidInkException() : base()
+    public InvalidInkException()
     {
     }
 
