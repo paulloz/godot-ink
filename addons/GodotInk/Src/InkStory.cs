@@ -22,6 +22,15 @@ public partial class InkStory : Resource
     [Signal]
     public delegate void MadeChoiceEventHandler(InkChoice choice);
 
+    [Signal]
+    public delegate void AuthorErrorEventHandler(string message);
+
+    [Signal]
+    public delegate void WarningErrorEventHandler(string message);
+
+    [Signal]
+    public delegate void ErrorErrorEventHandler(string message);
+
     protected virtual string RawStory
     {
         get => rawStory;
@@ -57,12 +66,14 @@ public partial class InkStory : Resource
         {
             runtimeStory.onDidContinue -= OnContinued;
             runtimeStory.onMakeChoice -= OnMadeChoice;
+            runtimeStory.onError -= OnError;
         }
 
         runtimeStory = new Ink.Runtime.Story(rawStory);
 
         runtimeStory.onDidContinue += OnContinued;
         runtimeStory.onMakeChoice += OnMadeChoice;
+        runtimeStory.onError += OnError;
     }
 
     public string CurrentText => runtimeStory.currentText;
@@ -692,6 +703,24 @@ public partial class InkStory : Resource
     private void OnMadeChoice(Ink.Runtime.Choice choice)
     {
         _ = EmitSignal(SignalName.MadeChoice, new InkChoice(choice));
+    }
+
+    private void OnError(string message, Ink.ErrorType type)
+    {
+        switch (type)
+        {
+            case Ink.ErrorType.Author:
+                _ = EmitSignal(SignalName.AuthorError, message);
+                break;
+            case Ink.ErrorType.Warning:
+                _ = EmitSignal(SignalName.WarningError, message);
+                break;
+            case Ink.ErrorType.Error:
+                _ = EmitSignal(SignalName.ErrorError, message);
+                break;
+            default:
+                return;
+        }
     }
 
     public override PropertyList _GetPropertyList()
