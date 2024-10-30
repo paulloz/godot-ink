@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <InkVersion>v1.1.1</InkVersion>
+    <InkVersion>v.1.2.0</InkVersion>
     <!-- Directories -->
     <GodotDotDirectory>$([System.IO.Path]::Combine($(GodotProjectDir),'.godot'))</GodotDotDirectory>
     <GodotMonoDirectory>$([System.IO.Path]::Combine($(GodotDotDirectory),'mono'))</GodotMonoDirectory>
